@@ -1,0 +1,14 @@
+const grid=document.getElementById('grid');const search=document.getElementById('search');const statusFilter=document.getElementById('status');const sizeSelect=document.getElementById('size');const count=document.getElementById('count');const cartItems=document.getElementById('cartItems');let cart=[];
+const packs={night:['9PM Night Out','Spicebomb Infrared EDP','Booz Extreme'],fresh:['Sanaya','Nirvana','Kaaf [Extrait]'],luxury:['Ponderer 45','Iris Infinite','Nirvana'],summer:['Opulent Dubai','Sanaya','Pacific Rock Moss']};
+function money(v){return v&&v!=='N/A'?v:'—'}
+function card(f){const size=sizeSelect.value;return `<article class="card"><div class="emoji">${f.emojis||'✨'}</div><div class="title">${f.fragrance}</div><div class="meta">${f.house} · <span class="badge">${f.status}</span></div><div class="insp">${f.inspiration||'Original / unknown inspiration'}</div><div class="prices"><span class="price">3mL ${money(f.price3)}</span><span class="price">5mL ${money(f.price5)}</span><span class="price">10mL ${money(f.price10)}</span></div><button class="add" onclick='addToCart(${JSON.stringify(f).replace(/'/g,"&#39;")})'>Add ${size.replace('price','')}mL ${money(f[size])}</button></article>`}
+function render(){const q=search.value.toLowerCase();const s=statusFilter.value;const data=FRAGRANCES.filter(f=>(!s||f.status===s)&&[f.fragrance,f.house,f.inspiration,f.emojis].join(' ').toLowerCase().includes(q));count.textContent=`${data.length} fragrances`;grid.innerHTML=data.map(card).join('')}
+function addToCart(f){const size=sizeSelect.value;const price=f[size]||'N/A';if(price==='N/A')return alert('That size is not available.');cart.push({name:f.fragrance,house:f.house,size:size.replace('price','')+'mL',price});renderCart()}
+function renderCart(){if(!cart.length){cartItems.textContent='No samples added yet.';return}cartItems.innerHTML=cart.map((c,i)=>`<div class="cart-item"><span>${c.name} ${c.size}</span><b>${c.price}</b><button onclick="cart.splice(${i},1);renderCart()">×</button></div>`).join('')}
+function copyOrder(){const name=document.getElementById('customer').value||'Customer';const total=cart.reduce((sum,c)=>sum+Number((c.price||'$0').replace(/[^0-9.]/g,'')),0);const msg=`Hi DeadEnd Scents, it's ${name}. I'd like to order:
+
+`+cart.map(c=>`- ${c.name} (${c.size}) ${c.price}`).join('
+')+`
+
+Total: $${total}`;navigator.clipboard.writeText(msg).then(()=>alert('Order copied. Paste it into Instagram/Messenger.'))}
+document.getElementById('copyOrder').onclick=copyOrder;[search,statusFilter,sizeSelect].forEach(el=>el.addEventListener('input',render));document.querySelectorAll('[data-pack]').forEach(b=>b.onclick=()=>{const names=packs[b.dataset.pack];cart=[];names.forEach(n=>{const f=FRAGRANCES.find(x=>x.fragrance===n);if(f)cart.push({name:f.fragrance,house:f.house,size:'3mL',price:f.price3})});renderCart()});render();
