@@ -1,48 +1,105 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>DeadEnd Scents</title>
-  <meta name="description" content="Fragrance decants and sample packs from DeadEnd Scents." />
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DeadEnd Scents | Fragrance Decants</title>
+  <meta name="description" content="DeadEnd Scents fragrance decants, sample packs and scent profiles.">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<header class="hero">
-  <div class="brand">
-    <div class="logo">DS</div>
-    <div><h1>DeadEnd Scents</h1><p>Fragrance decants. Fresh drops. Easy discovery.</p></div>
-  </div>
-  <a class="cta" href="#catalogue">Browse samples</a>
-</header>
-<section class="packs">
-  <h2>Sample Packs</h2>
-  <div class="pack-grid">
-    <button data-pack="night">🌙 Night Out Pack<br><span>sweet, spicy, loud</span></button>
-    <button data-pack="fresh">🍋 Fresh & Clean<br><span>daily and office safe</span></button>
-    <button data-pack="luxury">✨ Clean Luxury<br><span>premium, polished</span></button>
-    <button data-pack="summer">🏝️ Summer Bangers<br><span>bright and fresh</span></button>
-  </div>
-</section>
-<main id="catalogue">
-  <div class="toolbar">
-    <input id="search" placeholder="Search scent, house, inspiration, vibe…" />
-    <select id="status"><option value="">All status</option><option>In stock</option><option>Ordered</option></select>
-    <select id="size"><option value="price3">3mL</option><option value="price5">5mL</option><option value="price10">10mL</option></select>
-  </div>
-  <div id="count"></div>
-  <div class="grid" id="grid"></div>
-</main>
-<aside class="cart">
-  <h2>Order List</h2>
-  <div id="cartItems">No samples added yet.</div>
-  <div class="cart-actions">
-    <input id="customer" placeholder="Your name" />
-    <button id="copyOrder">Copy order message</button>
-    <a id="igLink" href="https://www.instagram.com/" target="_blank">Message on Instagram</a>
-  </div>
-</aside>
-<footer>DeadEnd Scents · Update stock and pricing in <code>data.js</code></footer>
-<script src="data.js"></script>
-<script src="app.js"></script>
-</body></html>
+  <header class="site-header">
+    <nav class="nav">
+      <a class="brand" href="#top"><span class="brand-mark">DS</span><span>DeadEnd Scents</span></a>
+      <div class="nav-links">
+        <a href="#catalogue">Catalogue</a>
+        <a href="#packs">Packs</a>
+        <a href="#order">Order</a>
+      </div>
+    </nav>
+    <section class="hero" id="top">
+      <p class="eyebrow">Premium fragrance decants</p>
+      <h1>Find your next signature scent without buying the whole bottle.</h1>
+      <p class="hero-text">Browse designer, niche and Middle Eastern inspired decants. Filter by vibe, season, occasion and price.</p>
+      <div class="hero-actions">
+        <a href="#catalogue" class="button primary">Browse samples</a>
+        <a href="#packs" class="button secondary">View packs</a>
+      </div>
+    </section>
+  </header>
+
+  <main>
+    <section class="stats" aria-label="Catalogue stats">
+      <div><strong id="stat-count">0</strong><span>fragrances</span></div>
+      <div><strong>3 / 5 / 10mL</strong><span>sample sizes</span></div>
+      <div><strong>Search</strong><span>by notes or vibe</span></div>
+    </section>
+
+    <section class="section" id="catalogue">
+      <div class="section-heading">
+        <p class="eyebrow">Catalogue</p>
+        <h2>Fragrance samples</h2>
+      </div>
+
+      <div class="toolbar">
+        <label class="search-wrap">
+          <span>Search</span>
+          <input id="search" type="search" placeholder="Try vanilla, tobacco, summer, Aventus...">
+        </label>
+        <label>
+          <span>Category</span>
+          <select id="categoryFilter"><option value="all">All categories</option></select>
+        </label>
+        <label>
+          <span>Occasion</span>
+          <select id="occasionFilter"><option value="all">All occasions</option></select>
+        </label>
+        <label>
+          <span>Status</span>
+          <select id="statusFilter">
+            <option value="all">All</option>
+            <option value="In stock">In stock</option>
+            <option value="Ordered">Ordered</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="results-meta"><span id="resultCount">0</span> results</div>
+      <div id="catalogueGrid" class="grid"></div>
+    </section>
+
+    <section class="section packs" id="packs">
+      <div class="section-heading">
+        <p class="eyebrow">Discovery packs</p>
+        <h2>Easy starting points</h2>
+      </div>
+      <div id="packsGrid" class="pack-grid"></div>
+    </section>
+
+    <section class="section order" id="order">
+      <div class="order-card">
+        <div>
+          <p class="eyebrow">How to order</p>
+          <h2>Send a simple order message.</h2>
+          <p>Pick your fragrances and sizes, then send the message by Facebook, Instagram or SMS.</p>
+        </div>
+        <textarea id="orderText" rows="7">Hi DeadEnd Scents, I’d like to order:
+
+- Fragrance name — 3mL / 5mL / 10mL
+
+Name:
+Pickup/Postage:
+Payment method:</textarea>
+        <button class="button primary" id="copyOrder">Copy order message</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>DeadEnd Scents · Fragrance decants and discovery packs.</p>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

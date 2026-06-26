@@ -2,9 +2,8 @@
 
 Official website for DeadEnd Scents.
 
-Discover premium fragrance decants, sample packs and detailed scent profiles from designer, niche and Middle Eastern fragrance houses.
+Browse fragrance decants, discovery packs, new arrivals, and detailed scent profiles.
 
-🌐 Website:
-https://deadendscents.com.au (once your domain is connected)
+## Updating the catalogue
 
-Follow us on Facebook and Instagram for new arrivals and restocks.
+Edit `data.js` only. Add or remove fragrance objects from the `fragrances` array, then commit the change to GitHub.

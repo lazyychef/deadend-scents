@@ -1,14 +1,119 @@
-const grid=document.getElementById('grid');const search=document.getElementById('search');const statusFilter=document.getElementById('status');const sizeSelect=document.getElementById('size');const count=document.getElementById('count');const cartItems=document.getElementById('cartItems');let cart=[];
-const packs={night:['9PM Night Out','Spicebomb Infrared EDP','Booz Extreme'],fresh:['Sanaya','Nirvana','Kaaf [Extrait]'],luxury:['Ponderer 45','Iris Infinite','Nirvana'],summer:['Opulent Dubai','Sanaya','Pacific Rock Moss']};
-function money(v){return v&&v!=='N/A'?v:'—'}
-function card(f){const size=sizeSelect.value;return `<article class="card"><div class="emoji">${f.emojis||'✨'}</div><div class="title">${f.fragrance}</div><div class="meta">${f.house} · <span class="badge">${f.status}</span></div><div class="insp">${f.inspiration||'Original / unknown inspiration'}</div><div class="prices"><span class="price">3mL ${money(f.price3)}</span><span class="price">5mL ${money(f.price5)}</span><span class="price">10mL ${money(f.price10)}</span></div><button class="add" onclick='addToCart(${JSON.stringify(f).replace(/'/g,"&#39;")})'>Add ${size.replace('price','')}mL ${money(f[size])}</button></article>`}
-function render(){const q=search.value.toLowerCase();const s=statusFilter.value;const data=FRAGRANCES.filter(f=>(!s||f.status===s)&&[f.fragrance,f.house,f.inspiration,f.emojis].join(' ').toLowerCase().includes(q));count.textContent=`${data.length} fragrances`;grid.innerHTML=data.map(card).join('')}
-function addToCart(f){const size=sizeSelect.value;const price=f[size]||'N/A';if(price==='N/A')return alert('That size is not available.');cart.push({name:f.fragrance,house:f.house,size:size.replace('price','')+'mL',price});renderCart()}
-function renderCart(){if(!cart.length){cartItems.textContent='No samples added yet.';return}cartItems.innerHTML=cart.map((c,i)=>`<div class="cart-item"><span>${c.name} ${c.size}</span><b>${c.price}</b><button onclick="cart.splice(${i},1);renderCart()">×</button></div>`).join('')}
-function copyOrder(){const name=document.getElementById('customer').value||'Customer';const total=cart.reduce((sum,c)=>sum+Number((c.price||'$0').replace(/[^0-9.]/g,'')),0);const msg=`Hi DeadEnd Scents, it's ${name}. I'd like to order:
+(function(){
+  const $ = (id) => document.getElementById(id);
+  const grid = $('catalogueGrid');
+  const search = $('search');
+  const categoryFilter = $('categoryFilter');
+  const occasionFilter = $('occasionFilter');
+  const statusFilter = $('statusFilter');
+  const resultCount = $('resultCount');
+  const statCount = $('stat-count');
 
-`+cart.map(c=>`- ${c.name} (${c.size}) ${c.price}`).join('
-')+`
+  if (!Array.isArray(window.fragrances || fragrances)) {
+    console.error('Catalogue data not found. Check data.js');
+    return;
+  }
 
-Total: $${total}`;navigator.clipboard.writeText(msg).then(()=>alert('Order copied. Paste it into Instagram/Messenger.'))}
-document.getElementById('copyOrder').onclick=copyOrder;[search,statusFilter,sizeSelect].forEach(el=>el.addEventListener('input',render));document.querySelectorAll('[data-pack]').forEach(b=>b.onclick=()=>{const names=packs[b.dataset.pack];cart=[];names.forEach(n=>{const f=FRAGRANCES.find(x=>x.fragrance===n);if(f)cart.push({name:f.fragrance,house:f.house,size:'3mL',price:f.price3})});renderCart()});render();
+  const data = fragrances;
+  statCount.textContent = data.length;
+
+  function uniqueValues(key){
+    return [...new Set(data.map(x => x[key]).filter(Boolean))].sort();
+  }
+
+  function addOptions(select, values){
+    values.forEach(v => {
+      const opt = document.createElement('option');
+      opt.value = v;
+      opt.textContent = v;
+      select.appendChild(opt);
+    });
+  }
+
+  addOptions(categoryFilter, uniqueValues('category'));
+  addOptions(occasionFilter, uniqueValues('occasion'));
+
+  function match(fragrance){
+    const q = search.value.trim().toLowerCase();
+    const combined = [fragrance.name, fragrance.house, fragrance.inspiration, fragrance.category, fragrance.occasion, fragrance.notes, fragrance.emojis].join(' ').toLowerCase();
+    const categoryOk = categoryFilter.value === 'all' || fragrance.category === categoryFilter.value;
+    const occasionOk = occasionFilter.value === 'all' || fragrance.occasion === occasionFilter.value;
+    const statusOk = statusFilter.value === 'all' || fragrance.status === statusFilter.value;
+    const searchOk = !q || combined.includes(q);
+    return categoryOk && occasionOk && statusOk && searchOk;
+  }
+
+  function render(){
+    const filtered = data.filter(match);
+    resultCount.textContent = filtered.length;
+    grid.innerHTML = '';
+
+    if (!filtered.length){
+      grid.innerHTML = '<div class="empty">No fragrances match that search. Try a broader word like “fresh”, “vanilla”, “date” or “summer”.</div>';
+      return;
+    }
+
+    const frag = document.createDocumentFragment();
+    filtered.forEach(f => {
+      const card = document.createElement('article');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="card-top">
+          <span class="emoji">${f.emojis || '✨'}</span>
+          <span class="status ${String(f.status).toLowerCase().replace(/\s+/g,'-')}">${f.status || 'In stock'}</span>
+        </div>
+        <h3>${escapeHtml(f.name)}</h3>
+        <p class="house">${escapeHtml(f.house || '')}</p>
+        <p class="inspo">${escapeHtml(f.inspiration || 'Original')}</p>
+        <p class="desc">${escapeHtml(f.notes || '')}</p>
+        <div class="tags">
+          <span>${escapeHtml(f.category || 'Fragrance')}</span>
+          <span>${escapeHtml(f.occasion || 'Anytime')}</span>
+        </div>
+        <div class="prices">
+          <div><strong>${escapeHtml(f.p3 || 'N/A')}</strong><span>3mL</span></div>
+          <div><strong>${escapeHtml(f.p5 || 'N/A')}</strong><span>5mL</span></div>
+          <div><strong>${escapeHtml(f.p10 || 'N/A')}</strong><span>10mL</span></div>
+        </div>
+      `;
+      frag.appendChild(card);
+    });
+    grid.appendChild(frag);
+  }
+
+  function renderPacks(){
+    const packsGrid = $('packsGrid');
+    packsGrid.innerHTML = '';
+    packs.forEach(pack => {
+      const div = document.createElement('article');
+      div.className = 'pack-card';
+      div.innerHTML = `
+        <span class="pack-emoji">${pack.emojis}</span>
+        <h3>${escapeHtml(pack.name)}</h3>
+        <p>${escapeHtml(pack.desc)}</p>
+        <strong>${escapeHtml(pack.price)}</strong>
+        <ul>${pack.items.map(i => `<li>${escapeHtml(i)}</li>`).join('')}</ul>
+      `;
+      packsGrid.appendChild(div);
+    });
+  }
+
+  function escapeHtml(value){
+    return String(value).replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+  }
+
+  [search, categoryFilter, occasionFilter, statusFilter].forEach(el => el.addEventListener('input', render));
+
+  $('copyOrder').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText($('orderText').value);
+      $('copyOrder').textContent = 'Copied';
+      setTimeout(() => $('copyOrder').textContent = 'Copy order message', 1400);
+    } catch (e) {
+      $('orderText').select();
+      document.execCommand('copy');
+    }
+  });
+
+  renderPacks();
+  render();
+})();
