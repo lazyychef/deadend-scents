@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>DeadEnd Scents | Fragrance Decants Australia</title>
-  <meta name="description" content="DeadEnd Scents offers designer, niche and Middle Eastern fragrance decants in Australia. Browse fresh, sweet, woody, leather, date night and summer sample packs." />
+  <meta name="description" content="DeadEnd Scents offers designer, niche and Middle Eastern fragrance decants in Australia. Glass vials, $10 express postage and Australia-wide shipping." />
   <meta name="keywords" content="fragrance decants Australia, perfume samples Australia, niche fragrance samples, designer fragrance decants, Middle Eastern fragrances, DeadEnd Scents" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://lazyychef.github.io/deadend-scents/" />
@@ -30,7 +30,7 @@
     <nav class="nav">
       <a href="#catalogue">Catalogue</a>
       <a href="#packs">Packs</a>
-      <a href="#order">Order</a>
+      <a href="#order">Cart / Order</a>
     </nav>
     <div class="hero-inner">
       <svg class="line-graphic" viewBox="0 0 260 72" role="img" aria-label="DeadEnd Scents line graphic">
@@ -51,10 +51,11 @@
         <a id="heroWhatsappLink" class="button" href="https://wa.me/61434432948?text=Hi%20DeadEnd%20Scents%2C%20I%27d%20like%20to%20order%20some%20samples." target="_blank" rel="noopener">WhatsApp</a>
         <a id="heroInstagramLink" class="button" href="https://instagram.com/deadendscents" target="_blank" rel="noopener">Instagram</a>
       </div>
+      <p class="shipping-note">$10 express postage · Australia-wide shipping · Glass vials</p>
       <div class="stats">
         <span><strong id="stat-count">0</strong> fragrances</span>
         <span>3mL · 5mL · 10mL</span>
-        <span>Australia</span>
+        <span>$10 express post</span><span>Glass vials</span>
       </div>
     </div>
   </header>
@@ -99,29 +100,35 @@
 
     <section id="order" class="section order-section">
       <div class="order-card">
-        <p class="eyebrow">Order</p>
-        <h2>Send your sample list</h2>
-        <p>Message DeadEnd Scents with the fragrance names, bottle sizes and delivery area.</p>
-        <div class="contact-row">
-          <a id="messengerLink" class="button primary" href="https://m.me/nickstreet09/" target="_blank" rel="noopener">Messenger</a>
-          <a id="whatsappLink" class="button" href="https://wa.me/61434432948?text=Hi%20DeadEnd%20Scents%2C%20I%27d%20like%20to%20order%20some%20samples." target="_blank" rel="noopener">WhatsApp</a>
+        <p class="eyebrow">Cart / Order</p>
+        <h2>Your sample list</h2>
+        <p>Tap a size/price on any fragrance to add it here. $10 express postage is added to orders. Shipping Australia wide in glass vials.</p>
+
+        <div id="cartItems" class="cart-items empty-cart">No samples added yet.</div>
+        <div class="shipping-summary"><span>Express postage</span><strong>$10</strong></div>
+        <div class="cart-total"><span>Estimated total</span><strong id="cartTotal">$0</strong></div>
+
+        <div class="contact-row cart-actions">
+          <a id="sendWhatsappCart" class="button primary" href="https://wa.me/61434432948?text=Hi%20DeadEnd%20Scents%2C%20I%27d%20like%20to%20order%20some%20samples." target="_blank" rel="noopener">Send WhatsApp order</a>
+          <a id="messengerLink" class="button" href="https://m.me/nickstreet09/" target="_blank" rel="noopener">Open Messenger</a>
           <a id="instagramLink" class="button" href="https://instagram.com/deadendscents" target="_blank" rel="noopener">Instagram</a>
         </div>
-        <textarea id="orderText">Hi DeadEnd Scents, I’d like to order some samples:
 
-1.
-2.
-3.
+        <textarea id="orderText" readonly>Hi DeadEnd Scents, I’d like to order some samples:
 
-Sizes:
+No samples added yet.
+
 Delivery area:</textarea>
-        <button id="copyOrder" class="button">Copy order message</button>
+        <div class="contact-row cart-actions">
+          <button id="copyOrder" class="button">Copy order message</button>
+          <button id="clearCart" class="button danger">Clear cart</button>
+        </div>
       </div>
     </section>
   </main>
 
   <footer>
-    <p>DeadEnd Scents · Fragrance decants and discovery packs</p>
+    <p>DeadEnd Scents · Glass fragrance vials · $10 express postage Australia wide</p>
   </footer>
 
   <script src="data.js"></script>

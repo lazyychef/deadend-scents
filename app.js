@@ -8,6 +8,8 @@
   const resultCount = $('resultCount');
   const statCount = $('stat-count');
   const data = Array.isArray(window.fragrances) ? window.fragrances : (typeof fragrances !== 'undefined' ? fragrances : []);
+  const cart = [];
+  const EXPRESS_POSTAGE = 10;
 
   if (!data.length) {
     console.error('Catalogue data not found. Check data.js');
@@ -65,9 +67,9 @@
         </div>
         <p class="desc">${escapeHtml(f.notes || '')}</p>
         <div class="prices compact-prices">
-          <div><strong>${escapeHtml(f.p3 || 'N/A')}</strong><span>3mL</span></div>
-          <div><strong>${escapeHtml(f.p5 || 'N/A')}</strong><span>5mL</span></div>
-          <div><strong>${escapeHtml(f.p10 || 'N/A')}</strong><span>10mL</span></div>
+          ${priceButton(f, '3mL', f.p3)}
+          ${priceButton(f, '5mL', f.p5)}
+          ${priceButton(f, '10mL', f.p10)}
         </div>
         <div class="card-links">
           ${f.fragranticaUrl ? `<a class="mini-link" href="${escapeAttr(f.fragranticaUrl)}" target="_blank" rel="noopener">${linkLabel}</a>` : ''}
@@ -77,8 +79,34 @@
       frag.appendChild(card);
     });
     grid.appendChild(frag);
+    attachCardListeners();
+  }
+
+  function priceButton(f, size, price){
+    const cleanPrice = String(price || '').trim();
+    const disabled = !cleanPrice || cleanPrice.toUpperCase() === 'N/A';
+    if (disabled) {
+      return `<div class="price-unavailable"><strong>N/A</strong><span>${escapeHtml(size)}</span></div>`;
+    }
+    return `<button class="price-add" type="button" data-name="${escapeAttr(f.name)}" data-house="${escapeAttr(f.house || '')}" data-size="${escapeAttr(size)}" data-price="${escapeAttr(cleanPrice)}"><strong>${escapeHtml(cleanPrice)}</strong><span>${escapeHtml(size)}</span><small>Add</small></button>`;
+  }
+
+  function attachCardListeners(){
     document.querySelectorAll('[data-copy]').forEach(btn => btn.addEventListener('click', async () => {
       try { await navigator.clipboard.writeText(btn.dataset.copy); btn.textContent = 'Copied'; setTimeout(()=>btn.textContent='Copy name', 1200); } catch(e) {}
+    }));
+    document.querySelectorAll('.price-add').forEach(btn => btn.addEventListener('click', () => {
+      addToCart({
+        type: 'sample',
+        name: btn.dataset.name,
+        house: btn.dataset.house,
+        size: btn.dataset.size,
+        price: btn.dataset.price
+      });
+      btn.classList.add('added');
+      const oldText = btn.querySelector('small').textContent;
+      btn.querySelector('small').textContent = 'Added';
+      setTimeout(() => { btn.classList.remove('added'); btn.querySelector('small').textContent = oldText; }, 900);
     }));
   }
 
@@ -94,9 +122,72 @@
         const match = data.find(f => f.name === i);
         return `<li>${escapeHtml(i)}${match ? ` <span class="pack-price">${escapeHtml(match.p3 || '')}</span>` : ''}</li>`;
       }).join('');
-      div.innerHTML = `<span class="pack-emoji">${pack.emojis}</span><h3>${escapeHtml(pack.name)}</h3><p>${escapeHtml(pack.desc)}</p><strong>${escapeHtml(pack.price)}</strong><ul>${itemLines}</ul>`;
+      div.innerHTML = `<span class="pack-emoji">${pack.emojis}</span><h3>${escapeHtml(pack.name)}</h3><p>${escapeHtml(pack.desc)}</p><strong>${escapeHtml(pack.price)}</strong><ul>${itemLines}</ul><button class="button pack-add" type="button" data-pack="${escapeAttr(pack.name)}" data-price="${escapeAttr(pack.price)}">Add pack to cart</button>`;
       packsGrid.appendChild(div);
     });
+    document.querySelectorAll('.pack-add').forEach(btn => btn.addEventListener('click', () => {
+      addToCart({ type:'pack', name:btn.dataset.pack, size:'Pack', price:btn.dataset.price, house:'' });
+      btn.textContent = 'Added to cart';
+      setTimeout(()=>btn.textContent='Add pack to cart', 1000);
+    }));
+  }
+
+  function addToCart(item){
+    cart.push(item);
+    updateCart();
+    const order = $('order');
+    if (order) order.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  function parseMoney(value){
+    const num = String(value || '').replace(/[^0-9.]/g,'');
+    return num ? Number(num) : 0;
+  }
+
+  function buildOrderMessage(){
+    if (!cart.length) {
+      return 'Hi DeadEnd Scents, I’d like to order some samples:\n\nNo samples added yet.\n\nPostage: $10 express postage Australia wide\nPackaging: glass vials\n\nDelivery name/address:';
+    }
+    const lines = cart.map((item, idx) => `${idx + 1}. ${item.name}${item.house ? ' - ' + item.house : ''} — ${item.size} (${item.price})`);
+    return `Hi DeadEnd Scents, I’d like to order these samples:\n\n${lines.join('\n')}\n\nEstimated total: ${formatMoney(cart.reduce((sum, item) => sum + parseMoney(item.price), 0))}\n\nDelivery area:`;
+  }
+
+  function updateCart(){
+    const cartItems = $('cartItems');
+    const orderText = $('orderText');
+    const cartTotal = $('cartTotal');
+    const sendWhatsappCart = $('sendWhatsappCart');
+    const cfg = window.siteConfig || {};
+    const samplesTotal = cart.reduce((sum, item) => sum + parseMoney(item.price), 0);
+    const total = cart.length ? samplesTotal + EXPRESS_POSTAGE : 0;
+
+    cartTotal.textContent = formatMoney(total);
+    if (!cart.length) {
+      cartItems.className = 'cart-items empty-cart';
+      cartItems.innerHTML = 'No samples added yet.';
+    } else {
+      cartItems.className = 'cart-items';
+      cartItems.innerHTML = cart.map((item, idx) => `
+        <div class="cart-line">
+          <div><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(item.size)} · ${escapeHtml(item.price)}${item.house ? ` · ${escapeHtml(item.house)}` : ''}</span></div>
+          <button type="button" class="remove-item" data-index="${idx}" aria-label="Remove ${escapeAttr(item.name)}">×</button>
+        </div>
+      `).join('');
+      document.querySelectorAll('.remove-item').forEach(btn => btn.addEventListener('click', () => {
+        cart.splice(Number(btn.dataset.index), 1);
+        updateCart();
+      }));
+    }
+    const message = buildOrderMessage();
+    orderText.value = message;
+    if (sendWhatsappCart) {
+      const base = (cfg.whatsAppUrl || 'https://wa.me/61434432948').split('?')[0];
+      sendWhatsappCart.href = `${base}?text=${encodeURIComponent(message)}`;
+    }
+  }
+
+  function formatMoney(value){
+    return `$${Math.round(value * 100) / 100}`.replace('.00','');
   }
 
   function escapeHtml(value){ return String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
@@ -114,5 +205,7 @@
     try { await navigator.clipboard.writeText($('orderText').value); $('copyOrder').textContent = 'Copied'; setTimeout(() => $('copyOrder').textContent = 'Copy order message', 1400); }
     catch (e) { $('orderText').select(); document.execCommand('copy'); }
   });
-  setupContactLinks(); renderPacks(); render();
+  const clearCart = $('clearCart');
+  if (clearCart) clearCart.addEventListener('click', () => { cart.length = 0; updateCart(); });
+  setupContactLinks(); renderPacks(); render(); updateCart();
 })();

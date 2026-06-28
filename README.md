@@ -1,3 +1,3 @@
 # DeadEnd Scents
 
-Website source for the DeadEnd Scents fragrance decant catalogue.
+Static fragrance decant catalogue with cart message ordering, $10 express postage, Australia-wide shipping and glass vials.
