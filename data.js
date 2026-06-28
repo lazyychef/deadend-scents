@@ -17,6 +17,7 @@ const fragrances = [
     "p5": "$11",
     "p10": "$14",
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Afnan/Supremacy-Collector-s-Edition-Pour-Homme-98689.html",
+    "imageUrl": "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.98689.avif",
     "category": "Fruity Woods",
     "occasion": "Daily / Versatile",
     "notes": "pineapple, citrus, smoky woods",
