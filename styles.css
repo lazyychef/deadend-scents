@@ -21,3 +21,5 @@ main{width:min(1180px,calc(100% - 1.6rem));margin:0 auto}.panel{display:grid;gri
 @media (max-width:1050px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.panel{grid-template-columns:1fr 1fr}.control-wide{grid-column:1/-1}}
 @media (max-width:720px){main{width:min(100% - 1rem,1180px)}.grid,.packs-grid{grid-template-columns:1fr 1fr}.panel{grid-template-columns:1fr}.section-head{display:block}.hero-inner{border-radius:22px}h1{font-size:2.45rem}.card{padding:.7rem}.card-main{display:block}.desc{display:none}}
 @media (max-width:460px){.grid,.packs-grid{grid-template-columns:1fr}.nav{position:sticky;top:0;z-index:10;background:rgba(24,53,42,.85);backdrop-filter:blur(14px)}}
+
+.pack-price{float:right;color:var(--mustard);font-weight:700;}

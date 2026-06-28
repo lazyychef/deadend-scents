@@ -7,7 +7,7 @@
   const statusFilter = $('statusFilter');
   const resultCount = $('resultCount');
   const statCount = $('stat-count');
-  const data = Array.isArray(window.fragrances || fragrances) ? fragrances : [];
+  const data = Array.isArray(window.fragrances) ? window.fragrances : (typeof fragrances !== 'undefined' ? fragrances : []);
 
   if (!data.length) {
     console.error('Catalogue data not found. Check data.js');
@@ -84,12 +84,17 @@
 
   function renderPacks(){
     const packsGrid = $('packsGrid');
-    if (!Array.isArray(window.packs || packs)) return;
+    const packData = Array.isArray(window.packs) ? window.packs : (typeof packs !== 'undefined' ? packs : []);
+    if (!Array.isArray(packData) || !packData.length) return;
     packsGrid.innerHTML = '';
-    packs.forEach(pack => {
+    packData.forEach(pack => {
       const div = document.createElement('article');
       div.className = 'pack-card';
-      div.innerHTML = `<span class="pack-emoji">${pack.emojis}</span><h3>${escapeHtml(pack.name)}</h3><p>${escapeHtml(pack.desc)}</p><strong>${escapeHtml(pack.price)}</strong><ul>${pack.items.map(i => `<li>${escapeHtml(i)}</li>`).join('')}</ul>`;
+      const itemLines = pack.items.map(i => {
+        const match = data.find(f => f.name === i);
+        return `<li>${escapeHtml(i)}${match ? ` <span class="pack-price">${escapeHtml(match.p3 || '')}</span>` : ''}</li>`;
+      }).join('');
+      div.innerHTML = `<span class="pack-emoji">${pack.emojis}</span><h3>${escapeHtml(pack.name)}</h3><p>${escapeHtml(pack.desc)}</p><strong>${escapeHtml(pack.price)}</strong><ul>${itemLines}</ul>`;
       packsGrid.appendChild(div);
     });
   }

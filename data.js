@@ -6,7 +6,7 @@ window.siteConfig = {
   "businessName": "DeadEnd Scents"
 };
 
-const fragrances = [
+window.fragrances = [
   {
     "name": "Supremacy Collectors Ed.",
     "house": "Afnan",
@@ -36,7 +36,7 @@ const fragrances = [
     "notes": "citrus, green tea, clean musk"
   },
   {
-    "name": "9PM - Night Out [Extrait]",
+    "name": "9PM - Night Out",
     "house": "Afnan",
     "inspiration": "Original Creation",
     "status": "In stock",
@@ -47,10 +47,10 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Afnan/9-PM-Night-Out-123313.html",
     "category": "Fruity / Night Out",
     "occasion": "Date / Autumn",
-    "notes": "dragon fruit, apple, cognac, toffee, suede, tonka"
+    "notes": "Extrait concentration. dragon fruit, apple, cognac, toffee, suede, tonka"
   },
   {
-    "name": "Kaaf [Extrait]",
+    "name": "Kaaf",
     "house": "Ahmed Al Maghrabi",
     "inspiration": "Parfums de Marly - Percival",
     "status": "In stock",
@@ -61,7 +61,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Ahmed-Al-Maghribi/Kaaf-102460.html",
     "category": "Fresh / Clean",
     "occasion": "Daily / Summer",
-    "notes": "citrus, lavender, clean musk"
+    "notes": "Extrait concentration. citrus, lavender, clean musk"
   },
   {
     "name": "Aqua Oud",
@@ -78,7 +78,7 @@ const fragrances = [
     "notes": "marine notes, citrus, woods"
   },
   {
-    "name": "Ignite Oud [Extrait]",
+    "name": "Ignite Oud",
     "house": "Ahmed Al Maghrabi",
     "inspiration": "Original Creation",
     "status": "In stock",
@@ -89,7 +89,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Ahmed-Al-Maghribi/Ignite-Oud-99960.html",
     "category": "Woody Leather",
     "occasion": "Date / Autumn",
-    "notes": "leather, patchouli, cedar, amber"
+    "notes": "Extrait concentration. leather, patchouli, cedar, amber"
   },
   {
     "name": "Club de Nuit Precieux I",
@@ -134,7 +134,7 @@ const fragrances = [
     "notes": "saffron, grapefruit, leather, patchouli, ambergris"
   },
   {
-    "name": "Boss Life [Extrait]",
+    "name": "Boss Life",
     "house": "Bujairami",
     "inspiration": "Amouage - Outlands",
     "status": "In stock",
@@ -145,10 +145,10 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Bujairami/Boss-Life-Extreme-123008.html",
     "category": "Amber / Aromatic",
     "occasion": "Date / Autumn",
-    "notes": "warm spice, amber, aromatic woods"
+    "notes": "Extrait concentration. warm spice, amber, aromatic woods"
   },
   {
-    "name": "Kingsman [Extrait]",
+    "name": "Kingsman",
     "house": "Bujairami",
     "inspiration": "Creed - Aventus",
     "status": "In stock",
@@ -159,7 +159,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Bujairami/Kingsman-133329.html",
     "category": "Fruity Woods",
     "occasion": "Daily / Versatile",
-    "notes": "pineapple, citrus, smoky woods"
+    "notes": "Extrait concentration. pineapple, citrus, smoky woods"
   },
   {
     "name": "Gladiator",
@@ -246,7 +246,7 @@ const fragrances = [
     "notes": "designer and niche-inspired fragrance profile"
   },
   {
-    "name": "Mafia Boss [Extrait]",
+    "name": "Mafia Boss",
     "house": "Bujairami",
     "inspiration": "Clive Christian - Blonde Amber",
     "status": "In stock",
@@ -257,7 +257,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Bujairami/Mafia-Boss-117832.html",
     "category": "Amber / Boozy",
     "occasion": "Date / Autumn",
-    "notes": "amber, vanilla, booze, woods"
+    "notes": "Extrait concentration. amber, vanilla, booze, woods"
   },
   {
     "name": "High Tide Mojito",
@@ -274,7 +274,7 @@ const fragrances = [
     "notes": "apple, marine notes, mint"
   },
   {
-    "name": "Bossman [Extrait]",
+    "name": "Bossman",
     "house": "Bujairami",
     "inspiration": "Creed - Absolu Aventus (2025)",
     "status": "In stock",
@@ -285,7 +285,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Bujairami/Bossman-124707.html",
     "category": "Fruity Woods",
     "occasion": "Daily / Versatile",
-    "notes": "pineapple, citrus, smoky woods"
+    "notes": "Extrait concentration. pineapple, citrus, smoky woods"
   },
   {
     "name": "Finesse",
@@ -299,8 +299,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Finesse%20%28W%29",
     "category": "Women",
     "occasion": "Daily / Feminine",
-    "notes": "peony, rose, peach; women's scent",
-    "gender": "Women"
+    "notes": "women's scent. peony, rose, peach"
   },
   {
     "name": "Romantic Rose",
@@ -314,8 +313,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Romantic%20Rose%20%28W%29",
     "category": "Women",
     "occasion": "Date / Autumn",
-    "notes": "rose, vanilla, amber; women's scent",
-    "gender": "Women"
+    "notes": "women's scent. rose, vanilla, amber"
   },
   {
     "name": "Booz Extreme",
@@ -346,7 +344,7 @@ const fragrances = [
     "notes": "citrus, woods, amber, incense"
   },
   {
-    "name": "Iris Infinite [Extrait]",
+    "name": "Iris Infinite",
     "house": "Bujairami",
     "inspiration": "Dior - Homme Parfum 2025",
     "status": "In stock",
@@ -354,10 +352,10 @@ const fragrances = [
     "p3": "$5",
     "p5": "$8",
     "p10": "$12",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Iris%20Infinite%20[Extrait]",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Iris%20Infinite%20Extrait",
     "category": "Iris / Leather",
     "occasion": "Date / Autumn",
-    "notes": "iris, amber, woods, leather nuance"
+    "notes": "Extrait concentration. iris, amber, woods, leather nuance"
   },
   {
     "name": "Midnight Booz",
@@ -413,11 +411,10 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Boujee%20%28W%29",
     "category": "Women",
     "occasion": "Daily / Versatile",
-    "notes": "designer and niche-inspired fragrance profile; women's scent",
-    "gender": "Women"
+    "notes": "women's scent. designer and niche-inspired fragrance profile"
   },
   {
-    "name": "Riverina [Extrait]",
+    "name": "Riverina",
     "house": "Bujairami",
     "inspiration": "Original Creation",
     "status": "In stock",
@@ -425,10 +422,10 @@ const fragrances = [
     "p3": "$6",
     "p5": "$9",
     "p10": "$15",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Riverina%20[Extrait]",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Riverina%20Extrait",
     "category": "Fresh / Citrus",
     "occasion": "Daily / Summer",
-    "notes": "citrus, green notes, watery freshness"
+    "notes": "Extrait concentration. citrus, green notes, watery freshness"
   },
   {
     "name": "Lucky",
@@ -781,7 +778,7 @@ const fragrances = [
     "notes": "honey, citrus, tobacco, vanilla"
   },
   {
-    "name": "Royal Taboo [Extrait]",
+    "name": "Royal Taboo",
     "house": "French Avenue",
     "inspiration": "Creed - Centaurus",
     "status": "In stock",
@@ -792,10 +789,10 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Aromatix-X-French-Avenue/Royal-Taboo-99330.html",
     "category": "Spicy Amber",
     "occasion": "Date / Autumn",
-    "notes": "spice, tobacco nuance, woods"
+    "notes": "Extrait concentration. spice, tobacco nuance, woods"
   },
   {
-    "name": "Teas Me [Extrait]",
+    "name": "Teas Me",
     "house": "French Avenue",
     "inspiration": "Nishane - Wulóng Chá",
     "status": "In stock",
@@ -806,7 +803,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Aromatix-X-French-Avenue/Teas-Me-117532.html",
     "category": "Tea Fresh",
     "occasion": "Daily / Summer",
-    "notes": "citrus, tea, clean musk"
+    "notes": "Extrait concentration. citrus, tea, clean musk"
   },
   {
     "name": "Lumière Garçon",
@@ -851,7 +848,7 @@ const fragrances = [
     "notes": "metallic fresh, lavender, woods"
   },
   {
-    "name": "Mexican Tobacco [Extrait]",
+    "name": "Mexican Tobacco",
     "house": "Ibraheem AlQurashi",
     "inspiration": "Jeroboam - Gozo",
     "status": "In stock",
@@ -862,12 +859,12 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Ibraheem-AlQurashi/Mexican-Tobacco-100563.html",
     "category": "Tobacco",
     "occasion": "Date / Autumn",
-    "notes": "tobacco, warmth, spice"
+    "notes": "Extrait concentration. tobacco, warmth, spice"
   },
   {
-    "name": "Jamaican Tobacco [Extrait]",
+    "name": "Jamaican Tobacco",
     "house": "Ibraheem AlQurashi",
-    "inspiration": "Ex Nihilo - Brompton Immortals [Extrait]",
+    "inspiration": "Ex Nihilo - Brompton Immortals Extrait",
     "status": "In stock",
     "emojis": "🌿🪵🌫",
     "p3": "$10",
@@ -876,10 +873,10 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Ibraheem-AlQurashi/Jamaican-Tobacco-100564.html",
     "category": "Tobacco",
     "occasion": "Date / Autumn",
-    "notes": "tobacco, warmth, spice"
+    "notes": "Extrait concentration. tobacco, warmth, spice"
   },
   {
-    "name": "Cuban Tobacco [Extrait]",
+    "name": "Cuban Tobacco",
     "house": "Ibraheem AlQurashi",
     "inspiration": "Le Labo - Tabac 28",
     "status": "In stock",
@@ -887,13 +884,13 @@ const fragrances = [
     "p3": "$10",
     "p5": "N/A",
     "p10": "N/A",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Ibraheem%20AlQurashi%20Cuban%20Tobacco%20[Extrait]",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Ibraheem%20AlQurashi%20Cuban%20Tobacco%20Extrait",
     "category": "Tobacco",
     "occasion": "Date / Autumn",
-    "notes": "tobacco, warmth, spice"
+    "notes": "Extrait concentration. tobacco, warmth, spice"
   },
   {
-    "name": "Greek Tobacco [Extrait]",
+    "name": "Greek Tobacco",
     "house": "Ibraheem AlQurashi",
     "inspiration": "Ex Nihilo - Fleur Narcotique",
     "status": "In stock",
@@ -904,10 +901,10 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Ibraheem-AlQurashi/Greek-Tobacco-100553.html",
     "category": "Tobacco",
     "occasion": "Date / Autumn",
-    "notes": "tobacco, warmth, spice"
+    "notes": "Extrait concentration. tobacco, warmth, spice"
   },
   {
-    "name": "Spanish Tobacco [Extrait]",
+    "name": "Spanish Tobacco",
     "house": "Ibraheem AlQurashi",
     "inspiration": "Orto Parisi - Megamare",
     "status": "In stock",
@@ -918,10 +915,10 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Ibraheem-AlQurashi/Spanish-Tobacco-100551.html",
     "category": "Tobacco",
     "occasion": "Date / Autumn",
-    "notes": "tobacco, warmth, spice"
+    "notes": "Extrait concentration. tobacco, warmth, spice"
   },
   {
-    "name": "French Tobacco [Extrait]",
+    "name": "French Tobacco",
     "house": "Ibraheem AlQurashi",
     "inspiration": "Louis Vuitton - Imagination",
     "status": "In stock",
@@ -932,10 +929,10 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Ibraheem-AlQurashi/French-Tobacco-100552.html",
     "category": "Tobacco",
     "occasion": "Date / Autumn",
-    "notes": "tobacco, warmth, spice"
+    "notes": "Extrait concentration. tobacco, warmth, spice"
   },
   {
-    "name": "Brazillian Tobacco [Extrait]",
+    "name": "Brazillian Tobacco",
     "house": "Ibraheem AlQurashi",
     "inspiration": "Parfums de Marly - Haltane",
     "status": "In stock",
@@ -946,7 +943,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Ibraheem-AlQurashi/Brazilian-Tobacco-100562.html",
     "category": "Tobacco",
     "occasion": "Date / Autumn",
-    "notes": "tobacco, warmth, spice"
+    "notes": "Extrait concentration. tobacco, warmth, spice"
   },
   {
     "name": "Tonka Powder",
@@ -1170,8 +1167,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Lattafa-Perfumes/Ana-Abiyedh-Rouge-63062.html",
     "category": "Women",
     "occasion": "Date / Autumn",
-    "notes": "airy amber, sweet musk; women's scent",
-    "gender": "Women"
+    "notes": "women's scent. airy amber, sweet musk"
   },
   {
     "name": "Luxe Street",
@@ -1199,8 +1195,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Maison-Alhambra/Luxe-Chic-107579.html",
     "category": "Women",
     "occasion": "Daily / Versatile",
-    "notes": "designer and niche-inspired fragrance profile; women's scent",
-    "gender": "Women"
+    "notes": "women's scent. designer and niche-inspired fragrance profile"
   },
   {
     "name": "Winsome",
@@ -1287,7 +1282,7 @@ const fragrances = [
     "notes": "marine notes, incense, woods"
   },
   {
-    "name": "Incense 01 [Extrait]",
+    "name": "Incense 01",
     "house": "Swiss Arabian",
     "inspiration": "Original Creation",
     "status": "In stock",
@@ -1298,11 +1293,11 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Swiss-Arabian/Incense-01-102415.html",
     "category": "Incense Gourmand",
     "occasion": "Date / Autumn",
-    "notes": "incense, nutty sweetness, woods"
+    "notes": "Extrait concentration. incense, nutty sweetness, woods"
   }
 ];
 
-const packs = [
+window.packs = [
   {
     "name": "Night Out Pack",
     "emojis": "🌙🔥🥃",
@@ -1370,3 +1365,6 @@ const packs = [
     "desc": "Sweet, easy and compliment-focused."
   }
 ];
+
+const fragrances = window.fragrances;
+const packs = window.packs;
