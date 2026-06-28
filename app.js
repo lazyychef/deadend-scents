@@ -1,4 +1,8 @@
 (function(){
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  window.addEventListener('load', () => {
+    if (!location.hash) window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  });
   const $ = (id) => document.getElementById(id);
   const grid = $('catalogueGrid');
   const search = $('search');
@@ -135,8 +139,7 @@
   function addToCart(item){
     cart.push(item);
     updateCart();
-    const order = $('order');
-    if (order) order.scrollIntoView({ behavior:'smooth', block:'start' });
+    // Do not auto-scroll after adding items; keep the customer browsing.
   }
 
   function parseMoney(value){
