@@ -1052,7 +1052,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$6",
     "p10": "$9",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Lattafa%20Emeer",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Lattafa-Perfumes/Emeer-89761.html",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -1081,7 +1081,7 @@ const fragrances = [
     "p3": "$8",
     "p5": "$14",
     "p10": "$23",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Lattafa%20Musamam%20Black%20Intense",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Lattafa-Perfumes/Musamam-Black-Intense-119987.html",
     "category": "Woody Sweet",
     "occasion": "Date / Autumn",
     "notes": "woody spice, tonka, maple sweetness"
@@ -1110,7 +1110,7 @@ const fragrances = [
     "p3": "$7",
     "p5": "$11",
     "p10": "$14",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Lattafa%20Atlas",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Lattafa-Perfumes/Atlas-89765.html",
     "category": "Marine / Powerful",
     "occasion": "Daily / Summer",
     "notes": "marine, salty woods, musky amber"
@@ -1124,7 +1124,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$8",
     "p10": "$11",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Lattafa%20Jasoor",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Lattafa-Perfumes/Jasoor-85093.html",
     "category": "Fruity Sweet",
     "occasion": "Date / Autumn",
     "notes": "apple, woods, amber sweetness"
@@ -1138,7 +1138,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$8",
     "p10": "$12",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Lattafa%20Vintage%20Radio",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Lattafa-Perfumes/Vintage-Radio-89454.html",
     "category": "Fruity Woody",
     "occasion": "Daily / Versatile",
     "notes": "plum, sage, palo santo, woods"
@@ -1166,7 +1166,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$11",
     "p10": "$15",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Lattafa%20Teriaq%20Intense",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Lattafa-Perfumes/Teriaq-Intense-99586.html",
     "category": "Amber / Night",
     "occasion": "Date / Autumn",
     "notes": "boozy amber, spice, dark warmth"
@@ -1195,7 +1195,7 @@ const fragrances = [
     "p3": "$5",
     "p5": "$7",
     "p10": "$12",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Maison%20Alhambra%20Luxe%20Street",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Maison-Alhambra/Luxe-Street-107584.html",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -1209,7 +1209,7 @@ const fragrances = [
     "p3": "$5",
     "p5": "$7",
     "p10": "$12",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Maison%20Alhambra%20Luxe%20Chic%20%28W%29",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Maison-Alhambra/Luxe-Chic-107579.html",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -1223,7 +1223,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$8",
     "p10": "$11",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Maison%20Alhambra%20Winsome",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Maison-Alhambra/The-Tux-78559.html",
     "category": "Amber / Dressy",
     "occasion": "Date / Autumn",
     "notes": "patchouli, amber, rose, vanilla"
@@ -1237,7 +1237,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$9",
     "p10": "$14",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Maison%20Asrar%20Legacy",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/MAISON-ASRAR/Legacy-105076.html",
     "category": "Fruity Fresh",
     "occasion": "Daily / Summer",
     "notes": "pear, ginger, orange blossom, musk"
@@ -1251,7 +1251,7 @@ const fragrances = [
     "p3": "$5",
     "p5": "$7",
     "p10": "$12",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Paris%20Corner%20Rifaqaat",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/PARIS-CORNER/Rifaaqat-99060.html",
     "category": "Vanilla Amber",
     "occasion": "Date / Autumn",
     "notes": "vanilla, resin, suede-like warmth"
@@ -1265,7 +1265,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$10",
     "p10": "$15",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Rayhaan%20Tiger",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Rayhaan/Tiger-112886.html",
     "category": "Spicy Rose",
     "occasion": "Daily / Versatile",
     "notes": "rose, spice, woods, amber"
@@ -1279,7 +1279,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$10",
     "p10": "$15",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Riffs%20Seasons%20Drift",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Riiffs-Perfumes/Seasons-Drift-118091.html",
     "category": "Blue / Woody",
     "occasion": "Daily / Summer",
     "notes": "citrus, woods, amber, incense"
@@ -1293,7 +1293,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$11",
     "p10": "$18",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Swiss%20Arabian%20Cardamom%20and%20Apple",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Swiss-Arabian/Cardamom-and-Apple-89412.html",
     "category": "Aquatic Incense",
     "occasion": "Daily / Summer",
     "notes": "marine notes, incense, woods"
