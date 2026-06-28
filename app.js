@@ -65,6 +65,7 @@
         <p class="house">${escapeHtml(f.house || '')}</p>
         <p class="inspo">${escapeHtml(f.inspiration || 'Original')}</p>
         <p class="desc">${escapeHtml(f.notes || '')}</p>
+        ${f.fragranticaUrl ? `<a class="mini-link" href="${escapeAttr(f.fragranticaUrl)}" target="_blank" rel="noopener">View on Fragrantica</a>` : ''}
         <div class="tags">
           <span>${escapeHtml(f.category || 'Fragrance')}</span>
           <span>${escapeHtml(f.occasion || 'Anytime')}</span>
@@ -101,6 +102,20 @@
     return String(value).replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
   }
 
+  function escapeAttr(value){
+    return escapeHtml(value).replace(/`/g, '&#96;');
+  }
+
+  function setupContactLinks(){
+    const cfg = window.siteConfig || {};
+    const fb = document.getElementById('messengerLink');
+    const wa = document.getElementById('whatsappLink');
+    const ig = document.getElementById('instagramLink');
+    if (fb && cfg.facebookMessengerUrl) fb.href = cfg.facebookMessengerUrl;
+    if (wa && cfg.whatsAppUrl) wa.href = cfg.whatsAppUrl;
+    if (ig && cfg.instagramUrl) ig.href = cfg.instagramUrl;
+  }
+
   [search, categoryFilter, occasionFilter, statusFilter].forEach(el => el.addEventListener('input', render));
 
   $('copyOrder').addEventListener('click', async () => {
@@ -114,6 +129,7 @@
     }
   });
 
+  setupContactLinks();
   renderPacks();
   render();
 })();

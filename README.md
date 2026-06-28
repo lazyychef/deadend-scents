@@ -2,8 +2,10 @@
 
 Official website for DeadEnd Scents.
 
-Browse fragrance decants, discovery packs, new arrivals, and detailed scent profiles.
+Browse fragrance decants, discovery packs, new arrivals and scent profiles.
+
+## Contact links
+Update `siteConfig` at the top of `data.js` with your real Facebook Messenger, WhatsApp and Instagram links.
 
 ## Updating the catalogue
-
-Edit `data.js` only. Add or remove fragrance objects from the `fragrances` array, then commit the change to GitHub.
+Edit `data.js` and update the `fragrances` list.
