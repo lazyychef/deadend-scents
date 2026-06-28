@@ -41,18 +41,6 @@
       && (!q || combined.includes(q));
   }
 
-  function bottlePlaceholder(f){
-    const initials = String(f.house || f.name || 'DS').split(/\s+/).slice(0,2).map(w => w[0]).join('').toUpperCase();
-    return `<div class="bottle-fallback" aria-hidden="true"><span>${escapeHtml(initials)}</span></div>`;
-  }
-
-  function imageBlock(f){
-    if (f.imageUrl) {
-      return `<div class="bottle"><img src="${escapeAttr(f.imageUrl)}" alt="${escapeAttr(f.house + ' ' + f.name)} bottle" loading="lazy" onerror="this.closest('.bottle').innerHTML='${bottlePlaceholder(f).replace(/'/g,"&#39;")}'"></div>`;
-    }
-    return `<div class="bottle">${bottlePlaceholder(f)}</div>`;
-  }
-
   function render(){
     const filtered = data.filter(match);
     resultCount.textContent = filtered.length;
@@ -67,8 +55,7 @@
       card.className = 'card';
       const linkLabel = f.fragranticaUrl && !f.fragranticaUrl.includes('/search/') ? 'Fragrantica page' : 'Fragrantica search';
       card.innerHTML = `
-        <div class="card-main">
-          ${imageBlock(f)}
+        <div class="card-main no-image">
           <div class="card-copy">
             <div class="card-top"><span class="emoji">${f.emojis || '✨'}</span><span class="status ${String(f.status).toLowerCase().replace(/\s+/g,'-')}">${f.status || 'In stock'}</span></div>
             <h3>${escapeHtml(f.name)}</h3>
@@ -112,10 +99,9 @@
 
   function setupContactLinks(){
     const cfg = window.siteConfig || {};
-    const fb = $('messengerLink'), wa = $('whatsappLink'), ig = $('instagramLink');
-    if (fb && cfg.facebookMessengerUrl) fb.href = cfg.facebookMessengerUrl;
-    if (wa && cfg.whatsAppUrl) wa.href = cfg.whatsAppUrl;
-    if (ig && cfg.instagramUrl) ig.href = cfg.instagramUrl;
+    ['messengerLink','heroMessengerLink'].forEach(id => { const el = $(id); if (el && cfg.facebookMessengerUrl) el.href = cfg.facebookMessengerUrl; });
+    ['whatsappLink','heroWhatsappLink'].forEach(id => { const el = $(id); if (el && cfg.whatsAppUrl) el.href = cfg.whatsAppUrl; });
+    ['instagramLink','heroInstagramLink'].forEach(id => { const el = $(id); if (el && cfg.instagramUrl) el.href = cfg.instagramUrl; });
   }
 
   [search, categoryFilter, occasionFilter, statusFilter].forEach(el => el.addEventListener('input', render));

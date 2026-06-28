@@ -1,8 +1,8 @@
 // DeadEnd Scents catalogue data. Update this file when your fragrance list changes.
 window.siteConfig = {
-  "facebookMessengerUrl": "https://m.me/YOUR_FACEBOOK_PAGE",
-  "whatsAppUrl": "https://wa.me/61YOURNUMBER?text=Hi%20DeadEnd%20Scents%2C%20I%27d%20like%20to%20order%20some%20samples.",
-  "instagramUrl": "https://instagram.com/YOUR_INSTAGRAM",
+  "facebookMessengerUrl": "https://m.me/nickstreet09/",
+  "whatsAppUrl": "https://wa.me/61434432948?text=Hi%20DeadEnd%20Scents%2C%20I%27d%20like%20to%20order%20some%20samples.",
+  "instagramUrl": "https://instagram.com/deadendscents",
   "businessName": "DeadEnd Scents"
 };
 
@@ -17,11 +17,9 @@ const fragrances = [
     "p5": "$11",
     "p10": "$14",
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Afnan/Supremacy-Collector-s-Edition-Pour-Homme-98689.html",
-    "imageUrl": "https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.98689.avif",
     "category": "Fruity Woods",
     "occasion": "Daily / Versatile",
-    "notes": "pineapple, citrus, smoky woods",
-    "gender": "Unisex / Men"
+    "notes": "pineapple, citrus, smoky woods"
   },
   {
     "name": "Supremacy in Heaven",
@@ -35,11 +33,10 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Afnan/Supremacy-In-Heaven-70703.html",
     "category": "Fresh / Clean",
     "occasion": "Daily / Summer",
-    "notes": "citrus, green tea, clean musk",
-    "gender": "Unisex / Men"
+    "notes": "citrus, green tea, clean musk"
   },
   {
-    "name": "9PM - Night Out",
+    "name": "9PM - Night Out Extrait",
     "house": "Afnan",
     "inspiration": "Original Creation",
     "status": "In stock",
@@ -48,14 +45,12 @@ const fragrances = [
     "p5": "$9",
     "p10": "$13",
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Afnan/9-PM-Night-Out-123313.html",
-    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.123313.jpg",
     "category": "Fruity / Night Out",
     "occasion": "Date / Autumn",
-    "notes": "Dragon fruit, apple, cognac, toffee, suede, tonka; Extrait concentration",
-    "gender": "Unisex / Men"
+    "notes": "dragon fruit, apple, cognac, toffee, suede, tonka"
   },
   {
-    "name": "Kaaf",
+    "name": "Kaaf Extrait",
     "house": "Ahmed Al Maghrabi",
     "inspiration": "Parfums de Marly - Percival",
     "status": "In stock",
@@ -66,8 +61,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Ahmed-Al-Maghribi/Kaaf-102460.html",
     "category": "Fresh / Clean",
     "occasion": "Daily / Summer",
-    "notes": "Citrus, lavender, clean musk; Extrait concentration",
-    "gender": "Unisex / Men"
+    "notes": "citrus, lavender, clean musk"
   },
   {
     "name": "Aqua Oud",
@@ -81,11 +75,10 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Ahmed-Al-Maghribi/Aqua-Oud-111001.html",
     "category": "Aquatic",
     "occasion": "Daily / Summer",
-    "notes": "marine notes, citrus, woods",
-    "gender": "Unisex / Men"
+    "notes": "marine notes, citrus, woods"
   },
   {
-    "name": "Ignite Oud",
+    "name": "Ignite Oud Extrait",
     "house": "Ahmed Al Maghrabi",
     "inspiration": "Original Creation",
     "status": "In stock",
@@ -94,11 +87,9 @@ const fragrances = [
     "p5": "$15",
     "p10": "$28",
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Ahmed-Al-Maghribi/Ignite-Oud-99960.html",
-    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.99960.jpg",
     "category": "Woody Leather",
     "occasion": "Date / Autumn",
-    "notes": "Leather, patchouli, cedar, amber; Extrait concentration",
-    "gender": "Unisex / Men"
+    "notes": "leather, patchouli, cedar, amber"
   },
   {
     "name": "Club de Nuit Precieux I",
@@ -112,8 +103,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=ARMAF%20Club%20de%20Nuit%20Precieux%20I",
     "category": "Fruity Woods",
     "occasion": "Daily / Versatile",
-    "notes": "pineapple, citrus, smoky woods",
-    "gender": "Unisex / Men"
+    "notes": "pineapple, citrus, smoky woods"
   },
   {
     "name": "Club de Nuit Intense Man EDT",
@@ -125,11 +115,9 @@ const fragrances = [
     "p5": "$8",
     "p10": "$13",
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Armaf/Club-de-Nuit-Intense-Man-34696.html",
-    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.34696.jpg",
     "category": "Fruity Woods",
     "occasion": "Daily / Versatile",
-    "notes": "pineapple, citrus, smoky woods",
-    "gender": "Unisex / Men"
+    "notes": "pineapple, citrus, smoky woods"
   },
   {
     "name": "Wild Colt",
@@ -141,14 +129,12 @@ const fragrances = [
     "p5": "$11",
     "p10": "$18",
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Assaf/Wild-Colt-75834.html",
-    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.75834.jpg",
     "category": "Leather / Woody",
     "occasion": "Date / Autumn",
-    "notes": "saffron, grapefruit, leather, patchouli, ambergris",
-    "gender": "Unisex / Men"
+    "notes": "saffron, grapefruit, leather, patchouli, ambergris"
   },
   {
-    "name": "Boss Life",
+    "name": "Boss Life Extrait",
     "house": "Bujairami",
     "inspiration": "Amouage - Outlands",
     "status": "In stock",
@@ -159,11 +145,10 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Bujairami/Boss-Life-Extreme-123008.html",
     "category": "Amber / Aromatic",
     "occasion": "Date / Autumn",
-    "notes": "Warm spice, amber, aromatic woods; Extrait concentration",
-    "gender": "Unisex / Men"
+    "notes": "warm spice, amber, aromatic woods"
   },
   {
-    "name": "Kingsman",
+    "name": "Kingsman Extrait",
     "house": "Bujairami",
     "inspiration": "Creed - Aventus",
     "status": "In stock",
@@ -174,8 +159,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Bujairami/Kingsman-133329.html",
     "category": "Fruity Woods",
     "occasion": "Daily / Versatile",
-    "notes": "Pineapple, citrus, smoky woods; Extrait concentration",
-    "gender": "Unisex / Men"
+    "notes": "pineapple, citrus, smoky woods"
   },
   {
     "name": "Gladiator",
@@ -189,8 +173,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Bujairami/Gladiator-134754.html",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
-    "notes": "designer and niche-inspired fragrance profile",
-    "gender": "Unisex / Men"
+    "notes": "designer and niche-inspired fragrance profile"
   },
   {
     "name": "Emperor",
@@ -204,8 +187,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Emperor",
     "category": "Fruity Woods",
     "occasion": "Daily / Versatile",
-    "notes": "pineapple, citrus, smoky woods",
-    "gender": "Unisex / Men"
+    "notes": "pineapple, citrus, smoky woods"
   },
   {
     "name": "Aqua Pure",
@@ -219,8 +201,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Aqua%20Pure",
     "category": "Aquatic",
     "occasion": "Daily / Summer",
-    "notes": "marine notes, citrus, woods",
-    "gender": "Unisex / Men"
+    "notes": "marine notes, citrus, woods"
   },
   {
     "name": "The Rock Intensely",
@@ -234,8 +215,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Bujairami/The-Rock-Intensely-123810.html",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
-    "notes": "designer and niche-inspired fragrance profile",
-    "gender": "Unisex / Men"
+    "notes": "designer and niche-inspired fragrance profile"
   },
   {
     "name": "Gotham",
@@ -249,8 +229,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Bond-No-9/Bleecker-Street-1301.html",
     "category": "Green Fruity",
     "occasion": "Daily / Summer",
-    "notes": "blueberry, violet leaf, woods",
-    "gender": "Unisex / Men"
+    "notes": "blueberry, violet leaf, woods"
   },
   {
     "name": "Ocean Drip",
@@ -264,11 +243,10 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Ocean%20Drip",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
-    "notes": "designer and niche-inspired fragrance profile",
-    "gender": "Unisex / Men"
+    "notes": "designer and niche-inspired fragrance profile"
   },
   {
-    "name": "Mafia Boss",
+    "name": "Mafia Boss Extrait",
     "house": "Bujairami",
     "inspiration": "Clive Christian - Blonde Amber",
     "status": "In stock",
@@ -279,8 +257,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Bujairami/Mafia-Boss-117832.html",
     "category": "Amber / Boozy",
     "occasion": "Date / Autumn",
-    "notes": "Amber, vanilla, booze, woods; Extrait concentration",
-    "gender": "Unisex / Men"
+    "notes": "amber, vanilla, booze, woods"
   },
   {
     "name": "High Tide Mojito",
@@ -294,11 +271,10 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20High%20Tide%20Mojito",
     "category": "Fresh Fruity",
     "occasion": "Daily / Summer",
-    "notes": "apple, marine notes, mint",
-    "gender": "Unisex / Men"
+    "notes": "apple, marine notes, mint"
   },
   {
-    "name": "Bossman",
+    "name": "Bossman Extrait",
     "house": "Bujairami",
     "inspiration": "Creed - Absolu Aventus (2025)",
     "status": "In stock",
@@ -309,8 +285,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Bujairami/Bossman-124707.html",
     "category": "Fruity Woods",
     "occasion": "Daily / Versatile",
-    "notes": "Pineapple, citrus, smoky woods; Extrait concentration",
-    "gender": "Unisex / Men"
+    "notes": "pineapple, citrus, smoky woods"
   },
   {
     "name": "Finesse",
@@ -324,7 +299,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Finesse%20%28W%29",
     "category": "Women",
     "occasion": "Daily / Feminine",
-    "notes": "Peony, rose, peach; women's scent",
+    "notes": "peony, rose, peach; women's scent",
     "gender": "Women"
   },
   {
@@ -338,8 +313,8 @@ const fragrances = [
     "p10": "$8",
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Romantic%20Rose%20%28W%29",
     "category": "Women",
-    "occasion": "Date / Feminine",
-    "notes": "Rose, vanilla, amber; women's scent",
+    "occasion": "Date / Autumn",
+    "notes": "rose, vanilla, amber; women's scent",
     "gender": "Women"
   },
   {
@@ -354,8 +329,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Booz%20Extreme",
     "category": "Boozy Sweet",
     "occasion": "Date / Autumn",
-    "notes": "cognac, spice, oak, vanilla warmth",
-    "gender": "Unisex / Men"
+    "notes": "cognac, spice, oak, vanilla warmth"
   },
   {
     "name": "Shu Helou",
@@ -369,11 +343,10 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Shu%20Helou",
     "category": "Blue / Woody",
     "occasion": "Daily / Summer",
-    "notes": "citrus, woods, amber, incense",
-    "gender": "Unisex / Men"
+    "notes": "citrus, woods, amber, incense"
   },
   {
-    "name": "Iris Infinite",
+    "name": "Iris Infinite Extrait",
     "house": "Bujairami",
     "inspiration": "Dior - Homme Parfum 2025",
     "status": "In stock",
@@ -384,8 +357,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Iris%20Infinite%20Extrait",
     "category": "Iris / Leather",
     "occasion": "Date / Autumn",
-    "notes": "Iris, amber, woods, leather nuance; Extrait concentration",
-    "gender": "Unisex / Men"
+    "notes": "iris, amber, woods, leather nuance"
   },
   {
     "name": "Midnight Booz",
@@ -399,8 +371,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Midnight%20Booz",
     "category": "Boozy Sweet",
     "occasion": "Date / Autumn",
-    "notes": "cognac, spice, oak, vanilla warmth",
-    "gender": "Unisex / Men"
+    "notes": "cognac, spice, oak, vanilla warmth"
   },
   {
     "name": "High Roller",
@@ -414,8 +385,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20High%20Roller",
     "category": "Fruity Sweet",
     "occasion": "Date / Autumn",
-    "notes": "apple, woods, amber sweetness",
-    "gender": "Unisex / Men"
+    "notes": "apple, woods, amber sweetness"
   },
   {
     "name": "Booz",
@@ -429,8 +399,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Bujairami/Booz-124583.html",
     "category": "Boozy Sweet",
     "occasion": "Date / Autumn",
-    "notes": "cognac, spice, oak, vanilla warmth",
-    "gender": "Unisex / Men"
+    "notes": "cognac, spice, oak, vanilla warmth"
   },
   {
     "name": "Boujee",
@@ -443,12 +412,12 @@ const fragrances = [
     "p10": "$8",
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Boujee%20%28W%29",
     "category": "Women",
-    "occasion": "Daily / Feminine",
-    "notes": "Designer and niche-inspired fragrance profile; women's scent",
+    "occasion": "Daily / Versatile",
+    "notes": "designer and niche-inspired fragrance profile; women's scent",
     "gender": "Women"
   },
   {
-    "name": "Riverina",
+    "name": "Riverina Extrait",
     "house": "Bujairami",
     "inspiration": "Original Creation",
     "status": "In stock",
@@ -459,8 +428,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Riverina%20Extrait",
     "category": "Fresh / Citrus",
     "occasion": "Daily / Summer",
-    "notes": "Citrus, green notes, watery freshness; Extrait concentration",
-    "gender": "Unisex / Men"
+    "notes": "citrus, green notes, watery freshness"
   },
   {
     "name": "Lucky",
@@ -474,8 +442,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Lucky",
     "category": "Sweet / Nutty",
     "occasion": "Date / Autumn",
-    "notes": "hazelnut, honey, plum",
-    "gender": "Unisex / Men"
+    "notes": "hazelnut, honey, plum"
   },
   {
     "name": "Untouchable",
@@ -489,8 +456,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Untouchable",
     "category": "Fresh Amber",
     "occasion": "Daily / Summer",
-    "notes": "aquatic freshness, amber woods",
-    "gender": "Unisex / Men"
+    "notes": "aquatic freshness, amber woods"
   },
   {
     "name": "Wicked",
@@ -504,8 +470,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Wicked",
     "category": "Green Fruity",
     "occasion": "Daily / Summer",
-    "notes": "green apple, woods, musk",
-    "gender": "Unisex / Men"
+    "notes": "green apple, woods, musk"
   },
   {
     "name": "Smoldering Sir",
@@ -519,8 +484,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Smoldering%20Sir",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
-    "notes": "designer and niche-inspired fragrance profile",
-    "gender": "Unisex / Men"
+    "notes": "designer and niche-inspired fragrance profile"
   },
   {
     "name": "ICE",
@@ -534,8 +498,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20ICE",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
-    "notes": "designer and niche-inspired fragrance profile",
-    "gender": "Unisex / Men"
+    "notes": "designer and niche-inspired fragrance profile"
   },
   {
     "name": "The Aftermath",
@@ -549,8 +512,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Bujairami/The-Aftermath-89278.html",
     "category": "Smoky Woods",
     "occasion": "Daily / Versatile",
-    "notes": "smoky woods, amber, warm spice",
-    "gender": "Unisex / Men"
+    "notes": "smoky woods, amber, warm spice"
   },
   {
     "name": "Star",
@@ -564,8 +526,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Star",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
-    "notes": "designer and niche-inspired fragrance profile",
-    "gender": "Unisex / Men"
+    "notes": "designer and niche-inspired fragrance profile"
   },
   {
     "name": "Ozonic",
@@ -579,8 +540,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Bujairami/Ozonic-123802.html",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
-    "notes": "designer and niche-inspired fragrance profile",
-    "gender": "Unisex / Men"
+    "notes": "designer and niche-inspired fragrance profile"
   },
   {
     "name": "Casanova",
@@ -594,8 +554,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Casanova",
     "category": "Honey Tobacco",
     "occasion": "Date / Autumn",
-    "notes": "honey, citrus, tobacco, vanilla",
-    "gender": "Unisex / Men"
+    "notes": "honey, citrus, tobacco, vanilla"
   },
   {
     "name": "The Most Wanted Intense",
@@ -609,8 +568,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Azzaro/The-Most-Wanted-Intense-90953.html",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
-    "notes": "designer and niche-inspired fragrance profile",
-    "gender": "Unisex / Men"
+    "notes": "designer and niche-inspired fragrance profile"
   },
   {
     "name": "Nuit d'Issey EDT",
@@ -622,11 +580,9 @@ const fragrances = [
     "p5": "$7",
     "p10": "$10",
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Issey-Miyake/Nuit-d-Issey-25514.html",
-    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.25514.jpg",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
-    "notes": "designer and niche-inspired fragrance profile",
-    "gender": "Unisex / Men"
+    "notes": "designer and niche-inspired fragrance profile"
   },
   {
     "name": "Fusion d'Issey Extrême",
@@ -638,11 +594,9 @@ const fragrances = [
     "p5": "$11",
     "p10": "$18",
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Issey-Miyake/Fusion-d-Issey-Extreme-67524.html",
-    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.67524.jpg",
     "category": "Tropical Woody",
     "occasion": "Daily / Versatile",
-    "notes": "mint, coconut, mineral notes, sandalwood",
-    "gender": "Unisex / Men"
+    "notes": "mint, coconut, mineral notes, sandalwood"
   },
   {
     "name": "L'Eau d'Issey Intense",
@@ -654,11 +608,9 @@ const fragrances = [
     "p5": "$10",
     "p10": "$17",
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Issey-Miyake/L-Eau-d-Issey-Pour-Homme-Intense-1998.html",
-    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.1998.jpg",
     "category": "Citrus Incense",
     "occasion": "Daily / Summer",
-    "notes": "yuzu, spice, incense, amber, papyrus",
-    "gender": "Unisex / Men"
+    "notes": "yuzu, spice, incense, amber, papyrus"
   },
   {
     "name": "Boss Bottled EDT",
@@ -670,11 +622,9 @@ const fragrances = [
     "p5": "$7",
     "p10": "$10",
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Hugo-Boss/Boss-Bottled-383.html",
-    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.383.jpg",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
-    "notes": "designer and niche-inspired fragrance profile",
-    "gender": "Unisex / Men"
+    "notes": "designer and niche-inspired fragrance profile"
   },
   {
     "name": "Boss Bottled Absolu Parfum",
@@ -686,11 +636,9 @@ const fragrances = [
     "p5": "$17",
     "p10": "$30",
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Hugo-Boss/Bottled-Absolu-96246.html",
-    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.96246.jpg",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
-    "notes": "designer and niche-inspired fragrance profile",
-    "gender": "Unisex / Men"
+    "notes": "designer and niche-inspired fragrance profile"
   },
   {
     "name": "Boss Bottled Parfum",
@@ -702,11 +650,9 @@ const fragrances = [
     "p5": "$13",
     "p10": "$20",
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Hugo-Boss/Boss-Bottled-Parfum-75183.html",
-    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.75183.jpg",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
-    "notes": "designer and niche-inspired fragrance profile",
-    "gender": "Unisex / Men"
+    "notes": "designer and niche-inspired fragrance profile"
   },
   {
     "name": "Acqua di Giò Eau de Parfum",
@@ -718,11 +664,9 @@ const fragrances = [
     "p5": "$13",
     "p10": "$22",
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Giorgio-Armani/Acqua-di-Gio-Eau-de-Parfum-71606.html",
-    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.71606.jpg",
     "category": "Aquatic",
     "occasion": "Daily / Summer",
-    "notes": "marine notes, citrus, woods",
-    "gender": "Unisex / Men"
+    "notes": "marine notes, citrus, woods"
   },
   {
     "name": "Cedrat Boise",
@@ -736,8 +680,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Mancera/Cedrat-Boise-15211.html",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
-    "notes": "designer and niche-inspired fragrance profile",
-    "gender": "Unisex / Men"
+    "notes": "designer and niche-inspired fragrance profile"
   },
   {
     "name": "Grand Soir",
@@ -751,8 +694,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Maison-Francis-Kurkdjian/Grand-Soir-40816.html",
     "category": "Amber",
     "occasion": "Date / Autumn",
-    "notes": "amber, vanilla, benzoin",
-    "gender": "Unisex / Men"
+    "notes": "amber, vanilla, benzoin"
   },
   {
     "name": "1 Million - Royal",
@@ -766,8 +708,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Rabanne/1-Million-Royal-79159.html",
     "category": "Sweet / Aromatic",
     "occasion": "Date / Autumn",
-    "notes": "lavender, woods, sweetness",
-    "gender": "Unisex / Men"
+    "notes": "lavender, woods, sweetness"
   },
   {
     "name": "Polo 67 EDP",
@@ -781,8 +722,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Ralph-Lauren/Polo-67-Eau-de-Parfum-108720.html",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
-    "notes": "designer and niche-inspired fragrance profile",
-    "gender": "Unisex / Men"
+    "notes": "designer and niche-inspired fragrance profile"
   },
   {
     "name": "Spicebomb Metallic Musk",
@@ -794,11 +734,9 @@ const fragrances = [
     "p5": "$13",
     "p10": "$22",
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Viktor-Rolf/Spicebomb-Metallic-Musk-104937.html",
-    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.104937.jpg",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
-    "notes": "designer and niche-inspired fragrance profile",
-    "gender": "Unisex / Men"
+    "notes": "designer and niche-inspired fragrance profile"
   },
   {
     "name": "Spicebomb Infrared EDP",
@@ -812,8 +750,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Viktor-Rolf/Spicebomb-Infrared-Eau-de-Parfum-81409.html",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
-    "notes": "designer and niche-inspired fragrance profile",
-    "gender": "Unisex / Men"
+    "notes": "designer and niche-inspired fragrance profile"
   },
   {
     "name": "Born in Roma Coral Fantasy EDT",
@@ -827,8 +764,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Valentino/Valentino-Uomo-Born-In-Roma-Coral-Fantasy-71761.html",
     "category": "Fruity Sweet",
     "occasion": "Date / Autumn",
-    "notes": "apple, woods, amber sweetness",
-    "gender": "Unisex / Men"
+    "notes": "apple, woods, amber sweetness"
   },
   {
     "name": "XJ 1861 Naxos",
@@ -840,14 +776,12 @@ const fragrances = [
     "p5": "$27",
     "p10": "$50",
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Xerjoff/XJ-1861-Naxos-30529.html",
-    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.30529.jpg",
     "category": "Honey Tobacco",
     "occasion": "Date / Autumn",
-    "notes": "honey, citrus, tobacco, vanilla",
-    "gender": "Unisex / Men"
+    "notes": "honey, citrus, tobacco, vanilla"
   },
   {
-    "name": "Royal Taboo",
+    "name": "Royal Taboo Extrait",
     "house": "French Avenue",
     "inspiration": "Creed - Centaurus",
     "status": "In stock",
@@ -858,11 +792,10 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Aromatix-X-French-Avenue/Royal-Taboo-99330.html",
     "category": "Spicy Amber",
     "occasion": "Date / Autumn",
-    "notes": "Spice, tobacco nuance, woods; Extrait concentration",
-    "gender": "Unisex / Men"
+    "notes": "spice, tobacco nuance, woods"
   },
   {
-    "name": "Teas Me",
+    "name": "Teas Me Extrait",
     "house": "French Avenue",
     "inspiration": "Nishane - Wulóng Chá",
     "status": "In stock",
@@ -871,11 +804,9 @@ const fragrances = [
     "p5": "$7",
     "p10": "$10",
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Aromatix-X-French-Avenue/Teas-Me-117532.html",
-    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.117532.jpg",
     "category": "Tea Fresh",
     "occasion": "Daily / Summer",
-    "notes": "Citrus, tea, clean musk; Extrait concentration",
-    "gender": "Unisex / Men"
+    "notes": "citrus, tea, clean musk"
   },
   {
     "name": "Lumière Garçon",
@@ -889,8 +820,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/French-Avenue/Lumiere-Garcon-94712.html",
     "category": "Fragrance",
     "occasion": "Date / Autumn",
-    "notes": "designer and niche-inspired fragrance profile",
-    "gender": "Unisex / Men"
+    "notes": "designer and niche-inspired fragrance profile"
   },
   {
     "name": "Obsidian",
@@ -904,8 +834,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/French-Avenue/Obsidian-120872.html",
     "category": "Boozy Sweet",
     "occasion": "Date / Autumn",
-    "notes": "cognac, spice, oak, vanilla warmth",
-    "gender": "Unisex / Men"
+    "notes": "cognac, spice, oak, vanilla warmth"
   },
   {
     "name": "Moonstone Bleu",
@@ -919,11 +848,10 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/French-Avenue/Moonstone-Bleu-100011.html",
     "category": "Clean / Aromatic",
     "occasion": "Daily / Versatile",
-    "notes": "metallic fresh, lavender, woods",
-    "gender": "Unisex / Men"
+    "notes": "metallic fresh, lavender, woods"
   },
   {
-    "name": "Mexican Tobacco",
+    "name": "Mexican Tobacco Extrait",
     "house": "Ibraheem AlQurashi",
     "inspiration": "Jeroboam - Gozo",
     "status": "In stock",
@@ -934,11 +862,10 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Ibraheem-AlQurashi/Mexican-Tobacco-100563.html",
     "category": "Tobacco",
     "occasion": "Date / Autumn",
-    "notes": "Tobacco, warmth, spice; Extrait concentration",
-    "gender": "Unisex / Men"
+    "notes": "tobacco, warmth, spice"
   },
   {
-    "name": "Jamaican Tobacco",
+    "name": "Jamaican Tobacco Extrait",
     "house": "Ibraheem AlQurashi",
     "inspiration": "Ex Nihilo - Brompton Immortals Extrait",
     "status": "In stock",
@@ -949,11 +876,10 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Ibraheem-AlQurashi/Jamaican-Tobacco-100564.html",
     "category": "Tobacco",
     "occasion": "Date / Autumn",
-    "notes": "Tobacco, warmth, spice; Extrait concentration",
-    "gender": "Unisex / Men"
+    "notes": "tobacco, warmth, spice"
   },
   {
-    "name": "Cuban Tobacco",
+    "name": "Cuban Tobacco Extrait",
     "house": "Ibraheem AlQurashi",
     "inspiration": "Le Labo - Tabac 28",
     "status": "In stock",
@@ -964,11 +890,10 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Ibraheem%20AlQurashi%20Cuban%20Tobacco%20Extrait",
     "category": "Tobacco",
     "occasion": "Date / Autumn",
-    "notes": "Tobacco, warmth, spice; Extrait concentration",
-    "gender": "Unisex / Men"
+    "notes": "tobacco, warmth, spice"
   },
   {
-    "name": "Greek Tobacco",
+    "name": "Greek Tobacco Extrait",
     "house": "Ibraheem AlQurashi",
     "inspiration": "Ex Nihilo - Fleur Narcotique",
     "status": "In stock",
@@ -979,11 +904,10 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Ibraheem-AlQurashi/Greek-Tobacco-100553.html",
     "category": "Tobacco",
     "occasion": "Date / Autumn",
-    "notes": "Tobacco, warmth, spice; Extrait concentration",
-    "gender": "Unisex / Men"
+    "notes": "tobacco, warmth, spice"
   },
   {
-    "name": "Spanish Tobacco",
+    "name": "Spanish Tobacco Extrait",
     "house": "Ibraheem AlQurashi",
     "inspiration": "Orto Parisi - Megamare",
     "status": "In stock",
@@ -994,11 +918,10 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Ibraheem-AlQurashi/Spanish-Tobacco-100551.html",
     "category": "Tobacco",
     "occasion": "Date / Autumn",
-    "notes": "Tobacco, warmth, spice; Extrait concentration",
-    "gender": "Unisex / Men"
+    "notes": "tobacco, warmth, spice"
   },
   {
-    "name": "French Tobacco",
+    "name": "French Tobacco Extrait",
     "house": "Ibraheem AlQurashi",
     "inspiration": "Louis Vuitton - Imagination",
     "status": "In stock",
@@ -1009,11 +932,10 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Ibraheem-AlQurashi/French-Tobacco-100552.html",
     "category": "Tobacco",
     "occasion": "Date / Autumn",
-    "notes": "Tobacco, warmth, spice; Extrait concentration",
-    "gender": "Unisex / Men"
+    "notes": "tobacco, warmth, spice"
   },
   {
-    "name": "Brazillian Tobacco",
+    "name": "Brazillian Tobacco Extrait",
     "house": "Ibraheem AlQurashi",
     "inspiration": "Parfums de Marly - Haltane",
     "status": "In stock",
@@ -1024,8 +946,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Ibraheem-AlQurashi/Brazilian-Tobacco-100562.html",
     "category": "Tobacco",
     "occasion": "Date / Autumn",
-    "notes": "Tobacco, warmth, spice; Extrait concentration",
-    "gender": "Unisex / Men"
+    "notes": "tobacco, warmth, spice"
   },
   {
     "name": "Tonka Powder",
@@ -1039,8 +960,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Jalu%20Tonka%20Powder",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
-    "notes": "designer and niche-inspired fragrance profile",
-    "gender": "Unisex / Men"
+    "notes": "designer and niche-inspired fragrance profile"
   },
   {
     "name": "Triumvrate",
@@ -1054,8 +974,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Jalu%20Triumvrate",
     "category": "Fresh Sweet",
     "occasion": "Daily / Summer",
-    "notes": "fresh citrus, florals, bubblegum sweetness",
-    "gender": "Unisex / Men"
+    "notes": "fresh citrus, florals, bubblegum sweetness"
   },
   {
     "name": "Purple Haze",
@@ -1069,8 +988,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Jalu%20Purple%20Haze",
     "category": "Fruity Sweet",
     "occasion": "Date / Autumn",
-    "notes": "citrus, fruit, musk, amber",
-    "gender": "Unisex / Men"
+    "notes": "citrus, fruit, musk, amber"
   },
   {
     "name": "Jaguar",
@@ -1084,8 +1002,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Jalu%20Jaguar",
     "category": "Ginger Citrus",
     "occasion": "Daily / Summer",
-    "notes": "ginger, grapefruit, amber woods",
-    "gender": "Unisex / Men"
+    "notes": "ginger, grapefruit, amber woods"
   },
   {
     "name": "Nirvana",
@@ -1099,8 +1016,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Jalu%20Nirvana",
     "category": "Iris / Leather",
     "occasion": "Date / Autumn",
-    "notes": "iris, amber, woods, leather nuance",
-    "gender": "Unisex / Men"
+    "notes": "iris, amber, woods, leather nuance"
   },
   {
     "name": "SANAYA",
@@ -1114,8 +1030,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/search/?query=Junaid%20SANAYA",
     "category": "Citrus Tea",
     "occasion": "Daily / Summer",
-    "notes": "citrus, ginger, tea, clean amber",
-    "gender": "Unisex / Men"
+    "notes": "citrus, ginger, tea, clean amber"
   },
   {
     "name": "Emeer",
@@ -1129,8 +1044,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Lattafa-Perfumes/Emeer-89761.html",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
-    "notes": "designer and niche-inspired fragrance profile",
-    "gender": "Unisex / Men"
+    "notes": "designer and niche-inspired fragrance profile"
   },
   {
     "name": "Masa",
@@ -1142,11 +1056,9 @@ const fragrances = [
     "p5": "$10",
     "p10": "$15",
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Lattafa-Perfumes/Masa-92484.html",
-    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.92484.jpg",
     "category": "Mineral Woods",
     "occasion": "Daily / Versatile",
-    "notes": "mineral citrus, suede-like woods",
-    "gender": "Unisex / Men"
+    "notes": "mineral citrus, suede-like woods"
   },
   {
     "name": "Musamam Black Intense",
@@ -1160,8 +1072,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Lattafa-Perfumes/Musamam-Black-Intense-119987.html",
     "category": "Woody Sweet",
     "occasion": "Date / Autumn",
-    "notes": "woody spice, tonka, maple sweetness",
-    "gender": "Unisex / Men"
+    "notes": "woody spice, tonka, maple sweetness"
   },
   {
     "name": "Opulent Dubai",
@@ -1173,11 +1084,9 @@ const fragrances = [
     "p5": "$8",
     "p10": "$14",
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Lattafa-Perfumes/Opulent-Dubai-105609.html",
-    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.105609.jpg",
     "category": "Tropical Fruity",
     "occasion": "Daily / Versatile",
-    "notes": "mango, citrus, ginger, amber woods",
-    "gender": "Unisex / Men"
+    "notes": "mango, citrus, ginger, amber woods"
   },
   {
     "name": "Atlas",
@@ -1191,8 +1100,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Lattafa-Perfumes/Atlas-89765.html",
     "category": "Marine / Powerful",
     "occasion": "Daily / Summer",
-    "notes": "marine, salty woods, musky amber",
-    "gender": "Unisex / Men"
+    "notes": "marine, salty woods, musky amber"
   },
   {
     "name": "Jasoor",
@@ -1206,8 +1114,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Lattafa-Perfumes/Jasoor-85093.html",
     "category": "Fruity Sweet",
     "occasion": "Date / Autumn",
-    "notes": "apple, woods, amber sweetness",
-    "gender": "Unisex / Men"
+    "notes": "apple, woods, amber sweetness"
   },
   {
     "name": "Vintage Radio",
@@ -1221,8 +1128,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Lattafa-Perfumes/Vintage-Radio-89454.html",
     "category": "Fruity Woody",
     "occasion": "Daily / Versatile",
-    "notes": "plum, sage, palo santo, woods",
-    "gender": "Unisex / Men"
+    "notes": "plum, sage, palo santo, woods"
   },
   {
     "name": "Art of Nature II",
@@ -1236,8 +1142,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Lattafa-Perfumes/Art-Of-Nature-II-98242.html",
     "category": "Vanilla / Sweet",
     "occasion": "Date / Autumn",
-    "notes": "vanilla, citrus, amber woods",
-    "gender": "Unisex / Men"
+    "notes": "vanilla, citrus, amber woods"
   },
   {
     "name": "Teriaq Intense",
@@ -1251,8 +1156,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Lattafa-Perfumes/Teriaq-Intense-99586.html",
     "category": "Amber / Night",
     "occasion": "Date / Autumn",
-    "notes": "boozy amber, spice, dark warmth",
-    "gender": "Unisex / Men"
+    "notes": "boozy amber, spice, dark warmth"
   },
   {
     "name": "Ana Abiyedh - Rouge",
@@ -1264,10 +1168,9 @@ const fragrances = [
     "p5": "$7",
     "p10": "$12",
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Lattafa-Perfumes/Ana-Abiyedh-Rouge-63062.html",
-    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.63062.jpg",
     "category": "Women",
-    "occasion": "Date / Feminine",
-    "notes": "Airy amber, sweet musk; women's scent",
+    "occasion": "Date / Autumn",
+    "notes": "airy amber, sweet musk; women's scent",
     "gender": "Women"
   },
   {
@@ -1282,8 +1185,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Maison-Alhambra/Luxe-Street-107584.html",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
-    "notes": "designer and niche-inspired fragrance profile",
-    "gender": "Unisex / Men"
+    "notes": "designer and niche-inspired fragrance profile"
   },
   {
     "name": "Luxe Chic",
@@ -1296,8 +1198,8 @@ const fragrances = [
     "p10": "$12",
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Maison-Alhambra/Luxe-Chic-107579.html",
     "category": "Women",
-    "occasion": "Daily / Feminine",
-    "notes": "Designer and niche-inspired fragrance profile; women's scent",
+    "occasion": "Daily / Versatile",
+    "notes": "designer and niche-inspired fragrance profile; women's scent",
     "gender": "Women"
   },
   {
@@ -1312,8 +1214,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Maison-Alhambra/The-Tux-78559.html",
     "category": "Amber / Dressy",
     "occasion": "Date / Autumn",
-    "notes": "patchouli, amber, rose, vanilla",
-    "gender": "Unisex / Men"
+    "notes": "patchouli, amber, rose, vanilla"
   },
   {
     "name": "Legacy",
@@ -1327,8 +1228,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/MAISON-ASRAR/Legacy-105076.html",
     "category": "Fruity Fresh",
     "occasion": "Daily / Summer",
-    "notes": "pear, ginger, orange blossom, musk",
-    "gender": "Unisex / Men"
+    "notes": "pear, ginger, orange blossom, musk"
   },
   {
     "name": "Rifaqaat",
@@ -1342,8 +1242,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/PARIS-CORNER/Rifaaqat-99060.html",
     "category": "Vanilla Amber",
     "occasion": "Date / Autumn",
-    "notes": "vanilla, resin, suede-like warmth",
-    "gender": "Unisex / Men"
+    "notes": "vanilla, resin, suede-like warmth"
   },
   {
     "name": "Tiger [Cal Cologne]",
@@ -1357,8 +1256,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Rayhaan/Tiger-112886.html",
     "category": "Spicy Rose",
     "occasion": "Daily / Versatile",
-    "notes": "rose, spice, woods, amber",
-    "gender": "Unisex / Men"
+    "notes": "rose, spice, woods, amber"
   },
   {
     "name": "Seasons Drift",
@@ -1372,8 +1270,7 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Riiffs-Perfumes/Seasons-Drift-118091.html",
     "category": "Blue / Woody",
     "occasion": "Daily / Summer",
-    "notes": "citrus, woods, amber, incense",
-    "gender": "Unisex / Men"
+    "notes": "citrus, woods, amber, incense"
   },
   {
     "name": "Cardamom and Apple",
@@ -1387,11 +1284,10 @@ const fragrances = [
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Swiss-Arabian/Cardamom-and-Apple-89412.html",
     "category": "Aquatic Incense",
     "occasion": "Daily / Summer",
-    "notes": "marine notes, incense, woods",
-    "gender": "Unisex / Men"
+    "notes": "marine notes, incense, woods"
   },
   {
-    "name": "Incense 01",
+    "name": "Incense 01 Extrait",
     "house": "Swiss Arabian",
     "inspiration": "Original Creation",
     "status": "In stock",
@@ -1400,15 +1296,11 @@ const fragrances = [
     "p5": "$20",
     "p10": "$30",
     "fragranticaUrl": "https://www.fragrantica.com/perfume/Swiss-Arabian/Incense-01-102415.html",
-    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.102415.jpg",
     "category": "Incense Gourmand",
     "occasion": "Date / Autumn",
-    "notes": "Incense, nutty sweetness, woods; Extrait concentration",
-    "gender": "Unisex / Men"
+    "notes": "incense, nutty sweetness, woods"
   }
 ];
-
-
 
 const packs = [
   {
@@ -1478,4 +1370,3 @@ const packs = [
     "desc": "Sweet, easy and compliment-focused."
   }
 ];
-
