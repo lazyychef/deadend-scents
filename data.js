@@ -1,8 +1,8 @@
 // DeadEnd Scents catalogue data. Update this file when your fragrance list changes.
 window.siteConfig = {
-  "facebookMessengerUrl": "https://m.me/YOUR_FACEBOOK_PAGE",
-  "whatsAppUrl": "https://wa.me/61YOURNUMBER?text=Hi%20DeadEnd%20Scents%2C%20I%27d%20like%20to%20order%20some%20samples.",
-  "instagramUrl": "https://instagram.com/YOUR_INSTAGRAM",
+  "facebookMessengerUrl": "https://m.me/nickstreet09/",
+  "whatsAppUrl": "https://wa.me/61434432948?text=Hi%20DeadEnd%20Scents%2C%20I%27d%20like%20to%20order%20some%20samples.",
+  "instagramUrl": "https://instagram.com/deadendscents",
   "businessName": "DeadEnd Scents"
 };
 
