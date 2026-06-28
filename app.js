@@ -9,6 +9,7 @@
   const categoryFilter = $('categoryFilter');
   const occasionFilter = $('occasionFilter');
   const statusFilter = $('statusFilter');
+  const sortBy = $('sortBy');
   const resultCount = $('resultCount');
   const statCount = $('stat-count');
   const data = Array.isArray(window.fragrances) ? window.fragrances : (typeof fragrances !== 'undefined' ? fragrances : []);
@@ -47,8 +48,30 @@
       && (!q || combined.includes(q));
   }
 
+
+  function inspirationHouse(fragrance){
+    const insp = String(fragrance.inspiration || '').trim();
+    if (!insp || insp.toLowerCase() === 'original' || insp.toLowerCase().includes('original creation') || insp.toLowerCase() === 'unique') return '';
+    return insp.split(' - ')[0].trim();
+  }
+
+  function firstAvailablePrice(fragrance){
+    return [fragrance.p3, fragrance.p5, fragrance.p10].map(parseMoney).find(n => n > 0) || 0;
+  }
+
+  function sortFragrances(items){
+    const mode = sortBy ? sortBy.value : 'alphabetical';
+    const sorted = [...items];
+    const byText = (getter) => sorted.sort((a,b) => String(getter(a) || '').localeCompare(String(getter(b) || ''), undefined, { sensitivity: 'base' }) || String(a.name || '').localeCompare(String(b.name || ''), undefined, { sensitivity: 'base' }));
+    if (mode === 'house') return byText(x => x.house);
+    if (mode === 'inspirationHouse') return byText(inspirationHouse);
+    if (mode === 'priceLow') return sorted.sort((a,b) => firstAvailablePrice(a) - firstAvailablePrice(b) || String(a.name || '').localeCompare(String(b.name || ''), undefined, { sensitivity: 'base' }));
+    if (mode === 'priceHigh') return sorted.sort((a,b) => firstAvailablePrice(b) - firstAvailablePrice(a) || String(a.name || '').localeCompare(String(b.name || ''), undefined, { sensitivity: 'base' }));
+    return byText(x => x.name);
+  }
+
   function render(){
-    const filtered = data.filter(match);
+    const filtered = sortFragrances(data.filter(match));
     resultCount.textContent = filtered.length;
     grid.innerHTML = '';
     if (!filtered.length){
@@ -143,8 +166,11 @@
   }
 
   function parseMoney(value){
-    const num = String(value || '').replace(/[^0-9.]/g,'');
-    return num ? Number(num) : 0;
+    const text = String(value || '').trim();
+    const matches = [...text.matchAll(/\$\s*(\d+(?:\.\d{1,2})?)/g)];
+    if (matches.length) return Number(matches[matches.length - 1][1]);
+    const plain = text.match(/^(\d+(?:\.\d{1,2})?)$/);
+    return plain ? Number(plain[1]) : 0;
   }
 
   function buildOrderMessage(){
@@ -203,7 +229,7 @@
     ['instagramLink','heroInstagramLink'].forEach(id => { const el = $(id); if (el && cfg.instagramUrl) el.href = cfg.instagramUrl; });
   }
 
-  [search, categoryFilter, occasionFilter, statusFilter].forEach(el => el.addEventListener('input', render));
+  [search, categoryFilter, occasionFilter, statusFilter, sortBy].filter(Boolean).forEach(el => el.addEventListener('input', render));
   $('copyOrder').addEventListener('click', async () => {
     try { await navigator.clipboard.writeText($('orderText').value); $('copyOrder').textContent = 'Copied'; setTimeout(() => $('copyOrder').textContent = 'Copy order message', 1400); }
     catch (e) { $('orderText').select(); document.execCommand('copy'); }
