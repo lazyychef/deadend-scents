@@ -36,7 +36,7 @@ const fragrances = [
     "notes": "citrus, green tea, clean musk"
   },
   {
-    "name": "9PM - Night Out Extrait",
+    "name": "9PM - Night Out [Extrait]",
     "house": "Afnan",
     "inspiration": "Original Creation",
     "status": "In stock",
@@ -50,7 +50,7 @@ const fragrances = [
     "notes": "dragon fruit, apple, cognac, toffee, suede, tonka"
   },
   {
-    "name": "Kaaf Extrait",
+    "name": "Kaaf [Extrait]",
     "house": "Ahmed Al Maghrabi",
     "inspiration": "Parfums de Marly - Percival",
     "status": "In stock",
@@ -78,7 +78,7 @@ const fragrances = [
     "notes": "marine notes, citrus, woods"
   },
   {
-    "name": "Ignite Oud Extrait",
+    "name": "Ignite Oud [Extrait]",
     "house": "Ahmed Al Maghrabi",
     "inspiration": "Original Creation",
     "status": "In stock",
@@ -134,7 +134,7 @@ const fragrances = [
     "notes": "saffron, grapefruit, leather, patchouli, ambergris"
   },
   {
-    "name": "Boss Life Extrait",
+    "name": "Boss Life [Extrait]",
     "house": "Bujairami",
     "inspiration": "Amouage - Outlands",
     "status": "In stock",
@@ -148,7 +148,7 @@ const fragrances = [
     "notes": "warm spice, amber, aromatic woods"
   },
   {
-    "name": "Kingsman Extrait",
+    "name": "Kingsman [Extrait]",
     "house": "Bujairami",
     "inspiration": "Creed - Aventus",
     "status": "In stock",
@@ -246,7 +246,7 @@ const fragrances = [
     "notes": "designer and niche-inspired fragrance profile"
   },
   {
-    "name": "Mafia Boss Extrait",
+    "name": "Mafia Boss [Extrait]",
     "house": "Bujairami",
     "inspiration": "Clive Christian - Blonde Amber",
     "status": "In stock",
@@ -274,7 +274,7 @@ const fragrances = [
     "notes": "apple, marine notes, mint"
   },
   {
-    "name": "Bossman Extrait",
+    "name": "Bossman [Extrait]",
     "house": "Bujairami",
     "inspiration": "Creed - Absolu Aventus (2025)",
     "status": "In stock",
@@ -346,7 +346,7 @@ const fragrances = [
     "notes": "citrus, woods, amber, incense"
   },
   {
-    "name": "Iris Infinite Extrait",
+    "name": "Iris Infinite [Extrait]",
     "house": "Bujairami",
     "inspiration": "Dior - Homme Parfum 2025",
     "status": "In stock",
@@ -354,7 +354,7 @@ const fragrances = [
     "p3": "$5",
     "p5": "$8",
     "p10": "$12",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Iris%20Infinite%20Extrait",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Iris%20Infinite%20[Extrait]",
     "category": "Iris / Leather",
     "occasion": "Date / Autumn",
     "notes": "iris, amber, woods, leather nuance"
@@ -417,7 +417,7 @@ const fragrances = [
     "gender": "Women"
   },
   {
-    "name": "Riverina Extrait",
+    "name": "Riverina [Extrait]",
     "house": "Bujairami",
     "inspiration": "Original Creation",
     "status": "In stock",
@@ -425,7 +425,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$9",
     "p10": "$15",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Riverina%20Extrait",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Riverina%20[Extrait]",
     "category": "Fresh / Citrus",
     "occasion": "Daily / Summer",
     "notes": "citrus, green notes, watery freshness"
@@ -781,7 +781,7 @@ const fragrances = [
     "notes": "honey, citrus, tobacco, vanilla"
   },
   {
-    "name": "Royal Taboo Extrait",
+    "name": "Royal Taboo [Extrait]",
     "house": "French Avenue",
     "inspiration": "Creed - Centaurus",
     "status": "In stock",
@@ -795,7 +795,7 @@ const fragrances = [
     "notes": "spice, tobacco nuance, woods"
   },
   {
-    "name": "Teas Me Extrait",
+    "name": "Teas Me [Extrait]",
     "house": "French Avenue",
     "inspiration": "Nishane - Wulóng Chá",
     "status": "In stock",
@@ -851,7 +851,7 @@ const fragrances = [
     "notes": "metallic fresh, lavender, woods"
   },
   {
-    "name": "Mexican Tobacco Extrait",
+    "name": "Mexican Tobacco [Extrait]",
     "house": "Ibraheem AlQurashi",
     "inspiration": "Jeroboam - Gozo",
     "status": "In stock",
@@ -865,9 +865,9 @@ const fragrances = [
     "notes": "tobacco, warmth, spice"
   },
   {
-    "name": "Jamaican Tobacco Extrait",
+    "name": "Jamaican Tobacco [Extrait]",
     "house": "Ibraheem AlQurashi",
-    "inspiration": "Ex Nihilo - Brompton Immortals Extrait",
+    "inspiration": "Ex Nihilo - Brompton Immortals [Extrait]",
     "status": "In stock",
     "emojis": "🌿🪵🌫",
     "p3": "$10",
@@ -879,7 +879,7 @@ const fragrances = [
     "notes": "tobacco, warmth, spice"
   },
   {
-    "name": "Cuban Tobacco Extrait",
+    "name": "Cuban Tobacco [Extrait]",
     "house": "Ibraheem AlQurashi",
     "inspiration": "Le Labo - Tabac 28",
     "status": "In stock",
@@ -887,13 +887,13 @@ const fragrances = [
     "p3": "$10",
     "p5": "N/A",
     "p10": "N/A",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Ibraheem%20AlQurashi%20Cuban%20Tobacco%20Extrait",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Ibraheem%20AlQurashi%20Cuban%20Tobacco%20[Extrait]",
     "category": "Tobacco",
     "occasion": "Date / Autumn",
     "notes": "tobacco, warmth, spice"
   },
   {
-    "name": "Greek Tobacco Extrait",
+    "name": "Greek Tobacco [Extrait]",
     "house": "Ibraheem AlQurashi",
     "inspiration": "Ex Nihilo - Fleur Narcotique",
     "status": "In stock",
@@ -907,7 +907,7 @@ const fragrances = [
     "notes": "tobacco, warmth, spice"
   },
   {
-    "name": "Spanish Tobacco Extrait",
+    "name": "Spanish Tobacco [Extrait]",
     "house": "Ibraheem AlQurashi",
     "inspiration": "Orto Parisi - Megamare",
     "status": "In stock",
@@ -921,7 +921,7 @@ const fragrances = [
     "notes": "tobacco, warmth, spice"
   },
   {
-    "name": "French Tobacco Extrait",
+    "name": "French Tobacco [Extrait]",
     "house": "Ibraheem AlQurashi",
     "inspiration": "Louis Vuitton - Imagination",
     "status": "In stock",
@@ -935,7 +935,7 @@ const fragrances = [
     "notes": "tobacco, warmth, spice"
   },
   {
-    "name": "Brazillian Tobacco Extrait",
+    "name": "Brazillian Tobacco [Extrait]",
     "house": "Ibraheem AlQurashi",
     "inspiration": "Parfums de Marly - Haltane",
     "status": "In stock",
@@ -1287,7 +1287,7 @@ const fragrances = [
     "notes": "marine notes, incense, woods"
   },
   {
-    "name": "Incense 01 Extrait",
+    "name": "Incense 01 [Extrait]",
     "house": "Swiss Arabian",
     "inspiration": "Original Creation",
     "status": "In stock",
