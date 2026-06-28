@@ -1,8 +1,8 @@
 // DeadEnd Scents catalogue data. Update this file when your fragrance list changes.
 window.siteConfig = {
-  "facebookMessengerUrl": "https://m.me/nickstreet09/",
-  "whatsAppUrl": "https://wa.me/61434432948?text=Hi%20DeadEnd%20Scents%2C%20I%27d%20like%20to%20order%20some%20samples.",
-  "instagramUrl": "https://instagram.com/deadendscents",
+  "facebookMessengerUrl": "https://m.me/YOUR_FACEBOOK_PAGE",
+  "whatsAppUrl": "https://wa.me/61YOURNUMBER?text=Hi%20DeadEnd%20Scents%2C%20I%27d%20like%20to%20order%20some%20samples.",
+  "instagramUrl": "https://instagram.com/YOUR_INSTAGRAM",
   "businessName": "DeadEnd Scents"
 };
 
@@ -44,7 +44,8 @@ const fragrances = [
     "p3": "$6",
     "p5": "$9",
     "p10": "$13",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Afnan%209PM%20-%20Night%20Out%20Extrait",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Afnan/9-PM-Night-Out-123313.html",
+    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.123313.jpg",
     "category": "Fruity / Night Out",
     "occasion": "Date / Autumn",
     "notes": "dragon fruit, apple, cognac, toffee, suede, tonka"
@@ -86,7 +87,8 @@ const fragrances = [
     "p3": "$9",
     "p5": "$15",
     "p10": "$28",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Ahmed%20Al%20Maghrabi%20Ignite%20Oud%20Extrait",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Ahmed-Al-Maghribi/Ignite-Oud-99960.html",
+    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.99960.jpg",
     "category": "Woody Leather",
     "occasion": "Date / Autumn",
     "notes": "leather, patchouli, cedar, amber"
@@ -114,7 +116,8 @@ const fragrances = [
     "p3": "$5",
     "p5": "$8",
     "p10": "$13",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=ARMAF%20Club%20de%20Nuit%20Intense%20Man",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Armaf/Club-de-Nuit-Intense-Man-34696.html",
+    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.34696.jpg",
     "category": "Fruity Woods",
     "occasion": "Daily / Versatile",
     "notes": "pineapple, citrus, smoky woods"
@@ -128,7 +131,8 @@ const fragrances = [
     "p3": "$6",
     "p5": "$11",
     "p10": "$18",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Assaf%20Wild%20Colt",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Assaf/Wild-Colt-75834.html",
+    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.75834.jpg",
     "category": "Leather / Woody",
     "occasion": "Date / Autumn",
     "notes": "saffron, grapefruit, leather, patchouli, ambergris"
@@ -576,7 +580,8 @@ const fragrances = [
     "p3": "$4",
     "p5": "$7",
     "p10": "$10",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Designer%20Nuit%20d%27Issey",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Issey-Miyake/Nuit-d-Issey-25514.html",
+    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.25514.jpg",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -590,7 +595,8 @@ const fragrances = [
     "p3": "$7",
     "p5": "$11",
     "p10": "$18",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Designer%20Fusion%20d%27Issey%20Extr%C3%AAme",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Issey-Miyake/Fusion-d-Issey-Extreme-67524.html",
+    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.67524.jpg",
     "category": "Tropical Woody",
     "occasion": "Daily / Versatile",
     "notes": "mint, coconut, mineral notes, sandalwood"
@@ -604,7 +610,8 @@ const fragrances = [
     "p3": "$6",
     "p5": "$10",
     "p10": "$17",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Designer%20L%27Eau%20d%27Issey%20Intense",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Issey-Miyake/L-Eau-d-Issey-Pour-Homme-Intense-1998.html",
+    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.1998.jpg",
     "category": "Citrus Incense",
     "occasion": "Daily / Summer",
     "notes": "yuzu, spice, incense, amber, papyrus"
@@ -618,7 +625,8 @@ const fragrances = [
     "p3": "$4",
     "p5": "$7",
     "p10": "$10",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Designer%20Boss%20Bottled",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Hugo-Boss/Boss-Bottled-383.html",
+    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.383.jpg",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -632,7 +640,8 @@ const fragrances = [
     "p3": "$10",
     "p5": "$17",
     "p10": "$30",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Designer%20Boss%20Bottled%20Absolu%20Parfum",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Hugo-Boss/Bottled-Absolu-96246.html",
+    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.96246.jpg",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -646,7 +655,8 @@ const fragrances = [
     "p3": "$8",
     "p5": "$13",
     "p10": "$20",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Designer%20Boss%20Bottled%20Parfum",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Hugo-Boss/Boss-Bottled-Parfum-75183.html",
+    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.75183.jpg",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -660,7 +670,8 @@ const fragrances = [
     "p3": "$8",
     "p5": "$13",
     "p10": "$22",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Designer%20Acqua%20di%20Gi%C3%B2%20Eau%20de%20Parfum",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Giorgio-Armani/Acqua-di-Gio-Eau-de-Parfum-71606.html",
+    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.71606.jpg",
     "category": "Aquatic",
     "occasion": "Daily / Summer",
     "notes": "marine notes, citrus, woods"
@@ -730,7 +741,8 @@ const fragrances = [
     "p3": "$8",
     "p5": "$13",
     "p10": "$22",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Designer%20Spicebomb%20Metallic%20Musk",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Viktor-Rolf/Spicebomb-Metallic-Musk-104937.html",
+    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.104937.jpg",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -772,7 +784,8 @@ const fragrances = [
     "p3": "$14",
     "p5": "$27",
     "p10": "$50",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Designer%20XJ%201861%20Naxos",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Xerjoff/XJ-1861-Naxos-30529.html",
+    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.30529.jpg",
     "category": "Honey Tobacco",
     "occasion": "Date / Autumn",
     "notes": "honey, citrus, tobacco, vanilla"
@@ -800,7 +813,8 @@ const fragrances = [
     "p3": "$4",
     "p5": "$7",
     "p10": "$10",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=French%20Avenue%20Teas%20Me%20Extrait",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Aromatix-X-French-Avenue/Teas-Me-117532.html",
+    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.117532.jpg",
     "category": "Tea Fresh",
     "occasion": "Daily / Summer",
     "notes": "citrus, tea, clean musk"
@@ -1052,7 +1066,8 @@ const fragrances = [
     "p3": "$6",
     "p5": "$10",
     "p10": "$15",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Lattafa%20Masa",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Lattafa-Perfumes/Masa-92484.html",
+    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.92484.jpg",
     "category": "Mineral Woods",
     "occasion": "Daily / Versatile",
     "notes": "mineral citrus, suede-like woods"
@@ -1080,7 +1095,8 @@ const fragrances = [
     "p3": "$5",
     "p5": "$8",
     "p10": "$14",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Lattafa%20Opulent%20Dubai",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Lattafa-Perfumes/Opulent-Dubai-105609.html",
+    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.105609.jpg",
     "category": "Tropical Fruity",
     "occasion": "Daily / Versatile",
     "notes": "mango, citrus, ginger, amber woods"
@@ -1164,7 +1180,8 @@ const fragrances = [
     "p3": "$5",
     "p5": "$7",
     "p10": "$12",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Lattafa%20Ana%20Abiyedh%20-%20Rouge%20%28W%29",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Lattafa-Perfumes/Ana-Abiyedh-Rouge-63062.html",
+    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.63062.jpg",
     "category": "Sweet Amber",
     "occasion": "Date / Autumn",
     "notes": "airy amber, sweet musk"
@@ -1290,7 +1307,8 @@ const fragrances = [
     "p3": "$10",
     "p5": "$20",
     "p10": "$30",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Swiss%20Arabian%20Incense%2001%20Extrait",
+    "fragranticaUrl": "https://www.fragrantica.com/perfume/Swiss-Arabian/Incense-01-102415.html",
+    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.102415.jpg",
     "category": "Incense Gourmand",
     "occasion": "Date / Autumn",
     "notes": "incense, nutty sweetness, woods"

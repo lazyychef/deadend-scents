@@ -7,13 +7,13 @@
   const statusFilter = $('statusFilter');
   const resultCount = $('resultCount');
   const statCount = $('stat-count');
+  const data = Array.isArray(window.fragrances || fragrances) ? fragrances : [];
 
-  if (!Array.isArray(window.fragrances || fragrances)) {
+  if (!data.length) {
     console.error('Catalogue data not found. Check data.js');
     return;
   }
 
-  const data = fragrances;
   statCount.textContent = data.length;
 
   function uniqueValues(key){
@@ -35,101 +35,93 @@
   function match(fragrance){
     const q = search.value.trim().toLowerCase();
     const combined = [fragrance.name, fragrance.house, fragrance.inspiration, fragrance.category, fragrance.occasion, fragrance.notes, fragrance.emojis].join(' ').toLowerCase();
-    const categoryOk = categoryFilter.value === 'all' || fragrance.category === categoryFilter.value;
-    const occasionOk = occasionFilter.value === 'all' || fragrance.occasion === occasionFilter.value;
-    const statusOk = statusFilter.value === 'all' || fragrance.status === statusFilter.value;
-    const searchOk = !q || combined.includes(q);
-    return categoryOk && occasionOk && statusOk && searchOk;
+    return (categoryFilter.value === 'all' || fragrance.category === categoryFilter.value)
+      && (occasionFilter.value === 'all' || fragrance.occasion === occasionFilter.value)
+      && (statusFilter.value === 'all' || fragrance.status === statusFilter.value)
+      && (!q || combined.includes(q));
+  }
+
+  function bottlePlaceholder(f){
+    const initials = String(f.house || f.name || 'DS').split(/\s+/).slice(0,2).map(w => w[0]).join('').toUpperCase();
+    return `<div class="bottle-fallback" aria-hidden="true"><span>${escapeHtml(initials)}</span></div>`;
+  }
+
+  function imageBlock(f){
+    if (f.imageUrl) {
+      return `<div class="bottle"><img src="${escapeAttr(f.imageUrl)}" alt="${escapeAttr(f.house + ' ' + f.name)} bottle" loading="lazy" onerror="this.closest('.bottle').innerHTML='${bottlePlaceholder(f).replace(/'/g,"&#39;")}'"></div>`;
+    }
+    return `<div class="bottle">${bottlePlaceholder(f)}</div>`;
   }
 
   function render(){
     const filtered = data.filter(match);
     resultCount.textContent = filtered.length;
     grid.innerHTML = '';
-
     if (!filtered.length){
-      grid.innerHTML = '<div class="empty">No fragrances match that search. Try a broader word like “fresh”, “vanilla”, “date” or “summer”.</div>';
+      grid.innerHTML = '<div class="empty">No fragrances match that search. Try “fresh”, “vanilla”, “date” or “summer”.</div>';
       return;
     }
-
     const frag = document.createDocumentFragment();
     filtered.forEach(f => {
       const card = document.createElement('article');
       card.className = 'card';
+      const linkLabel = f.fragranticaUrl && !f.fragranticaUrl.includes('/search/') ? 'Fragrantica page' : 'Fragrantica search';
       card.innerHTML = `
-        <div class="card-top">
-          <span class="emoji">${f.emojis || '✨'}</span>
-          <span class="status ${String(f.status).toLowerCase().replace(/\s+/g,'-')}">${f.status || 'In stock'}</span>
+        <div class="card-main">
+          ${imageBlock(f)}
+          <div class="card-copy">
+            <div class="card-top"><span class="emoji">${f.emojis || '✨'}</span><span class="status ${String(f.status).toLowerCase().replace(/\s+/g,'-')}">${f.status || 'In stock'}</span></div>
+            <h3>${escapeHtml(f.name)}</h3>
+            <p class="house">${escapeHtml(f.house || '')}</p>
+            <p class="inspo">${escapeHtml(f.inspiration || 'Original')}</p>
+          </div>
         </div>
-        <h3>${escapeHtml(f.name)}</h3>
-        <p class="house">${escapeHtml(f.house || '')}</p>
-        <p class="inspo">${escapeHtml(f.inspiration || 'Original')}</p>
         <p class="desc">${escapeHtml(f.notes || '')}</p>
-        ${f.fragranticaUrl ? `<a class="mini-link" href="${escapeAttr(f.fragranticaUrl)}" target="_blank" rel="noopener">View on Fragrantica</a>` : ''}
-        <div class="tags">
-          <span>${escapeHtml(f.category || 'Fragrance')}</span>
-          <span>${escapeHtml(f.occasion || 'Anytime')}</span>
-        </div>
-        <div class="prices">
+        <div class="prices compact-prices">
           <div><strong>${escapeHtml(f.p3 || 'N/A')}</strong><span>3mL</span></div>
           <div><strong>${escapeHtml(f.p5 || 'N/A')}</strong><span>5mL</span></div>
           <div><strong>${escapeHtml(f.p10 || 'N/A')}</strong><span>10mL</span></div>
+        </div>
+        <div class="card-links">
+          ${f.fragranticaUrl ? `<a class="mini-link" href="${escapeAttr(f.fragranticaUrl)}" target="_blank" rel="noopener">${linkLabel}</a>` : ''}
+          <button class="mini-button" data-copy="${escapeAttr(f.name)}">Copy name</button>
         </div>
       `;
       frag.appendChild(card);
     });
     grid.appendChild(frag);
+    document.querySelectorAll('[data-copy]').forEach(btn => btn.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(btn.dataset.copy); btn.textContent = 'Copied'; setTimeout(()=>btn.textContent='Copy name', 1200); } catch(e) {}
+    }));
   }
 
   function renderPacks(){
     const packsGrid = $('packsGrid');
+    if (!Array.isArray(window.packs || packs)) return;
     packsGrid.innerHTML = '';
     packs.forEach(pack => {
       const div = document.createElement('article');
       div.className = 'pack-card';
-      div.innerHTML = `
-        <span class="pack-emoji">${pack.emojis}</span>
-        <h3>${escapeHtml(pack.name)}</h3>
-        <p>${escapeHtml(pack.desc)}</p>
-        <strong>${escapeHtml(pack.price)}</strong>
-        <ul>${pack.items.map(i => `<li>${escapeHtml(i)}</li>`).join('')}</ul>
-      `;
+      div.innerHTML = `<span class="pack-emoji">${pack.emojis}</span><h3>${escapeHtml(pack.name)}</h3><p>${escapeHtml(pack.desc)}</p><strong>${escapeHtml(pack.price)}</strong><ul>${pack.items.map(i => `<li>${escapeHtml(i)}</li>`).join('')}</ul>`;
       packsGrid.appendChild(div);
     });
   }
 
-  function escapeHtml(value){
-    return String(value).replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
-  }
-
-  function escapeAttr(value){
-    return escapeHtml(value).replace(/`/g, '&#96;');
-  }
+  function escapeHtml(value){ return String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+  function escapeAttr(value){ return escapeHtml(value).replace(/`/g, '&#96;'); }
 
   function setupContactLinks(){
     const cfg = window.siteConfig || {};
-    const fb = document.getElementById('messengerLink');
-    const wa = document.getElementById('whatsappLink');
-    const ig = document.getElementById('instagramLink');
+    const fb = $('messengerLink'), wa = $('whatsappLink'), ig = $('instagramLink');
     if (fb && cfg.facebookMessengerUrl) fb.href = cfg.facebookMessengerUrl;
     if (wa && cfg.whatsAppUrl) wa.href = cfg.whatsAppUrl;
     if (ig && cfg.instagramUrl) ig.href = cfg.instagramUrl;
   }
 
   [search, categoryFilter, occasionFilter, statusFilter].forEach(el => el.addEventListener('input', render));
-
   $('copyOrder').addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText($('orderText').value);
-      $('copyOrder').textContent = 'Copied';
-      setTimeout(() => $('copyOrder').textContent = 'Copy order message', 1400);
-    } catch (e) {
-      $('orderText').select();
-      document.execCommand('copy');
-    }
+    try { await navigator.clipboard.writeText($('orderText').value); $('copyOrder').textContent = 'Copied'; setTimeout(() => $('copyOrder').textContent = 'Copy order message', 1400); }
+    catch (e) { $('orderText').select(); document.execCommand('copy'); }
   });
-
-  setupContactLinks();
-  renderPacks();
-  render();
+  setupContactLinks(); renderPacks(); render();
 })();
