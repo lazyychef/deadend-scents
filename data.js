@@ -1,8 +1,8 @@
 // DeadEnd Scents catalogue data. Update this file when your fragrance list changes.
 window.siteConfig = {
-  "facebookMessengerUrl": "https://m.me/nickstreet09/",
-  "whatsAppUrl": "https://wa.me/61434432948?text=Hi%20DeadEnd%20Scents%2C%20I%27d%20like%20to%20order%20some%20samples.",
-  "instagramUrl": "https://instagram.com/deadendscents",
+  "facebookMessengerUrl": "https://m.me/YOUR_FACEBOOK_PAGE",
+  "whatsAppUrl": "https://wa.me/61YOURNUMBER?text=Hi%20DeadEnd%20Scents%2C%20I%27d%20like%20to%20order%20some%20samples.",
+  "instagramUrl": "https://instagram.com/YOUR_INSTAGRAM",
   "businessName": "DeadEnd Scents"
 };
 
@@ -16,7 +16,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$11",
     "p10": "$14",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/Afnan/Supremacy-Collector-s-Edition-Pour-Homme-98689.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Afnan%20Supremacy%20Collectors%20Ed.",
     "category": "Fruity Woods",
     "occasion": "Daily / Versatile",
     "notes": "pineapple, citrus, smoky woods"
@@ -30,7 +30,7 @@ const fragrances = [
     "p3": "$5",
     "p5": "$9",
     "p10": "$13",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/Afnan/Supremacy-In-Heaven-70703.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Afnan%20Supremacy%20in%20Heaven",
     "category": "Fresh / Clean",
     "occasion": "Daily / Summer",
     "notes": "citrus, green tea, clean musk"
@@ -58,7 +58,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$7",
     "p10": "$12",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/Ahmed-Al-Maghribi/Kaaf-102460.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Ahmed%20Al%20Maghrabi%20Kaaf%20Extrait",
     "category": "Fresh / Clean",
     "occasion": "Daily / Summer",
     "notes": "citrus, lavender, clean musk"
@@ -72,7 +72,7 @@ const fragrances = [
     "p3": "$5",
     "p5": "$8",
     "p10": "$12",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/Ahmed-Al-Maghribi/Aqua-Oud-111001.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Ahmed%20Al%20Maghrabi%20Aqua%20Oud",
     "category": "Aquatic",
     "occasion": "Daily / Summer",
     "notes": "marine notes, citrus, woods"
@@ -100,7 +100,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$11",
     "p10": "$14",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/Armaf/Club-de-Nuit-Precieux-I-93272.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=ARMAF%20Club%20de%20Nuit%20Precieux%20I",
     "category": "Fruity Woods",
     "occasion": "Daily / Versatile",
     "notes": "pineapple, citrus, smoky woods"
@@ -114,7 +114,7 @@ const fragrances = [
     "p3": "$5",
     "p5": "$8",
     "p10": "$13",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/Armaf/Club-de-Nuit-Intense-Man-34696.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=ARMAF%20Club%20de%20Nuit%20Intense%20Man",
     "category": "Fruity Woods",
     "occasion": "Daily / Versatile",
     "notes": "pineapple, citrus, smoky woods"
@@ -128,7 +128,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$11",
     "p10": "$18",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/Assaf/Wild-Colt-Elixir-75834.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Assaf%20Wild%20Colt",
     "category": "Leather / Woody",
     "occasion": "Date / Autumn",
     "notes": "saffron, grapefruit, leather, patchouli, ambergris"
@@ -142,7 +142,7 @@ const fragrances = [
     "p3": "$5",
     "p5": "$8",
     "p10": "$12",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Amouage%20-%20Outlands",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Boss%20Life%20Extrait",
     "category": "Amber / Aromatic",
     "occasion": "Date / Autumn",
     "notes": "warm spice, amber, aromatic woods"
@@ -156,7 +156,7 @@ const fragrances = [
     "p3": "$5",
     "p5": "$8",
     "p10": "$12",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Creed%20-%20Aventus",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Kingsman%20Extrait",
     "category": "Fruity Woods",
     "occasion": "Daily / Versatile",
     "notes": "pineapple, citrus, smoky woods"
@@ -170,7 +170,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$6",
     "p10": "$8",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Argos%20-%20Triumph%20of%20Bacchus",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Gladiator",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -184,7 +184,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$6",
     "p10": "$8",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Creed%20-%20Absolu%20Aventus",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Emperor",
     "category": "Fruity Woods",
     "occasion": "Daily / Versatile",
     "notes": "pineapple, citrus, smoky woods"
@@ -198,7 +198,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$6",
     "p10": "$8",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Armani%20-%20Acqua%20di%20Gi%C3%B2%20Absolu",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Aqua%20Pure",
     "category": "Aquatic",
     "occasion": "Daily / Summer",
     "notes": "marine notes, citrus, woods"
@@ -212,7 +212,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$6",
     "p10": "$8",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Armani%20-%20SWY%20Intensely",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20The%20Rock%20Intensely",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -226,7 +226,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$6",
     "p10": "$8",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bond%20No.9%20-%20Bleecker%20St.",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Gotham",
     "category": "Green Fruity",
     "occasion": "Daily / Summer",
     "notes": "blueberry, violet leaf, woods"
@@ -240,7 +240,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$6",
     "p10": "$8",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bvlgari%20-%20Aqva%20Pour%20Homme%20Atlantiqve",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Ocean%20Drip",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -254,7 +254,7 @@ const fragrances = [
     "p3": "$5",
     "p5": "$8",
     "p10": "$12",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Clive%20Christian%20-%20Blonde%20Amber",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Mafia%20Boss%20Extrait",
     "category": "Amber / Boozy",
     "occasion": "Date / Autumn",
     "notes": "amber, vanilla, booze, woods"
@@ -268,7 +268,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$6",
     "p10": "$8",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Clive%20Christian%20-%20Crab%20Apple%20Blossom",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20High%20Tide%20Mojito",
     "category": "Fresh Fruity",
     "occasion": "Daily / Summer",
     "notes": "apple, marine notes, mint"
@@ -282,7 +282,7 @@ const fragrances = [
     "p3": "$5",
     "p5": "$8",
     "p10": "$12",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Creed%20-%20Absolu%20Aventus%20%282025%29",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Bossman%20Extrait",
     "category": "Fruity Woods",
     "occasion": "Daily / Versatile",
     "notes": "pineapple, citrus, smoky woods"
@@ -296,7 +296,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$6",
     "p10": "$8",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Dior%20-%20Blooming%20Bouquet",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Finesse%20%28W%29",
     "category": "Floral",
     "occasion": "Daily / Feminine",
     "notes": "peony, rose, peach"
@@ -310,7 +310,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$6",
     "p10": "$8",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Initio%20Parfums%20Prives%20-%20Atomic%20Rose",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Romantic%20Rose%20%28W%29",
     "category": "Rose Amber",
     "occasion": "Date / Autumn",
     "notes": "rose, vanilla, amber"
@@ -324,7 +324,7 @@ const fragrances = [
     "p3": "$5",
     "p5": "$7",
     "p10": "$11",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=By%20Kilian%20-%20Angels%20Share",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Booz%20Extreme",
     "category": "Boozy Sweet",
     "occasion": "Date / Autumn",
     "notes": "cognac, spice, oak, vanilla warmth"
@@ -338,7 +338,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$6",
     "p10": "$8",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Chanel%20-%20Bleu%20de%20Chanel%20EDP",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Shu%20Helou",
     "category": "Blue / Woody",
     "occasion": "Daily / Summer",
     "notes": "citrus, woods, amber, incense"
@@ -352,7 +352,7 @@ const fragrances = [
     "p3": "$5",
     "p5": "$8",
     "p10": "$12",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Dior%20-%20Homme%20Parfum%202025",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Iris%20Infinite%20Extrait",
     "category": "Iris / Leather",
     "occasion": "Date / Autumn",
     "notes": "iris, amber, woods, leather nuance"
@@ -366,7 +366,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$6",
     "p10": "$8",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=By%20Kilian%20-%20Angels%20Share%20Paradis",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Midnight%20Booz",
     "category": "Boozy Sweet",
     "occasion": "Date / Autumn",
     "notes": "cognac, spice, oak, vanilla warmth"
@@ -380,7 +380,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$6",
     "p10": "$8",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Valentino%20-%20Born%20in%20Roma%20Extradose",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20High%20Roller",
     "category": "Fruity Sweet",
     "occasion": "Date / Autumn",
     "notes": "apple, woods, amber sweetness"
@@ -394,7 +394,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$6",
     "p10": "$8",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=By%20Kilian%20-%20Angels%20Share%20Twist",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Booz",
     "category": "Boozy Sweet",
     "occasion": "Date / Autumn",
     "notes": "cognac, spice, oak, vanilla warmth"
@@ -408,7 +408,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$6",
     "p10": "$8",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Louis%20Vuitton%20-%20Attrape-R%C3%AAves",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Boujee%20%28W%29",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -436,7 +436,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$6",
     "p10": "$8",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Paco%20Rabanne%20-%201M%20Lucky",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Lucky",
     "category": "Sweet / Nutty",
     "occasion": "Date / Autumn",
     "notes": "hazelnut, honey, plum"
@@ -450,7 +450,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$6",
     "p10": "$8",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Paco%20Rabanne%20-%20Invictus%20Parfum",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Untouchable",
     "category": "Fresh Amber",
     "occasion": "Daily / Summer",
     "notes": "aquatic freshness, amber woods"
@@ -464,7 +464,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$6",
     "p10": "$8",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Parfums%20de%20Marly%20-%20Greenley",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Wicked",
     "category": "Green Fruity",
     "occasion": "Daily / Summer",
     "notes": "green apple, woods, musk"
@@ -478,7 +478,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$6",
     "p10": "$8",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Penhaligons%20-%20Blazing%20Mr.%20Sam",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Smoldering%20Sir",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -492,7 +492,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$6",
     "p10": "$8",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Rasasi%20-%20Hawas%20ICE",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20ICE",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -520,7 +520,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$6",
     "p10": "$8",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Versace%20-%20Eros%20Najim",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Star",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -534,7 +534,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$6",
     "p10": "$8",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Wavechild%20-%20Room%201015",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Ozonic",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -548,7 +548,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$6",
     "p10": "$8",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Xerjoff%20-%20XJ%201861%20Naxos",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bujairami%20Casanova",
     "category": "Honey Tobacco",
     "occasion": "Date / Autumn",
     "notes": "honey, citrus, tobacco, vanilla"
@@ -562,7 +562,7 @@ const fragrances = [
     "p3": "$9",
     "p5": "$15",
     "p10": "$30",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Azzaro%20-%20The%20Most%20Wanted%20Intense",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Designer%20The%20Most%20Wanted%20Intense",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -576,7 +576,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$7",
     "p10": "$10",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Issey%20Miyake%20-%20Nuit%20d%27Issey",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Designer%20Nuit%20d%27Issey",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -590,7 +590,7 @@ const fragrances = [
     "p3": "$7",
     "p5": "$11",
     "p10": "$18",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Issey%20Miyake%20-%20Fusion%20d%27Issey%20Extr%C3%AAme",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Designer%20Fusion%20d%27Issey%20Extr%C3%AAme",
     "category": "Tropical Woody",
     "occasion": "Daily / Versatile",
     "notes": "mint, coconut, mineral notes, sandalwood"
@@ -604,7 +604,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$10",
     "p10": "$17",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Issey%20Miyake%20-%20L%27Eau%20d%27Issey%20Pour%20Homme%20Intense",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Designer%20L%27Eau%20d%27Issey%20Intense",
     "category": "Citrus Incense",
     "occasion": "Daily / Summer",
     "notes": "yuzu, spice, incense, amber, papyrus"
@@ -618,7 +618,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$7",
     "p10": "$10",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Hugo%20Boss%20-%20Boss%20Bottled",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Designer%20Boss%20Bottled",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -632,7 +632,7 @@ const fragrances = [
     "p3": "$10",
     "p5": "$17",
     "p10": "$30",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Hugo%20Boss%20-%20Boss%20Bottled%20Absolu%20Intense",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Designer%20Boss%20Bottled%20Absolu%20Parfum",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -646,7 +646,7 @@ const fragrances = [
     "p3": "$8",
     "p5": "$13",
     "p10": "$20",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Hugo%20Boss%20-%20Boss%20Bottled%20Parfum",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Designer%20Boss%20Bottled%20Parfum",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -660,7 +660,7 @@ const fragrances = [
     "p3": "$8",
     "p5": "$13",
     "p10": "$22",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Armani%20-%20Acqua%20di%20Gi%C3%B2%20Eau%20de%20Parfum",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Designer%20Acqua%20di%20Gi%C3%B2%20Eau%20de%20Parfum",
     "category": "Aquatic",
     "occasion": "Daily / Summer",
     "notes": "marine notes, citrus, woods"
@@ -674,7 +674,7 @@ const fragrances = [
     "p3": "$7",
     "p5": "$11",
     "p10": "$15",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Mancera%20-%20Cedrat%20Boise",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Designer%20Cedrat%20Boise",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -688,7 +688,7 @@ const fragrances = [
     "p3": "$18",
     "p5": "$40",
     "p10": "$65",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=MFK%20-%20Grand%20Soir",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Designer%20Grand%20Soir",
     "category": "Amber",
     "occasion": "Date / Autumn",
     "notes": "amber, vanilla, benzoin"
@@ -702,7 +702,7 @@ const fragrances = [
     "p3": "$8",
     "p5": "$18",
     "p10": "$30",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Paco%20Rabanne%20-%201M%20Royal",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Designer%201%20Million%20-%20Royal",
     "category": "Sweet / Aromatic",
     "occasion": "Date / Autumn",
     "notes": "lavender, woods, sweetness"
@@ -716,7 +716,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$14",
     "p10": "$20",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Ralph%20Lauren%20-%20Polo%2067",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Designer%20Polo%2067",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -730,7 +730,7 @@ const fragrances = [
     "p3": "$8",
     "p5": "$13",
     "p10": "$22",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Viktor%26Rolf%20-%20SpiceBomb%20Metallic%20Musk",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Designer%20Spicebomb%20Metallic%20Musk",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -744,7 +744,7 @@ const fragrances = [
     "p3": "$8",
     "p5": "$13",
     "p10": "$22",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Viktor%26Rolf%20-%20SpiceBomb%20Infrared",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Designer%20Spicebomb%20Infrared",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -758,7 +758,7 @@ const fragrances = [
     "p3": "$8",
     "p5": "$17",
     "p10": "$30",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Valentino%20-%20Born%20in%20Roma%20Coral%20Fantasy",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Designer%20Born%20in%20Roma%20Coral%20Fantasy",
     "category": "Fruity Sweet",
     "occasion": "Date / Autumn",
     "notes": "apple, woods, amber sweetness"
@@ -772,7 +772,7 @@ const fragrances = [
     "p3": "$14",
     "p5": "$27",
     "p10": "$50",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Xerjoff%20-%20Naxos",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Designer%20XJ%201861%20Naxos",
     "category": "Honey Tobacco",
     "occasion": "Date / Autumn",
     "notes": "honey, citrus, tobacco, vanilla"
@@ -786,7 +786,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$7",
     "p10": "$10",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/Aromatix-X-French-Avenue/Royal-Taboo-99330.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=French%20Avenue%20Royal%20Taboo%20Extrait",
     "category": "Spicy Amber",
     "occasion": "Date / Autumn",
     "notes": "spice, tobacco nuance, woods"
@@ -800,7 +800,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$7",
     "p10": "$10",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/Aromatix-X-French-Avenue/Teas-Me-117532.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=French%20Avenue%20Teas%20Me%20Extrait",
     "category": "Tea Fresh",
     "occasion": "Daily / Summer",
     "notes": "citrus, tea, clean musk"
@@ -814,7 +814,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$6",
     "p10": "$11",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/French-Avenue/Lumiere-Garcon-94712.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=French%20Avenue%20Lumi%C3%A8re%20Gar%C3%A7on",
     "category": "Fragrance",
     "occasion": "Date / Autumn",
     "notes": "designer and niche-inspired fragrance profile"
@@ -828,7 +828,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$9",
     "p10": "$14",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/French-Avenue/Obsidian-120872.html,
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=French%20Avenue%20Obsidian",
     "category": "Boozy Sweet",
     "occasion": "Date / Autumn",
     "notes": "cognac, spice, oak, vanilla warmth"
@@ -842,7 +842,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$8",
     "p10": "$10",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/French-Avenue/Moonstone-Bleu-100011.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=French%20Avenue%20Moonstone%20Bleu",
     "category": "Clean / Aromatic",
     "occasion": "Daily / Versatile",
     "notes": "metallic fresh, lavender, woods"
@@ -856,7 +856,7 @@ const fragrances = [
     "p3": "$10",
     "p5": "N/A",
     "p10": "N/A",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/Ibraheem-AlQurashi/Mexican-Tobacco-100563.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Ibraheem%20AlQurashi%20Mexican%20Tobacco%20Extrait",
     "category": "Tobacco",
     "occasion": "Date / Autumn",
     "notes": "tobacco, warmth, spice"
@@ -870,7 +870,7 @@ const fragrances = [
     "p3": "$10",
     "p5": "N/A",
     "p10": "N/A",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/Ibraheem-AlQurashi/Jamaican-Tobacco-100564.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Ibraheem%20AlQurashi%20Jamaican%20Tobacco%20Extrait",
     "category": "Tobacco",
     "occasion": "Date / Autumn",
     "notes": "tobacco, warmth, spice"
@@ -884,7 +884,7 @@ const fragrances = [
     "p3": "$10",
     "p5": "N/A",
     "p10": "N/A",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Le%20Labo%20-%20Tabac%2028",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Ibraheem%20AlQurashi%20Cuban%20Tobacco%20Extrait",
     "category": "Tobacco",
     "occasion": "Date / Autumn",
     "notes": "tobacco, warmth, spice"
@@ -898,7 +898,7 @@ const fragrances = [
     "p3": "$8",
     "p5": "$13",
     "p10": "$22",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/Ibraheem-AlQurashi/Greek-Tobacco-100553.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Ibraheem%20AlQurashi%20Greek%20Tobacco%20Extrait",
     "category": "Tobacco",
     "occasion": "Date / Autumn",
     "notes": "tobacco, warmth, spice"
@@ -912,7 +912,7 @@ const fragrances = [
     "p3": "$10",
     "p5": "N/A",
     "p10": "N/A",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/Ibraheem-AlQurashi/Spanish-Tobacco-100551.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Ibraheem%20AlQurashi%20Spanish%20Tobacco%20Extrait",
     "category": "Tobacco",
     "occasion": "Date / Autumn",
     "notes": "tobacco, warmth, spice"
@@ -926,7 +926,7 @@ const fragrances = [
     "p3": "$10",
     "p5": "N/A",
     "p10": "N/A",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/Ibraheem-AlQurashi/French-Tobacco-100552.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Ibraheem%20AlQurashi%20French%20Tobacco%20Extrait",
     "category": "Tobacco",
     "occasion": "Date / Autumn",
     "notes": "tobacco, warmth, spice"
@@ -940,7 +940,7 @@ const fragrances = [
     "p3": "$10",
     "p5": "N/A",
     "p10": "N/A",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/Ibraheem-AlQurashi/Brazilian-Tobacco-100562.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Ibraheem%20AlQurashi%20Brazillian%20Tobacco%20Extrait",
     "category": "Tobacco",
     "occasion": "Date / Autumn",
     "notes": "tobacco, warmth, spice"
@@ -954,7 +954,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$11",
     "p10": "$15",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/Montale/Arabians-Tonka-57384.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Jalu%20Tonka%20Powder",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -968,7 +968,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$11",
     "p10": "$15",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/Yves-Saint-Laurent/MYSLF-Eau-de-Parfum-84094.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Jalu%20Triumvrate",
     "category": "Fresh Sweet",
     "occasion": "Daily / Summer",
     "notes": "fresh citrus, florals, bubblegum sweetness"
@@ -982,7 +982,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$11",
     "p10": "$15",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/Dior/Rouge-Trafalgar-58665.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Jalu%20Purple%20Haze",
     "category": "Fruity Sweet",
     "occasion": "Date / Autumn",
     "notes": "citrus, fruit, musk, amber"
@@ -996,7 +996,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$11",
     "p10": "$15",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/Bvlgari/Tygar-41222.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Jalu%20Jaguar",
     "category": "Ginger Citrus",
     "occasion": "Daily / Summer",
     "notes": "ginger, grapefruit, amber woods"
@@ -1010,7 +1010,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$11",
     "p10": "$15",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/Roja-Dove/Elysium-Pour-Homme-Parfum-Cologne-46296.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Jalu%20Nirvana",
     "category": "Iris / Leather",
     "occasion": "Date / Autumn",
     "notes": "iris, amber, woods, leather nuance"
@@ -1024,7 +1024,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$11",
     "p10": "$18",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=LV%20-%20Imagination",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Junaid%20SANAYA",
     "category": "Citrus Tea",
     "occasion": "Daily / Summer",
     "notes": "citrus, ginger, tea, clean amber"
@@ -1038,7 +1038,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$6",
     "p10": "$9",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/Lattafa-Perfumes/Emeer-89761.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Lattafa%20Emeer",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -1052,7 +1052,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$10",
     "p10": "$15",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/Lattafa-Perfumes/Masa-88636.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Lattafa%20Masa",
     "category": "Mineral Woods",
     "occasion": "Daily / Versatile",
     "notes": "mineral citrus, suede-like woods"
@@ -1080,7 +1080,7 @@ const fragrances = [
     "p3": "$5",
     "p5": "$8",
     "p10": "$14",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/Lattafa-Perfumes/Opulent-Dubai-105609.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Lattafa%20Opulent%20Dubai",
     "category": "Tropical Fruity",
     "occasion": "Daily / Versatile",
     "notes": "mango, citrus, ginger, amber woods"
@@ -1094,7 +1094,7 @@ const fragrances = [
     "p3": "$7",
     "p5": "$11",
     "p10": "$14",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/Lattafa-Perfumes/Atlas-89765.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Lattafa%20Atlas",
     "category": "Marine / Powerful",
     "occasion": "Daily / Summer",
     "notes": "marine, salty woods, musky amber"
@@ -1108,7 +1108,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$8",
     "p10": "$11",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/Lattafa-Perfumes/Jasoor-85093.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Lattafa%20Jasoor",
     "category": "Fruity Sweet",
     "occasion": "Date / Autumn",
     "notes": "apple, woods, amber sweetness"
@@ -1122,7 +1122,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$8",
     "p10": "$12",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/Lattafa-Perfumes/Vintage-Radio-89454.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Lattafa%20Vintage%20Radio",
     "category": "Fruity Woody",
     "occasion": "Daily / Versatile",
     "notes": "plum, sage, palo santo, woods"
@@ -1136,7 +1136,7 @@ const fragrances = [
     "p3": "$4",
     "p5": "$6",
     "p10": "$9",
-    "fragranticaUrl": "https://www.fragrantica.com/perfume/Lattafa-Perfumes/Art-Of-Nature-II-98242.html",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Lattafa%20Art%20of%20Nature%20II",
     "category": "Vanilla / Sweet",
     "occasion": "Date / Autumn",
     "notes": "vanilla, citrus, amber woods"
@@ -1164,7 +1164,7 @@ const fragrances = [
     "p3": "$5",
     "p5": "$7",
     "p10": "$12",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=MFK%20-%20Baccarat%20Rouge%20540",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Lattafa%20Ana%20Abiyedh%20-%20Rouge%20%28W%29",
     "category": "Sweet Amber",
     "occasion": "Date / Autumn",
     "notes": "airy amber, sweet musk"
@@ -1178,7 +1178,7 @@ const fragrances = [
     "p3": "$5",
     "p5": "$7",
     "p10": "$12",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bond%20No.9%20-%20Lafayette%20St.",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Maison%20Alhambra%20Luxe%20Street",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -1192,7 +1192,7 @@ const fragrances = [
     "p3": "$5",
     "p5": "$7",
     "p10": "$12",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Bond%20No.9%20-%20Nolita",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Maison%20Alhambra%20Luxe%20Chic%20%28W%29",
     "category": "Fragrance",
     "occasion": "Daily / Versatile",
     "notes": "designer and niche-inspired fragrance profile"
@@ -1206,7 +1206,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$8",
     "p10": "$11",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Yves%20Saint%20Laurent%20-%20Tuxedo",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Maison%20Alhambra%20Winsome",
     "category": "Amber / Dressy",
     "occasion": "Date / Autumn",
     "notes": "patchouli, amber, rose, vanilla"
@@ -1220,7 +1220,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$9",
     "p10": "$14",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Ex%20Nihilo%20-%20Blue%20Talisman",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Maison%20Asrar%20Legacy",
     "category": "Fruity Fresh",
     "occasion": "Daily / Summer",
     "notes": "pear, ginger, orange blossom, musk"
@@ -1234,7 +1234,7 @@ const fragrances = [
     "p3": "$5",
     "p5": "$7",
     "p10": "$12",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Yves%20Saint%20Laurent%20-%20Babycat",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Paris%20Corner%20Rifaqaat",
     "category": "Vanilla Amber",
     "occasion": "Date / Autumn",
     "notes": "vanilla, resin, suede-like warmth"
@@ -1248,7 +1248,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$10",
     "p10": "$15",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Penhaligon%27s%20-%20Halfeti",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Rayhaan%20Tiger",
     "category": "Spicy Rose",
     "occasion": "Daily / Versatile",
     "notes": "rose, spice, woods, amber"
@@ -1262,7 +1262,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$10",
     "p10": "$15",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Chanel%20-%20Bleu%20de%20Chanel%20L%E2%80%99Exclusif",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Riffs%20Seasons%20Drift",
     "category": "Blue / Woody",
     "occasion": "Daily / Summer",
     "notes": "citrus, woods, amber, incense"
@@ -1276,7 +1276,7 @@ const fragrances = [
     "p3": "$6",
     "p5": "$11",
     "p10": "$18",
-    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Armani%20-%20Code%20Profumo",
+    "fragranticaUrl": "https://www.fragrantica.com/search/?query=Swiss%20Arabian%20Cardamom%20and%20Apple",
     "category": "Aquatic Incense",
     "occasion": "Daily / Summer",
     "notes": "marine notes, incense, woods"
