@@ -1,5 +1,17 @@
-# DeadEnd Scents V20
+# DeadEnd Scents V21
 
-Fixes Google Sheet loading by adding a Google Sheets JSONP fallback if normal CSV fetch fails.
+Polish pass for the Google Sheets powered catalogue.
 
-Upload all files to GitHub Pages. The catalogue still reads from the published Catalogue CSV URL in settings.json.
+## Included
+
+- Cleaner typography and card hierarchy
+- Featured fragrance section
+- Floating cart summary
+- Smoother hover/add animations
+- Improved mobile 2/3-column catalogue layout
+- Existing Google Sheet CSV loading retained
+- Existing analytics fields retained in `settings.json`
+
+## Normal updates
+
+Edit the Google Sheet Catalogue tab. The website reads the published CSV URL from `settings.json`.

@@ -12,6 +12,10 @@
   const sortBy = $('sortBy');
   const resultCount = $('resultCount');
   const statCount = $('stat-count');
+  const featuredGrid = $('featuredGrid');
+  const floatingCart = $('floatingCart');
+  const floatingCartCount = $('floatingCartCount');
+  const floatingCartTotal = $('floatingCartTotal');
   const cart = [];
   let data = [];
   let packs = [];
@@ -194,7 +198,7 @@
     resetOptions(categoryFilter,'All scent styles',uniqueValues('category'));
     resetOptions(collectionFilter,'All types',uniqueValues('collection'));
     resetOptions(occasionFilter,'All occasions',uniqueMultiValues('occasion'));
-    setupContactLinks(); setupAnalytics(); renderPacks(); render(); updateCart();
+    setupContactLinks(); setupAnalytics(); renderFeatured(); renderPacks(); render(); updateCart();
   }
 
   function uniqueValues(key){ return [...new Set(data.map(x=>x[key]).filter(Boolean))].sort(); }
@@ -218,6 +222,31 @@
     const mode=sortBy?sortBy.value:'newest'; const sorted=[...items];
     const byText=getter=>sorted.sort((a,b)=>String(getter(a)||'').localeCompare(String(getter(b)||''),undefined,{sensitivity:'base'}) || String(a.name||'').localeCompare(String(b.name||''),undefined,{sensitivity:'base'}));
     if(mode==='house') return byText(x=>x.house); if(mode==='inspirationHouse') return byText(inspirationHouse); if(mode==='priceLow') return sorted.sort((a,b)=>firstAvailablePrice(a)-firstAvailablePrice(b) || a.name.localeCompare(b.name)); if(mode==='priceHigh') return sorted.sort((a,b)=>firstAvailablePrice(b)-firstAvailablePrice(a) || a.name.localeCompare(b.name)); if(mode==='newest') return sorted.sort((a,b)=>newDateValue(b)-newDateValue(a) || a.name.localeCompare(b.name)); return byText(x=>x.name);
+  }
+
+  function renderFeatured(){
+    if(!featuredGrid) return;
+    const f = data.find(x => x.featured) || data.find(x => x.staffPick) || data.find(isNewArrival) || data[0];
+    if(!f){ featuredGrid.innerHTML = '<div class="empty">No featured fragrance available.</div>'; return; }
+    const inspirationLine = shouldShowInspiration(f) ? `<p class="featured-inspo">Inspired by <strong>${escapeHtml(f.inspiration)}</strong></p>` : `<p class="featured-inspo">${escapeHtml(f.collection || 'Featured fragrance')}</p>`;
+    featuredGrid.innerHTML = `
+      <article class="featured-card">
+        <div class="featured-main">
+          <div class="featured-mark">${escapeHtml(f.emojis || '✨')}</div>
+          <div>
+            <div class="featured-label">Featured fragrance</div>
+            <h3>${escapeHtml(f.name)}</h3>
+            <p class="featured-house">${escapeHtml(f.house || '')}</p>
+            <div class="collection-pill ${collectionClass(f.collection)}">${escapeHtml(f.collection || 'Type')}</div>
+            ${inspirationLine}
+            <p class="featured-desc">${escapeHtml(f.notes || '')}</p>
+          </div>
+        </div>
+        <div class="featured-actions">
+          ${priceButton(f,'3mL',f.p3)}${priceButton(f,'5mL',f.p5)}${priceButton(f,'10mL',f.p10)}
+        </div>
+      </article>`;
+    attachCardListeners();
   }
 
   function render(){
@@ -244,13 +273,13 @@
   }
   function priceButton(f,size,price){ const clean=String(price||'').trim(); const disabled=!clean || clean.toUpperCase()==='N/A'; if(disabled) return `<div class="price-unavailable"><strong>N/A</strong><span>${size}</span></div>`; return `<button class="price-add" type="button" data-name="${escapeAttr(f.name)}" data-house="${escapeAttr(f.house||'')}" data-size="${size}" data-price="${escapeAttr(clean)}"><strong>${escapeHtml(clean)}</strong><span>${size}</span><small>Add</small></button>`; }
   function attachCardListeners(){
-    document.querySelectorAll('[data-copy]').forEach(btn=>btn.addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText(btn.dataset.copy); btn.textContent='Copied'; setTimeout(()=>btn.textContent='Copy name',1200); }catch(e){} }));
-    document.querySelectorAll('.price-add').forEach(btn=>btn.addEventListener('click',()=>{ addToCart({type:'sample',name:btn.dataset.name,house:btn.dataset.house,size:btn.dataset.size,price:btn.dataset.price}); btn.classList.add('added'); const old=btn.querySelector('small').textContent; btn.querySelector('small').textContent='Added'; setTimeout(()=>{btn.classList.remove('added'); btn.querySelector('small').textContent=old;},900); }));
+    document.querySelectorAll('[data-copy]').forEach(btn=>{ if(btn.dataset.bound) return; btn.dataset.bound='1'; btn.addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText(btn.dataset.copy); btn.textContent='Copied'; setTimeout(()=>btn.textContent='Copy name',1200); }catch(e){} }); });
+    document.querySelectorAll('.price-add').forEach(btn=>{ if(btn.dataset.bound) return; btn.dataset.bound='1'; btn.addEventListener('click',()=>{ addToCart({type:'sample',name:btn.dataset.name,house:btn.dataset.house,size:btn.dataset.size,price:btn.dataset.price}); btn.classList.add('added'); const old=btn.querySelector('small').textContent; btn.querySelector('small').textContent='Added'; setTimeout(()=>{btn.classList.remove('added'); btn.querySelector('small').textContent=old;},900); }); });
   }
   function renderPacks(){
     const packsGrid=$('packsGrid'); if(!packsGrid || !packs.length) return; packsGrid.innerHTML='';
     packs.forEach(pack=>{ const div=document.createElement('article'); div.className='pack-card'; const itemLines=Array.isArray(pack.items)&&pack.items.length?pack.items.map(i=>`<li>${escapeHtml(i)}</li>`).join(''):'<li>Choose from any available catalogue fragrance</li><li>Add the pack, then list your picks in the order message</li>'; div.innerHTML=`<span class="pack-emoji">${escapeHtml(pack.emojis||'🧪')}</span><h3>${escapeHtml(pack.name)}</h3><p>${escapeHtml(pack.desc||'')}</p><strong>${escapeHtml(pack.price)}</strong><ul>${itemLines}</ul><button class="button pack-add" type="button" data-pack="${escapeAttr(pack.name)}" data-price="${escapeAttr(pack.price)}">Add pack</button>`; packsGrid.appendChild(div); });
-    document.querySelectorAll('.pack-add').forEach(btn=>btn.addEventListener('click',()=>{ addToCart({type:'pack',name:btn.dataset.pack,size:'Pack',price:btn.dataset.price,house:'Choose fragrances in message'}); btn.textContent='Added to cart'; setTimeout(()=>btn.textContent='Add pack',1000); }));
+    document.querySelectorAll('.pack-add').forEach(btn=>{ if(btn.dataset.bound) return; btn.dataset.bound='1'; btn.addEventListener('click',()=>{ addToCart({type:'pack',name:btn.dataset.pack,size:'Pack',price:btn.dataset.price,house:'Choose fragrances in message'}); btn.textContent='Added to cart'; setTimeout(()=>btn.textContent='Add pack',1000); }); });
   }
   function addToCart(item){ cart.push(item); updateCart(); }
   function buildOrderMessage(){
@@ -259,7 +288,7 @@
     return `Hi DeadEnd Scents, I’d like to order these samples:\n\n${lines.join('\n')}\n\nSamples total: ${formatMoney(samples)}\nExpress postage: ${formatMoney(postage)}\nEstimated total: ${formatMoney(total)}\n\nPack selections (if using a flexible pack):\n\nDelivery name/address:`;
   }
   function updateCart(){
-    const cartItems=$('cartItems'), orderText=$('orderText'), cartTotal=$('cartTotal'), sendWhatsappCart=$('sendWhatsappCart'); const postage=Number(settings.expressPostage||10); const samples=cart.reduce((sum,item)=>sum+parseMoney(item.price),0); const total=cart.length?samples+postage:0; cartTotal.textContent=formatMoney(total);
+    const cartItems=$('cartItems'), orderText=$('orderText'), cartTotal=$('cartTotal'), sendWhatsappCart=$('sendWhatsappCart'); const postage=Number(settings.expressPostage||10); const samples=cart.reduce((sum,item)=>sum+parseMoney(item.price),0); const total=cart.length?samples+postage:0; cartTotal.textContent=formatMoney(total); if(floatingCartCount) floatingCartCount.textContent=String(cart.length); if(floatingCartTotal) floatingCartTotal.textContent=formatMoney(total); if(floatingCart) floatingCart.classList.toggle('has-items', cart.length>0);
     if(!cart.length){ cartItems.className='cart-items empty-cart'; cartItems.innerHTML='No samples added yet.'; }
     else { cartItems.className='cart-items'; cartItems.innerHTML=cart.map((item,idx)=>`<div class="cart-line"><div><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(item.size)} · ${escapeHtml(item.price)}${item.house?` · ${escapeHtml(item.house)}`:''}</span></div><button type="button" class="remove-item" data-index="${idx}" aria-label="Remove ${escapeAttr(item.name)}">×</button></div>`).join(''); document.querySelectorAll('.remove-item').forEach(btn=>btn.addEventListener('click',()=>{ cart.splice(Number(btn.dataset.index),1); updateCart(); })); }
     const message=buildOrderMessage(); orderText.value=message; if(sendWhatsappCart){ const base=(settings.whatsAppUrl||'https://wa.me/61434432948').split('?')[0]; sendWhatsappCart.href=`${base}?text=${encodeURIComponent(message)}`; }
@@ -275,5 +304,6 @@
   [search,categoryFilter,collectionFilter,occasionFilter,sortBy].filter(Boolean).forEach(el=>el.addEventListener('input',render));
   $('copyOrder').addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText($('orderText').value); $('copyOrder').textContent='Copied'; setTimeout(()=>$('copyOrder').textContent='Copy order message',1400); }catch(e){ $('orderText').select(); document.execCommand('copy'); } });
   const clearCart=$('clearCart'); if(clearCart) clearCart.addEventListener('click',()=>{ cart.length=0; updateCart(); });
+  if(floatingCart) floatingCart.addEventListener('click',()=>{ const order=$('order'); if(order) order.scrollIntoView({behavior:'smooth',block:'start'}); });
   init();
 })();

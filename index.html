@@ -16,6 +16,7 @@
 </head>
 <body>
   <nav class="top-nav" aria-label="Main navigation">
+    <a href="#featured">Featured</a>
     <a href="#catalogue">Catalogue</a>
     <a href="#packs">Packs</a>
     <a href="#order">Cart / Order</a>
@@ -26,7 +27,7 @@
       <div class="line-art" aria-hidden="true"><span></span><i></i><b></b></div>
       <p class="eyebrow">Original Designer • Original Niche • Middle Eastern • Inspired By</p>
       <h1>DeadEnd Scents</h1>
-      <p class="subhead">Best value premium decants Australia. Discovery sizes in glass vials.</p>
+      <p class="subhead">Premium fragrance decants with simple discovery sizes, fast ordering and Australia-wide express post.</p>
       <div class="contact-row top-contact" aria-label="Contact DeadEnd Scents">
         <a id="heroMessengerLink" class="button primary" href="https://m.me/nickstreet09/" target="_blank" rel="noopener">Messenger</a>
         <a id="heroWhatsappLink" class="button" href="https://wa.me/61434432948?text=Hi%20DeadEnd%20Scents%2C%20I%27d%20like%20to%20order%20some%20samples." target="_blank" rel="noopener">WhatsApp</a>
@@ -75,6 +76,17 @@
       </div>
     </section>
 
+    <section id="featured" class="section featured-section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Featured</p>
+          <h2>Pick of the week</h2>
+        </div>
+        <p class="result-line">A current highlight from the catalogue</p>
+      </div>
+      <div id="featuredGrid" class="featured-grid"><div class="empty">Loading featured fragrance...</div></div>
+    </section>
+
     <section id="catalogue" class="section">
       <div class="section-head">
         <div>
@@ -118,6 +130,12 @@
       </div>
     </section>
   </main>
+
+  <button id="floatingCart" class="floating-cart" type="button" aria-label="View cart">
+    <span>Cart</span>
+    <strong id="floatingCartCount">0</strong>
+    <em id="floatingCartTotal">$0</em>
+  </button>
 
   <footer>DeadEnd Scents · Best value premium decants Australia · Glass vials</footer>
   <script src="app.js"></script>
