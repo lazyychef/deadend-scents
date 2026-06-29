@@ -4,6 +4,8 @@
     if (!location.hash) window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   });
 
+  const GOOGLE_SHEET_CATALOGUE_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS1yQxI1LA53T40lgn1ZZ_9RmljQsDgjYLmlC0xDlNU1dQ8RZQJQ2J-8h5he3nBdA/pub?gid=863343549&single=true&output=csv';
+
   const $ = (id) => document.getElementById(id);
   const grid = $('catalogueGrid');
   const search = $('search');
@@ -29,27 +31,141 @@
     }
   }
 
+  async function getCsv(url){
+    const res = await fetch(url + (url.includes('?') ? '&' : '?') + 'cacheBust=' + Date.now(), { cache: 'no-store' });
+    if(!res.ok) throw new Error(`Google Sheet returned ${res.status}`);
+    return await res.text();
+  }
+
+  function parseCsv(text){
+    const rows = [];
+    let row = [];
+    let cell = '';
+    let quoted = false;
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      const next = text[i + 1];
+      if (ch === '"' && quoted && next === '"') { cell += '"'; i++; continue; }
+      if (ch === '"') { quoted = !quoted; continue; }
+      if (ch === ',' && !quoted) { row.push(cell); cell = ''; continue; }
+      if ((ch === '\n' || ch === '\r') && !quoted) {
+        if (ch === '\r' && next === '\n') i++;
+        row.push(cell); rows.push(row); row = []; cell = '';
+        continue;
+      }
+      cell += ch;
+    }
+    if (cell || row.length) { row.push(cell); rows.push(row); }
+    return rows.filter(r => r.some(c => String(c || '').trim() !== ''));
+  }
+
+  function normaliseHeader(h){ return String(h || '').trim().toLowerCase().replace(/[^a-z0-9]/g, ''); }
+  function get(row, keys){
+    for (const key of keys) {
+      const val = row[normaliseHeader(key)];
+      if (val !== undefined && String(val).trim() !== '') return String(val).trim();
+    }
+    return '';
+  }
+
+  function csvToFragrances(csvText){
+    const rows = parseCsv(csvText);
+    if (!rows.length) return [];
+    const headers = rows[0].map(normaliseHeader);
+    return rows.slice(1).map(cols => {
+      const row = {};
+      headers.forEach((h, idx) => row[h] = cols[idx] || '');
+      const fragrance = get(row, ['Fragrance','Name','Fragrance Name']);
+      const house = get(row, ['House','Fragrance House']);
+      const inspirationHouse = get(row, ['Inspiration House','Inspired House']);
+      const inspirationName = get(row, ['Inspiration','Inspired By']);
+      const inspiration = [inspirationHouse, inspirationName].filter(Boolean).join(' - ') || inspirationName || 'Original';
+      const gender = get(row, ['Gender']);
+      const category = get(row, ['Category','Profile']) || gender || 'Fragrance';
+      const occasion = get(row, ['Occasion']) || get(row, ['Season']) || 'Anytime';
+      const concentration = get(row, ['Concentration']);
+      const desc = get(row, ['Description','Notes']);
+      const notes = [desc, concentration ? `${concentration} concentration.` : '', gender && gender.toLowerCase() === 'women' ? `Women's scent.` : ''].filter(Boolean).join(' ');
+      const p3 = moneyText(get(row, ['3mL','3 ml','3']));
+      const p5 = moneyText(get(row, ['5mL','5 ml','5']));
+      const p10 = moneyText(get(row, ['10mL','10 ml','10']));
+      return {
+        name: fragrance,
+        house,
+        inspiration,
+        inspirationHouse,
+        category,
+        gender,
+        notes,
+        emojis: get(row, ['Emojis','Emoji']) || '✨',
+        p3, p5, p10,
+        fragranticaUrl: get(row, ['Fragrantica','Fragrantica URL','Fragrantica Link']),
+        addedDate: toIsoDate(get(row, ['Added Date','Date Added','Added'])),
+        featured: truthy(get(row, ['Featured'])),
+        staffPick: truthy(get(row, ['Staff Pick','StaffPick','Nick Pick'])),
+        performance: get(row, ['Performance']),
+        projection: get(row, ['Projection']),
+        season: get(row, ['Season']),
+        occasion,
+        stock: get(row, ['Stock']),
+        status: get(row, ['Status']) || 'In stock'
+      };
+    }).filter(f => f.name);
+  }
+
+  function moneyText(value){
+    const v = String(value || '').trim();
+    if (!v) return '';
+    if (/^n\/?a$/i.test(v)) return 'N/A';
+    if (v.includes('$')) return v;
+    const num = v.match(/\d+(?:\.\d{1,2})?/);
+    return num ? `$${num[0].replace(/\.00$/,'')}` : v;
+  }
+
+  function truthy(value){ return ['true','yes','y','1','x'].includes(String(value || '').trim().toLowerCase()); }
+
+  function toIsoDate(value){
+    const raw = String(value || '').trim();
+    if (!raw) return '';
+    if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+    const parts = raw.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/);
+    if (parts) {
+      const d = parts[1].padStart(2,'0');
+      const m = parts[2].padStart(2,'0');
+      const y = parts[3].length === 2 ? '20' + parts[3] : parts[3];
+      return `${y}-${m}-${d}`;
+    }
+    const date = new Date(raw);
+    return Number.isNaN(date.getTime()) ? raw : date.toISOString().slice(0,10);
+  }
+
   async function init(){
-    const [loadedSettings, loadedFragrances, loadedPacks] = await Promise.all([
+    const [loadedSettings, loadedPacks] = await Promise.all([
       getJson('settings.json', {}),
-      getJson('fragrances.json', []),
       getJson('packs.json', [])
     ]);
     settings = loadedSettings || {};
-    data = Array.isArray(loadedFragrances) ? loadedFragrances : [];
     packs = Array.isArray(loadedPacks) ? loadedPacks : [];
-
     window.siteConfig = settings;
 
+    try {
+      const csvText = await getCsv(settings.catalogueCsvUrl || GOOGLE_SHEET_CATALOGUE_CSV);
+      data = csvToFragrances(csvText);
+    } catch (error) {
+      console.error('Could not load Google Sheet CSV', error);
+      if (grid) grid.innerHTML = '<div class="empty">Catalogue could not load from Google Sheets. Check the published CSV link.</div>';
+      return;
+    }
+
     if (!data.length) {
-      console.error('Catalogue data not found. Check fragrances.json');
-      if (grid) grid.innerHTML = '<div class="empty">Catalogue could not load. Check fragrances.json.</div>';
+      console.error('Catalogue data not found in Google Sheet');
+      if (grid) grid.innerHTML = '<div class="empty">Catalogue is empty. Check the Catalogue tab headers in Google Sheets.</div>';
       return;
     }
 
     if (statCount) statCount.textContent = data.length;
-    addOptions(categoryFilter, uniqueValues('category'));
-    addOptions(occasionFilter, uniqueValues('occasion'));
+    resetOptions(categoryFilter, 'All profiles', uniqueValues('category'));
+    resetOptions(occasionFilter, 'All occasions', uniqueMultiValues('occasion'));
     setupContactLinks();
     setupAnalytics();
     renderPacks();
@@ -60,9 +176,15 @@
   function uniqueValues(key){
     return [...new Set(data.map(x => x[key]).filter(Boolean))].sort();
   }
+  function uniqueMultiValues(key){
+    const values = new Set();
+    data.forEach(x => String(x[key] || '').split(',').map(v => v.trim()).filter(Boolean).forEach(v => values.add(v)));
+    return [...values].sort();
+  }
 
-  function addOptions(select, values){
+  function resetOptions(select, allLabel, values){
     if(!select) return;
+    select.innerHTML = `<option value="all">${allLabel}</option>`;
     values.forEach(v => {
       const opt = document.createElement('option');
       opt.value = v;
@@ -71,11 +193,16 @@
     });
   }
 
+  function fieldContains(value, selected){
+    if (selected === 'all') return true;
+    return String(value || '').split(',').map(v => v.trim()).includes(selected) || String(value || '') === selected;
+  }
+
   function match(fragrance){
     const q = search.value.trim().toLowerCase();
-    const combined = [fragrance.name, fragrance.house, fragrance.inspiration, fragrance.category, fragrance.occasion, fragrance.notes, fragrance.emojis].join(' ').toLowerCase();
-    return (categoryFilter.value === 'all' || fragrance.category === categoryFilter.value)
-      && (occasionFilter.value === 'all' || fragrance.occasion === occasionFilter.value)
+    const combined = [fragrance.name, fragrance.house, fragrance.inspiration, fragrance.category, fragrance.occasion, fragrance.season, fragrance.notes, fragrance.emojis, fragrance.gender].join(' ').toLowerCase();
+    return fieldContains(fragrance.category, categoryFilter.value)
+      && fieldContains(fragrance.occasion, occasionFilter.value)
       && (statusFilter.value === 'all' || fragrance.status === statusFilter.value)
       && (!q || combined.includes(q));
   }
@@ -91,6 +218,7 @@
   }
 
   function inspirationHouse(fragrance){
+    if (fragrance.inspirationHouse) return fragrance.inspirationHouse;
     const insp = String(fragrance.inspiration || '').trim();
     if (!insp || insp.toLowerCase() === 'original' || insp.toLowerCase().includes('original creation') || insp.toLowerCase() === 'unique') return '';
     return insp.split(' - ')[0].trim();
@@ -134,14 +262,13 @@
       card.innerHTML = `
         <div class="card-main no-image">
           <div class="card-copy">
-            <div class="card-top"><span class="emoji">${f.emojis || '✨'}</span><span class="badge-row">${isNewArrival(f) ? '<span class="new-badge">New</span>' : ''}<span class="status ${String(f.status).toLowerCase().replace(/\s+/g,'-')}">${f.status || 'In stock'}</span></span></div>
+            <div class="card-top"><span class="emoji">${escapeHtml(f.emojis || '✨')}</span><span class="badge-row">${isNewArrival(f) ? '<span class="new-badge">New</span>' : ''}${f.staffPick ? '<span class="new-badge staff">Pick</span>' : ''}<span class="status ${String(f.status).toLowerCase().replace(/\s+/g,'-')}">${escapeHtml(f.status || 'In stock')}</span></span></div>
             <h3>${escapeHtml(f.name)}</h3>
             <p class="house">${escapeHtml(f.house || '')}</p>
             <p class="inspo">${escapeHtml(f.inspiration || 'Original')}</p>
           </div>
         </div>
         <p class="desc">${escapeHtml(f.notes || '')}</p>
-        <div class="rating-row">${ratingPill('Performance', f.performance)}${ratingPill('Projection', f.projection)}</div>
         <div class="prices compact-prices">
           ${priceButton(f, '3mL', f.p3)}
           ${priceButton(f, '5mL', f.p5)}
@@ -156,11 +283,6 @@
     });
     grid.appendChild(frag);
     attachCardListeners();
-  }
-
-  function ratingPill(label, value){
-    if(!value) return '';
-    return `<span class="rating-pill">${escapeHtml(label)}: ${escapeHtml(value)}</span>`;
   }
 
   function priceButton(f, size, price){
@@ -199,12 +321,9 @@
       const div = document.createElement('article');
       div.className = 'pack-card';
       const itemLines = Array.isArray(pack.items) && pack.items.length
-        ? pack.items.map(i => {
-            const match = data.find(f => f.name === i);
-            return `<li>${escapeHtml(i)}${match ? ` <span class="pack-price">${escapeHtml(match.p3 || '')}</span>` : ''}</li>`;
-          }).join('')
+        ? pack.items.map(i => `<li>${escapeHtml(i)}</li>`).join('')
         : '<li>Choose from any available catalogue fragrance</li><li>Add the pack, then list your picks in the order message</li>';
-      div.innerHTML = `<span class="pack-emoji">${pack.emojis}</span><h3>${escapeHtml(pack.name)}</h3><p>${escapeHtml(pack.desc)}</p><strong>${escapeHtml(pack.price)}</strong><ul>${itemLines}</ul><button class="button pack-add" type="button" data-pack="${escapeAttr(pack.name)}" data-price="${escapeAttr(pack.price)}">Add flexible pack</button>`;
+      div.innerHTML = `<span class="pack-emoji">${escapeHtml(pack.emojis || '🧪')}</span><h3>${escapeHtml(pack.name)}</h3><p>${escapeHtml(pack.desc || '')}</p><strong>${escapeHtml(pack.price)}</strong><ul>${itemLines}</ul><button class="button pack-add" type="button" data-pack="${escapeAttr(pack.name)}" data-price="${escapeAttr(pack.price)}">Add flexible pack</button>`;
       packsGrid.appendChild(div);
     });
     document.querySelectorAll('.pack-add').forEach(btn => btn.addEventListener('click', () => {
@@ -278,7 +397,6 @@
 
   function escapeHtml(value){ return String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
   function escapeAttr(value){ return escapeHtml(value).replace(/`/g, '&#96;'); }
-
 
   function setupAnalytics(){
     if (settings.googleAnalyticsId) {

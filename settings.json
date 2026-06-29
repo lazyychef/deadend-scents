@@ -8,5 +8,6 @@
   "expressPostage": 10,
   "shippingLine": "$10 express postage \u00b7 Australia-wide shipping \u00b7 Glass vials",
   "googleAnalyticsId": "",
-  "microsoftClarityId": ""
+  "microsoftClarityId": "",
+  "catalogueCsvUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vS1yQxI1LA53T40lgn1ZZ_9RmljQsDgjYLmlC0xDlNU1dQ8RZQJQ2J-8h5he3nBdA/pub?gid=863343549&single=true&output=csv"
 }

@@ -1,57 +1,44 @@
-# DeadEnd Scents
+# DeadEnd Scents V15
 
-Static website for the DeadEnd Scents fragrance catalogue.
+This version loads the public catalogue directly from the published Google Sheet CSV.
 
-## Updating fragrances
+## Normal updates
 
-Edit `fragrances.json` only.
+Edit the **Catalogue** tab in Google Sheets. The website will read the latest published CSV on refresh.
 
-To add a new bottle, copy an existing fragrance object, paste it at the top of the list, then update:
+Main columns used by the website:
 
-- `name`
-- `house`
-- `inspiration`
-- `emojis`
-- `p3`, `p5`, `p10`
-- `fragranticaUrl`
-- `category`
-- `occasion`
-- `notes`
-- `addedDate`
+- House
+- Fragrance
+- Inspiration House
+- Inspiration
+- Category
+- Gender
+- Description
+- Emojis
+- 3mL
+- 5mL
+- 10mL
+- Fragrantica
+- Added Date
+- Featured
+- Staff Pick
+- Performance
+- Projection
+- Season
+- Occasion
+- Stock
+- Concentration
+- Status
 
-Example:
+## New arrivals
 
-```json
-{
-  "name": "New Fragrance",
-  "house": "Brand Name",
-  "inspiration": "Original Creation",
-  "status": "In stock",
-  "emojis": "🍋🌲✨",
-  "p3": "$6",
-  "p5": "$10",
-  "p10": "$18",
-  "fragranticaUrl": "https://www.fragrantica.com/...",
-  "category": "Fresh / Clean",
-  "occasion": "Daily / Summer",
-  "notes": "Short scent description.",
-  "addedDate": "2026-06-29"
-}
-```
+Add an **Added Date** in YYYY-MM-DD or DD/MM/YYYY format. New badges show automatically for the number of days set in `settings.json`.
 
-Any fragrance with `addedDate` inside the last 45 days will show as **New** automatically.
+## Settings
 
-## Updating packs
+The Google Sheet URL, contact links, postage and analytics IDs live in `settings.json`.
 
-Edit `packs.json`.
+## Packs
 
-## Updating contact, postage and analytics
-
-Edit `settings.json`.
-
-Optional traffic tracking fields:
-
-- `googleAnalyticsId`
-- `microsoftClarityId`
-
-Leave them blank until you create those accounts.
+Flexible discovery packs live in `packs.json`.
