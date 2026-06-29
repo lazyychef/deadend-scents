@@ -1,17 +1,19 @@
-# DeadEnd Scents V21
+# DeadEnd Scents V22
 
-Polish pass for the Google Sheets powered catalogue.
+V22 user experience polish:
 
-## Included
+- Wider, shorter hero
+- Duplicate hero pills removed
+- Fragrance of the Week section
+- Automatic 20% discount for the featured fragrance
+- Discounted price is applied to cart and WhatsApp order message
 
-- Cleaner typography and card hierarchy
-- Featured fragrance section
-- Floating cart summary
-- Smoother hover/add animations
-- Improved mobile 2/3-column catalogue layout
-- Existing Google Sheet CSV loading retained
-- Existing analytics fields retained in `settings.json`
+## Fragrance of the Week setup
 
-## Normal updates
+In Google Sheets:
 
-Edit the Google Sheet Catalogue tab. The website reads the published CSV URL from `settings.json`.
+1. Set `Featured` to `TRUE` for one fragrance.
+2. Add `Featured Start` with the start date, e.g. `2026-06-30`.
+3. The website applies 20% off for 7 days.
+
+If `Featured Start` is blank, the site will try to use `Added Date`. If both are blank, it will still feature the fragrance, but the discount timing cannot be calculated properly.

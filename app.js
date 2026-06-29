@@ -179,6 +179,8 @@
         fragranticaUrl:get(row,['Fragrantica','Fragrantica URL','Fragrantica Link']),
         addedDate:toIsoDate(get(row,['Added Date','Date Added','Added'])),
         featured:truthy(get(row,['Featured'])),
+        featuredStart:toIsoDate(get(row,['Featured Start','Feature Start','Featured Date','Feature Date','Fragrance of the Week Start'])),
+        featuredNote:get(row,['Featured Note','Feature Note','Promo Note']),
         staffPick:truthy(get(row,['Staff Pick','StaffPick','Nick Pick'])),
         season:get(row,['Season']),
         occasion,
@@ -216,6 +218,39 @@
   }
   function inspirationHouse(f){ if(f.inspirationHouse) return f.inspirationHouse; const insp=String(f.inspiration||'').trim(); if(!insp || insp.toLowerCase()==='original' || insp.toLowerCase().includes('original creation') || insp.toLowerCase()==='unique') return ''; return insp.split(' - ')[0].trim(); }
   function parseMoney(value){ const text=String(value||'').trim(); const matches=[...text.matchAll(/\$\s*(\d+(?:\.\d{1,2})?)/g)]; if(matches.length) return Number(matches[matches.length-1][1]); const plain=text.match(/^(\d+(?:\.\d{1,2})?)$/); return plain?Number(plain[1]):0; }
+
+  function money(value){
+    const rounded = Math.round(Number(value || 0) * 100) / 100;
+    return '$' + (Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(2));
+  }
+  function featuredStart(f){
+    const raw = f.featuredStart || f.featureStart || f.featuredDate || f.addedDate;
+    const date = raw ? new Date(raw) : null;
+    return date && !Number.isNaN(date.getTime()) ? date : null;
+  }
+  function isFeaturedDiscountActive(f){
+    if (!f || !f.featured) return false;
+    const start = featuredStart(f);
+    if (!start) return true;
+    const now = new Date();
+    const diff = now.getTime() - start.getTime();
+    return diff >= 0 && diff < 7 * 24 * 60 * 60 * 1000;
+  }
+  function discountEndsText(f){
+    const start = featuredStart(f);
+    if (!start) return '20% off this featured fragrance';
+    const end = new Date(start.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const left = end.getTime() - Date.now();
+    if (left <= 0) return 'Weekly discount ended';
+    const days = Math.floor(left / (24 * 60 * 60 * 1000));
+    const hours = Math.floor((left % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+    return days > 0 ? `Ends in ${days}d ${hours}h` : `Ends in ${hours}h`;
+  }
+  function discountedPriceText(price, f){
+    const original = parseMoney(price);
+    if (!original || !isFeaturedDiscountActive(f)) return String(price || '').trim();
+    return money(original * 0.8);
+  }
   function firstAvailablePrice(f){ return [f.p3,f.p5,f.p10].map(parseMoney).find(n=>n>0)||0; }
   function newDateValue(f){ const date=f.addedDate?new Date(f.addedDate):null; return date&&!Number.isNaN(date.getTime())?date.getTime():0; }
   function sortFragrances(items){
@@ -228,22 +263,29 @@
     if(!featuredGrid) return;
     const f = data.find(x => x.featured) || data.find(x => x.staffPick) || data.find(isNewArrival) || data[0];
     if(!f){ featuredGrid.innerHTML = '<div class="empty">No featured fragrance available.</div>'; return; }
+    const active = isFeaturedDiscountActive(f);
     const inspirationLine = shouldShowInspiration(f) ? `<p class="featured-inspo">Inspired by <strong>${escapeHtml(f.inspiration)}</strong></p>` : `<p class="featured-inspo">${escapeHtml(f.collection || 'Featured fragrance')}</p>`;
+    const note = f.featuredNote || f.notes || 'This week’s highlighted fragrance.';
     featuredGrid.innerHTML = `
-      <article class="featured-card">
+      <article class="featured-card weekly-card ${active ? 'discount-active' : ''}">
         <div class="featured-main">
           <div class="featured-mark">${escapeHtml(f.emojis || '✨')}</div>
           <div>
-            <div class="featured-label">Featured fragrance</div>
+            <div class="featured-label">Fragrance of the Week</div>
             <h3>${escapeHtml(f.name)}</h3>
             <p class="featured-house">${escapeHtml(f.house || '')}</p>
             <div class="collection-pill ${collectionClass(f.collection)}">${escapeHtml(f.collection || 'Type')}</div>
             ${inspirationLine}
-            <p class="featured-desc">${escapeHtml(f.notes || '')}</p>
+            <p class="featured-desc">${escapeHtml(note)}</p>
           </div>
         </div>
-        <div class="featured-actions">
-          ${priceButton(f,'3mL',f.p3)}${priceButton(f,'5mL',f.p5)}${priceButton(f,'10mL',f.p10)}
+        <div class="weekly-offer">
+          <div class="offer-kicker">${active ? '20% off this week' : 'Featured pick'}</div>
+          <div class="offer-main">${active ? 'Auto-discount applied' : 'Normal pricing'}</div>
+          <div class="offer-ends">${escapeHtml(discountEndsText(f))}</div>
+          <div class="featured-actions">
+            ${priceButton(f,'3mL',f.p3)}${priceButton(f,'5mL',f.p5)}${priceButton(f,'10mL',f.p10)}
+          </div>
         </div>
       </article>`;
     attachCardListeners();
@@ -271,7 +313,15 @@
     });
     grid.appendChild(frag); attachCardListeners();
   }
-  function priceButton(f,size,price){ const clean=String(price||'').trim(); const disabled=!clean || clean.toUpperCase()==='N/A'; if(disabled) return `<div class="price-unavailable"><strong>N/A</strong><span>${size}</span></div>`; return `<button class="price-add" type="button" data-name="${escapeAttr(f.name)}" data-house="${escapeAttr(f.house||'')}" data-size="${size}" data-price="${escapeAttr(clean)}"><strong>${escapeHtml(clean)}</strong><span>${size}</span><small>Add</small></button>`; }
+  function priceButton(f,size,price){
+    const clean=String(price||'').trim();
+    const disabled=!clean || clean.toUpperCase()==='N/A';
+    if(disabled) return `<div class="price-unavailable"><strong>N/A</strong><span>${size}</span></div>`;
+    const discounted = discountedPriceText(clean, f);
+    const active = discounted !== clean;
+    const priceMarkup = active ? `<strong><s>${escapeHtml(clean)}</s> ${escapeHtml(discounted)}</strong>` : `<strong>${escapeHtml(clean)}</strong>`;
+    return `<button class="price-add ${active?'weekly-discount':''}" type="button" data-name="${escapeAttr(f.name)}" data-house="${escapeAttr(f.house||'')}" data-size="${size}" data-price="${escapeAttr(discounted)}" data-original-price="${escapeAttr(clean)}">${priceMarkup}<span>${size}</span><small>${active?'20% off':'Add'}</small></button>`;
+  }
   function attachCardListeners(){
     document.querySelectorAll('[data-copy]').forEach(btn=>{ if(btn.dataset.bound) return; btn.dataset.bound='1'; btn.addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText(btn.dataset.copy); btn.textContent='Copied'; setTimeout(()=>btn.textContent='Copy name',1200); }catch(e){} }); });
     document.querySelectorAll('.price-add').forEach(btn=>{ if(btn.dataset.bound) return; btn.dataset.bound='1'; btn.addEventListener('click',()=>{ addToCart({type:'sample',name:btn.dataset.name,house:btn.dataset.house,size:btn.dataset.size,price:btn.dataset.price}); btn.classList.add('added'); const old=btn.querySelector('small').textContent; btn.querySelector('small').textContent='Added'; setTimeout(()=>{btn.classList.remove('added'); btn.querySelector('small').textContent=old;},900); }); });
