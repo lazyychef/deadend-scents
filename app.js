@@ -8,7 +8,7 @@
   const search = $('search');
   const categoryFilter = $('categoryFilter');
   const occasionFilter = $('occasionFilter');
-  const statusFilter = $('statusFilter');
+  const collectionFilter = $('collectionFilter');
   const sortBy = $('sortBy');
   const resultCount = $('resultCount');
   const statCount = $('stat-count');
@@ -59,6 +59,41 @@
     const date=new Date(raw); return Number.isNaN(date.getTime()) ? raw : date.toISOString().slice(0,10);
   }
 
+  function normaliseCollection(value, house){
+    const raw = String(value || '').trim();
+    if (raw) return raw;
+    const h = String(house || '').toLowerCase();
+    const inspired = ['jalu','bujairami','maison alhambra','french avenue','fragrance world','flavia','palermo','riiffs','riffs','paris corner'];
+    const middleEastern = ['lattafa','ahmed al maghrabi','ahmed al maghribi','rayhaan','swiss arabian','afnan','armaf','assaf','ibraheem alqurashi','junaid','rasasi'];
+    const niche = ['xerjoff','mancera','mfk','maison francis kurkdjian','parfums de marly','amouage','roja','goldfield','penhaligon'];
+    const designer = ['hugo boss','azzaro','issey miyake','giorgio armani','armani','paco rabanne','rabanne','ralph lauren','viktor&rolf','valentino','carolina herrera'];
+    if (inspired.some(x => h.includes(x))) return 'Inspired By';
+    if (middleEastern.some(x => h.includes(x))) return 'Middle Eastern';
+    if (niche.some(x => h.includes(x))) return 'Original Niche';
+    if (designer.some(x => h.includes(x))) return 'Original Designer';
+    return 'Inspired By';
+  }
+
+  function shouldShowInspiration(f){
+    const c = String(f.collection || '').toLowerCase();
+    const insp = String(f.inspiration || '').trim();
+    const clean = insp.toLowerCase();
+    const hasRealInspiration = !!insp && clean !== 'original' && clean !== 'unique' && !clean.includes('original creation');
+    if (!hasRealInspiration) return false;
+    if (c.includes('designer') || c.includes('niche')) return false;
+    if (c.includes('middle')) return true;
+    return c.includes('inspired') || c.includes('dupe') || c.includes('clone');
+  }
+
+  function collectionClass(collection){
+    const c = String(collection || '').toLowerCase();
+    if (c.includes('designer')) return 'designer';
+    if (c.includes('niche')) return 'niche';
+    if (c.includes('middle')) return 'middle';
+    if (c.includes('inspired') || c.includes('dupe') || c.includes('clone')) return 'inspired';
+    return 'other';
+  }
+
   function csvToFragrances(csvText){
     const rows=parseCsv(csvText); if(!rows.length) return [];
     const headers=rows[0].map(cleanHeader);
@@ -70,13 +105,14 @@
       const inspirationName=get(row,['Inspiration','Inspired By']);
       const inspiration=[inspirationHouse,inspirationName].filter(Boolean).join(' - ') || inspirationName || 'Original';
       const gender=get(row,['Gender']);
-      const category=get(row,['Category','Profile']) || gender || 'Fragrance';
+      const collection=normaliseCollection(get(row,['Collection','Category']), house);
+      const category=get(row,['Scent Style','ScentStyle','Profile']) || 'Other';
       const occasion=get(row,['Occasion']) || get(row,['Season']) || 'Anytime';
       const concentration=get(row,['Concentration']);
       const desc=get(row,['Description','Notes']);
       const notes=[desc, concentration ? `${concentration} concentration.` : '', gender && gender.toLowerCase()==='women' ? `Women's scent.` : ''].filter(Boolean).join(' ');
       return {
-        name, house, inspiration, inspirationHouse, category, gender, notes,
+        name, house, inspiration, inspirationHouse, collection, category, gender, notes,
         emojis:get(row,['Emojis','Emoji']) || '✨',
         p3:moneyText(get(row,['3mL','3 ml','3'])),
         p5:moneyText(get(row,['5mL','5 ml','5'])),
@@ -100,7 +136,8 @@
     catch(error){ console.error(error); if(grid) grid.innerHTML='<div class="empty">Catalogue could not load from Google Sheets. Check the published CSV link.</div>'; return; }
     if(!data.length){ if(grid) grid.innerHTML='<div class="empty">Catalogue is empty. Check the Catalogue tab headers.</div>'; return; }
     if(statCount) statCount.textContent=data.length;
-    resetOptions(categoryFilter,'All profiles',uniqueValues('category'));
+    resetOptions(categoryFilter,'All scent styles',uniqueValues('category'));
+    resetOptions(collectionFilter,'All types',uniqueValues('collection'));
     resetOptions(occasionFilter,'All occasions',uniqueMultiValues('occasion'));
     setupContactLinks(); setupAnalytics(); renderPacks(); render(); updateCart();
   }
@@ -111,8 +148,8 @@
   function fieldContains(value, selected){ if(selected==='all') return true; return String(value||'').split(',').map(v=>v.trim()).includes(selected) || String(value||'')===selected; }
   function match(f){
     const q=search.value.trim().toLowerCase();
-    const combined=[f.name,f.house,f.inspiration,f.category,f.occasion,f.season,f.notes,f.emojis,f.gender].join(' ').toLowerCase();
-    return fieldContains(f.category,categoryFilter.value) && fieldContains(f.occasion,occasionFilter.value) && (statusFilter.value==='all'||f.status===statusFilter.value) && (!q || combined.includes(q));
+    const combined=[f.name,f.house,f.inspiration,f.collection,f.category,f.occasion,f.season,f.notes,f.emojis,f.gender].join(' ').toLowerCase();
+    return fieldContains(f.category,categoryFilter.value) && fieldContains(f.collection,collectionFilter.value) && fieldContains(f.occasion,occasionFilter.value) && (!q || combined.includes(q));
   }
   function isNewArrival(f){
     const raw=f.addedDate; if(!raw) return false; const added=new Date(raw); if(Number.isNaN(added.getTime())) return false;
@@ -136,11 +173,12 @@
       const card=document.createElement('article'); card.className=isNewArrival(f)?'card new-card':'card';
       const linkLabel=f.fragranticaUrl && !f.fragranticaUrl.includes('/search/') ? 'Fragrantica page' : 'Fragrantica search';
       card.innerHTML=`
-        <div class="card-top"><span class="emoji">${escapeHtml(f.emojis || '✨')}</span><span class="badge-row">${isNewArrival(f)?'<span class="new-badge">New</span>':''}${f.staffPick?'<span class="new-badge staff">Pick</span>':''}<span class="status ${String(f.status).toLowerCase().replace(/\s+/g,'-')}">${escapeHtml(f.status||'In stock')}</span></span></div>
+        <div class="card-top"><span class="emoji">${escapeHtml(f.emojis || '✨')}</span><span class="badge-row">${isNewArrival(f)?'<span class="new-badge">New</span>':''}${f.staffPick?'<span class="new-badge staff">Pick</span>':''}</span></div>
         <h3>${escapeHtml(f.name)}</h3>
+        <div class="collection-pill ${collectionClass(f.collection)}">${escapeHtml(f.collection || 'Type')}</div>
         <div class="meta-lines">
           <p class="house"><span>House</span>${escapeHtml(f.house || '')}</p>
-          <p class="inspo"><span>Inspired by</span>${escapeHtml(f.inspiration || 'Original')}</p>
+          ${shouldShowInspiration(f) ? `<p class="inspo"><span>Inspired by</span>${escapeHtml(f.inspiration)}</p>` : ''}
         </div>
         <p class="desc">${escapeHtml(f.notes || '')}</p>
         <div class="prices">${priceButton(f,'3mL',f.p3)}${priceButton(f,'5mL',f.p5)}${priceButton(f,'10mL',f.p10)}</div>
@@ -179,7 +217,7 @@
     if(settings.googleAnalyticsId){ const ga=document.createElement('script'); ga.async=true; ga.src=`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(settings.googleAnalyticsId)}`; document.head.appendChild(ga); window.dataLayer=window.dataLayer||[]; function gtag(){dataLayer.push(arguments);} window.gtag=gtag; gtag('js',new Date()); gtag('config',settings.googleAnalyticsId); }
     if(settings.microsoftClarityId){ (function(c,l,a,r,i,t,y){ c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)}; t=l.createElement(r);t.async=1;t.src='https://www.clarity.ms/tag/'+i; y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y); })(window,document,'clarity','script',settings.microsoftClarityId); }
   }
-  [search,categoryFilter,occasionFilter,statusFilter,sortBy].filter(Boolean).forEach(el=>el.addEventListener('input',render));
+  [search,categoryFilter,collectionFilter,occasionFilter,sortBy].filter(Boolean).forEach(el=>el.addEventListener('input',render));
   $('copyOrder').addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText($('orderText').value); $('copyOrder').textContent='Copied'; setTimeout(()=>$('copyOrder').textContent='Copy order message',1400); }catch(e){ $('orderText').select(); document.execCommand('copy'); } });
   const clearCart=$('clearCart'); if(clearCart) clearCart.addEventListener('click',()=>{ cart.length=0; updateCart(); });
   init();

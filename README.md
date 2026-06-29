@@ -1,10 +1,16 @@
-# DeadEnd Scents V16
+# DeadEnd Scents V19
 
-This version loads the catalogue directly from the published Google Sheet CSV.
+Google Sheet powered catalogue.
 
-Normal updates happen in the Google Sheet Catalogue tab. Keep the core header names unchanged, but columns can be moved around.
+Changes in V19:
+- Uses the four Type values from the Google Sheet Category column:
+  - 🟦 Designer Original
+  - 🟪 Niche Original
+  - 🟨 Middle Eastern
+  - 🟩 Inspired By
+- Removes the confusing inspiration line for Designer Original and Niche Original.
+- Keeps inspiration visible for Middle Eastern when inspiration is filled in.
+- Keeps inspiration visible for Inspired By.
+- Filter label changed from Collection to Type.
 
-The website uses:
-- settings.json for contact links, postage and analytics IDs
-- packs.json for discovery packs
-- the published Google Sheet CSV for the live catalogue
+Normal updates happen in the Google Sheet Catalogue tab.
