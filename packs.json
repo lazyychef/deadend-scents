@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Choose Any 3",
+    "emojis": "🎯🧪✨",
+    "price": "3 x 3mL — $22",
+    "items": [],
+    "desc": "Pick any 3 fragrances from the catalogue. Good starter option if you want variety. Add this pack to cart, then list your 3 choices in the order message."
+  },
+  {
+    "name": "Choose Any 5",
+    "emojis": "🔥🧪📦",
+    "price": "5 x 3mL — $35",
+    "items": [],
+    "desc": "Pick any 5 fragrances from the catalogue. Best balance of value and variety. Add this pack to cart, then list your 5 choices in the order message."
+  },
+  {
+    "name": "Choose Any 8",
+    "emojis": "💎🧪🚀",
+    "price": "8 x 3mL — $55",
+    "items": [],
+    "desc": "Pick any 8 fragrances from the catalogue. Best value discovery option. Add this pack to cart, then list your 8 choices in the order message."
+  }
+]

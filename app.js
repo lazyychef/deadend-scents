@@ -1,8 +1,9 @@
-(function(){
+(async function(){
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   window.addEventListener('load', () => {
     if (!location.hash) window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   });
+
   const $ = (id) => document.getElementById(id);
   const grid = $('catalogueGrid');
   const search = $('search');
@@ -12,22 +13,56 @@
   const sortBy = $('sortBy');
   const resultCount = $('resultCount');
   const statCount = $('stat-count');
-  const data = Array.isArray(window.fragrances) ? window.fragrances : (typeof fragrances !== 'undefined' ? fragrances : []);
   const cart = [];
-  const EXPRESS_POSTAGE = 10;
+  let data = [];
+  let packs = [];
+  let settings = {};
 
-  if (!data.length) {
-    console.error('Catalogue data not found. Check data.js');
-    return;
+  async function getJson(file, fallback){
+    try{
+      const res = await fetch(file, { cache: 'no-store' });
+      if(!res.ok) throw new Error(`${file} returned ${res.status}`);
+      return await res.json();
+    } catch (error){
+      console.error(`Could not load ${file}`, error);
+      return fallback;
+    }
   }
 
-  statCount.textContent = data.length;
+  async function init(){
+    const [loadedSettings, loadedFragrances, loadedPacks] = await Promise.all([
+      getJson('settings.json', {}),
+      getJson('fragrances.json', []),
+      getJson('packs.json', [])
+    ]);
+    settings = loadedSettings || {};
+    data = Array.isArray(loadedFragrances) ? loadedFragrances : [];
+    packs = Array.isArray(loadedPacks) ? loadedPacks : [];
+
+    window.siteConfig = settings;
+
+    if (!data.length) {
+      console.error('Catalogue data not found. Check fragrances.json');
+      if (grid) grid.innerHTML = '<div class="empty">Catalogue could not load. Check fragrances.json.</div>';
+      return;
+    }
+
+    if (statCount) statCount.textContent = data.length;
+    addOptions(categoryFilter, uniqueValues('category'));
+    addOptions(occasionFilter, uniqueValues('occasion'));
+    setupContactLinks();
+    setupAnalytics();
+    renderPacks();
+    render();
+    updateCart();
+  }
 
   function uniqueValues(key){
     return [...new Set(data.map(x => x[key]).filter(Boolean))].sort();
   }
 
   function addOptions(select, values){
+    if(!select) return;
     values.forEach(v => {
       const opt = document.createElement('option');
       opt.value = v;
@@ -35,9 +70,6 @@
       select.appendChild(opt);
     });
   }
-
-  addOptions(categoryFilter, uniqueValues('category'));
-  addOptions(occasionFilter, uniqueValues('occasion'));
 
   function match(fragrance){
     const q = search.value.trim().toLowerCase();
@@ -48,6 +80,15 @@
       && (!q || combined.includes(q));
   }
 
+  function isNewArrival(fragrance){
+    if (fragrance.newArrival === true || fragrance.isNew === true || fragrance.new === true) return true;
+    const raw = fragrance.addedDate || fragrance.added || fragrance.dateAdded;
+    if (!raw) return false;
+    const added = new Date(raw);
+    if (Number.isNaN(added.getTime())) return false;
+    const days = Number(settings.newArrivalDays || 45);
+    return (Date.now() - added.getTime()) <= days * 24 * 60 * 60 * 1000;
+  }
 
   function inspirationHouse(fragrance){
     const insp = String(fragrance.inspiration || '').trim();
@@ -67,7 +108,14 @@
     if (mode === 'inspirationHouse') return byText(inspirationHouse);
     if (mode === 'priceLow') return sorted.sort((a,b) => firstAvailablePrice(a) - firstAvailablePrice(b) || String(a.name || '').localeCompare(String(b.name || ''), undefined, { sensitivity: 'base' }));
     if (mode === 'priceHigh') return sorted.sort((a,b) => firstAvailablePrice(b) - firstAvailablePrice(a) || String(a.name || '').localeCompare(String(b.name || ''), undefined, { sensitivity: 'base' }));
+    if (mode === 'newest') return sorted.sort((a,b) => newDateValue(b) - newDateValue(a) || String(a.name || '').localeCompare(String(b.name || ''), undefined, { sensitivity: 'base' }));
     return byText(x => x.name);
+  }
+
+  function newDateValue(fragrance){
+    const raw = fragrance.addedDate || fragrance.added || fragrance.dateAdded;
+    const date = raw ? new Date(raw) : null;
+    return date && !Number.isNaN(date.getTime()) ? date.getTime() : 0;
   }
 
   function render(){
@@ -81,18 +129,19 @@
     const frag = document.createDocumentFragment();
     filtered.forEach(f => {
       const card = document.createElement('article');
-      card.className = 'card';
+      card.className = isNewArrival(f) ? 'card new-card' : 'card';
       const linkLabel = f.fragranticaUrl && !f.fragranticaUrl.includes('/search/') ? 'Fragrantica page' : 'Fragrantica search';
       card.innerHTML = `
         <div class="card-main no-image">
           <div class="card-copy">
-            <div class="card-top"><span class="emoji">${f.emojis || '✨'}</span><span class="status ${String(f.status).toLowerCase().replace(/\s+/g,'-')}">${f.status || 'In stock'}</span></div>
+            <div class="card-top"><span class="emoji">${f.emojis || '✨'}</span><span class="badge-row">${isNewArrival(f) ? '<span class="new-badge">New</span>' : ''}<span class="status ${String(f.status).toLowerCase().replace(/\s+/g,'-')}">${f.status || 'In stock'}</span></span></div>
             <h3>${escapeHtml(f.name)}</h3>
             <p class="house">${escapeHtml(f.house || '')}</p>
             <p class="inspo">${escapeHtml(f.inspiration || 'Original')}</p>
           </div>
         </div>
         <p class="desc">${escapeHtml(f.notes || '')}</p>
+        <div class="rating-row">${ratingPill('Performance', f.performance)}${ratingPill('Projection', f.projection)}</div>
         <div class="prices compact-prices">
           ${priceButton(f, '3mL', f.p3)}
           ${priceButton(f, '5mL', f.p5)}
@@ -107,6 +156,11 @@
     });
     grid.appendChild(frag);
     attachCardListeners();
+  }
+
+  function ratingPill(label, value){
+    if(!value) return '';
+    return `<span class="rating-pill">${escapeHtml(label)}: ${escapeHtml(value)}</span>`;
   }
 
   function priceButton(f, size, price){
@@ -139,30 +193,30 @@
 
   function renderPacks(){
     const packsGrid = $('packsGrid');
-    const packData = Array.isArray(window.packs) ? window.packs : (typeof packs !== 'undefined' ? packs : []);
-    if (!Array.isArray(packData) || !packData.length) return;
+    if (!packsGrid || !Array.isArray(packs) || !packs.length) return;
     packsGrid.innerHTML = '';
-    packData.forEach(pack => {
+    packs.forEach(pack => {
       const div = document.createElement('article');
       div.className = 'pack-card';
-      const itemLines = pack.items.map(i => {
-        const match = data.find(f => f.name === i);
-        return `<li>${escapeHtml(i)}${match ? ` <span class="pack-price">${escapeHtml(match.p3 || '')}</span>` : ''}</li>`;
-      }).join('');
-      div.innerHTML = `<span class="pack-emoji">${pack.emojis}</span><h3>${escapeHtml(pack.name)}</h3><p>${escapeHtml(pack.desc)}</p><strong>${escapeHtml(pack.price)}</strong><ul>${itemLines}</ul><button class="button pack-add" type="button" data-pack="${escapeAttr(pack.name)}" data-price="${escapeAttr(pack.price)}">Add pack to cart</button>`;
+      const itemLines = Array.isArray(pack.items) && pack.items.length
+        ? pack.items.map(i => {
+            const match = data.find(f => f.name === i);
+            return `<li>${escapeHtml(i)}${match ? ` <span class="pack-price">${escapeHtml(match.p3 || '')}</span>` : ''}</li>`;
+          }).join('')
+        : '<li>Choose from any available catalogue fragrance</li><li>Add the pack, then list your picks in the order message</li>';
+      div.innerHTML = `<span class="pack-emoji">${pack.emojis}</span><h3>${escapeHtml(pack.name)}</h3><p>${escapeHtml(pack.desc)}</p><strong>${escapeHtml(pack.price)}</strong><ul>${itemLines}</ul><button class="button pack-add" type="button" data-pack="${escapeAttr(pack.name)}" data-price="${escapeAttr(pack.price)}">Add flexible pack</button>`;
       packsGrid.appendChild(div);
     });
     document.querySelectorAll('.pack-add').forEach(btn => btn.addEventListener('click', () => {
-      addToCart({ type:'pack', name:btn.dataset.pack, size:'Pack', price:btn.dataset.price, house:'' });
+      addToCart({ type:'pack', name:btn.dataset.pack, size:'Flexible Pack', price:btn.dataset.price, house:'Choose fragrances in message' });
       btn.textContent = 'Added to cart';
-      setTimeout(()=>btn.textContent='Add pack to cart', 1000);
+      setTimeout(()=>btn.textContent='Add flexible pack', 1000);
     }));
   }
 
   function addToCart(item){
     cart.push(item);
     updateCart();
-    // Do not auto-scroll after adding items; keep the customer browsing.
   }
 
   function parseMoney(value){
@@ -174,11 +228,14 @@
   }
 
   function buildOrderMessage(){
+    const postage = Number(settings.expressPostage || 10);
     if (!cart.length) {
-      return 'Hi DeadEnd Scents, I’d like to order some samples:\n\nNo samples added yet.\n\nPostage: $10 express postage Australia wide\nPackaging: glass vials\n\nDelivery name/address:';
+      return `Hi DeadEnd Scents, I’d like to order some samples:\n\nNo samples added yet.\n\nPostage: $${postage} express postage Australia wide\nPackaging: glass vials\n\nDelivery name/address:`;
     }
     const lines = cart.map((item, idx) => `${idx + 1}. ${item.name}${item.house ? ' - ' + item.house : ''} — ${item.size} (${item.price})`);
-    return `Hi DeadEnd Scents, I’d like to order these samples:\n\n${lines.join('\n')}\n\nEstimated total: ${formatMoney(cart.reduce((sum, item) => sum + parseMoney(item.price), 0))}\n\nDelivery area:`;
+    const samplesTotal = cart.reduce((sum, item) => sum + parseMoney(item.price), 0);
+    const total = samplesTotal + postage;
+    return `Hi DeadEnd Scents, I’d like to order these samples:\n\n${lines.join('\n')}\n\nSamples total: ${formatMoney(samplesTotal)}\nExpress postage: ${formatMoney(postage)}\nEstimated total: ${formatMoney(total)}\n\nPack selections (if using a flexible pack):\n\nDelivery name/address:`;
   }
 
   function updateCart(){
@@ -186,9 +243,9 @@
     const orderText = $('orderText');
     const cartTotal = $('cartTotal');
     const sendWhatsappCart = $('sendWhatsappCart');
-    const cfg = window.siteConfig || {};
+    const postage = Number(settings.expressPostage || 10);
     const samplesTotal = cart.reduce((sum, item) => sum + parseMoney(item.price), 0);
-    const total = cart.length ? samplesTotal + EXPRESS_POSTAGE : 0;
+    const total = cart.length ? samplesTotal + postage : 0;
 
     cartTotal.textContent = formatMoney(total);
     if (!cart.length) {
@@ -210,7 +267,7 @@
     const message = buildOrderMessage();
     orderText.value = message;
     if (sendWhatsappCart) {
-      const base = (cfg.whatsAppUrl || 'https://wa.me/61434432948').split('?')[0];
+      const base = (settings.whatsAppUrl || 'https://wa.me/61434432948').split('?')[0];
       sendWhatsappCart.href = `${base}?text=${encodeURIComponent(message)}`;
     }
   }
@@ -222,11 +279,32 @@
   function escapeHtml(value){ return String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
   function escapeAttr(value){ return escapeHtml(value).replace(/`/g, '&#96;'); }
 
+
+  function setupAnalytics(){
+    if (settings.googleAnalyticsId) {
+      const ga = document.createElement('script');
+      ga.async = true;
+      ga.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(settings.googleAnalyticsId)}`;
+      document.head.appendChild(ga);
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){ dataLayer.push(arguments); }
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', settings.googleAnalyticsId);
+    }
+    if (settings.microsoftClarityId) {
+      (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src='https://www.clarity.ms/tag/'+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, 'clarity', 'script', settings.microsoftClarityId);
+    }
+  }
+
   function setupContactLinks(){
-    const cfg = window.siteConfig || {};
-    ['messengerLink','heroMessengerLink'].forEach(id => { const el = $(id); if (el && cfg.facebookMessengerUrl) el.href = cfg.facebookMessengerUrl; });
-    ['whatsappLink','heroWhatsappLink'].forEach(id => { const el = $(id); if (el && cfg.whatsAppUrl) el.href = cfg.whatsAppUrl; });
-    ['instagramLink','heroInstagramLink'].forEach(id => { const el = $(id); if (el && cfg.instagramUrl) el.href = cfg.instagramUrl; });
+    ['messengerLink','heroMessengerLink'].forEach(id => { const el = $(id); if (el && settings.facebookMessengerUrl) el.href = settings.facebookMessengerUrl; });
+    ['whatsappLink','heroWhatsappLink'].forEach(id => { const el = $(id); if (el && settings.whatsAppUrl) el.href = settings.whatsAppUrl; });
+    ['instagramLink','heroInstagramLink'].forEach(id => { const el = $(id); if (el && settings.instagramUrl) el.href = settings.instagramUrl; });
   }
 
   [search, categoryFilter, occasionFilter, statusFilter, sortBy].filter(Boolean).forEach(el => el.addEventListener('input', render));
@@ -236,5 +314,6 @@
   });
   const clearCart = $('clearCart');
   if (clearCart) clearCart.addEventListener('click', () => { cart.length = 0; updateCart(); });
-  setupContactLinks(); renderPacks(); render(); updateCart();
+
+  init();
 })();
