@@ -4,20 +4,48 @@
     "emojis": "🎯🧪✨",
     "price": "3 x 3mL — $22",
     "items": [],
-    "desc": "Pick any 3 fragrances from the catalogue. Good starter option if you want variety. Add this pack to cart, then list your 3 choices in the order message."
+    "desc": "Pick any 3 fragrances from the catalogue. Add this pack to cart, then list your choices in the order message."
   },
   {
     "name": "Choose Any 5",
     "emojis": "🔥🧪📦",
     "price": "5 x 3mL — $35",
     "items": [],
-    "desc": "Pick any 5 fragrances from the catalogue. Best balance of value and variety. Add this pack to cart, then list your 5 choices in the order message."
+    "desc": "Pick any 5 fragrances from the catalogue. Best balance of value and variety."
   },
   {
     "name": "Choose Any 8",
     "emojis": "💎🧪🚀",
     "price": "8 x 3mL — $55",
     "items": [],
-    "desc": "Pick any 8 fragrances from the catalogue. Best value discovery option. Add this pack to cart, then list your 8 choices in the order message."
+    "desc": "Pick any 8 fragrances from the catalogue. Best value discovery option."
+  },
+  {
+    "name": "Tobacco Pack",
+    "emojis": "🚬🥃🔥",
+    "price": "5 x 3mL — $35",
+    "items": ["Cinder Kiss", "Casanova", "Cuban Tobacco", "Rifaqaat", "Incense 01"],
+    "desc": "Warm tobacco, boozy and smoky scents. Swap options if needed."
+  },
+  {
+    "name": "Summer Pack",
+    "emojis": "☀️🍋🌊",
+    "price": "5 x 3mL — $35",
+    "items": ["SANAYA", "Kaaf", "Supremacy in Heaven", "Opulent Dubai", "Fusion d'Issey Extrême"],
+    "desc": "Fresh, citrus, aquatic and warm-weather options."
+  },
+  {
+    "name": "Office Collection",
+    "emojis": "💼🧼🌲",
+    "price": "5 x 3mL — $35",
+    "items": ["Seasons Drift", "Boss Bottled Parfum", "Nirvana", "Teas Me", "Moonstone Bleu"],
+    "desc": "Clean, polished and easy daily wear."
+  },
+  {
+    "name": "Date Night Pack",
+    "emojis": "🌙🔥🥃",
+    "price": "5 x 3mL — $35",
+    "items": ["XJ 1861 Naxos", "Rifaqaat", "Boss Bottled Absolu Parfum", "Spicebomb Infrared EDP", "9PM - Night Out"],
+    "desc": "Sweet, warm, spicy and dressed-up options."
   }
 ]

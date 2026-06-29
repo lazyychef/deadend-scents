@@ -1,13 +1,13 @@
 {
+  "businessName": "DeadEnd Scents",
+  "tagline": "Best value premium decants Australia",
+  "catalogueCsvUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vS1yQxI1LA53T40lgn1ZZ_9RmljQsDgjYLmlC0xDlNU1dQ8RZQJQ2J-8h5he3nBdA/pub?gid=863343549&single=true&output=csv",
   "facebookMessengerUrl": "https://m.me/nickstreet09/",
   "whatsAppUrl": "https://wa.me/61434432948?text=Hi%20DeadEnd%20Scents%2C%20I%27d%20like%20to%20order%20some%20samples.",
   "instagramUrl": "https://instagram.com/deadendscents",
-  "businessName": "DeadEnd Scents",
-  "newArrivalDays": 45,
-  "tagline": "Best value premium decants Australia",
   "expressPostage": 10,
-  "shippingLine": "$10 express postage \u00b7 Australia-wide shipping \u00b7 Glass vials",
+  "shippingLine": "$10 express postage · Australia-wide shipping · Glass vials",
+  "newArrivalDays": 45,
   "googleAnalyticsId": "",
-  "microsoftClarityId": "",
-  "catalogueCsvUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vS1yQxI1LA53T40lgn1ZZ_9RmljQsDgjYLmlC0xDlNU1dQ8RZQJQ2J-8h5he3nBdA/pub?gid=863343549&single=true&output=csv"
+  "microsoftClarityId": ""
 }

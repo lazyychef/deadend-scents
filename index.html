@@ -1,51 +1,32 @@
 <!doctype html>
-<html lang="en-AU">
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>DeadEnd Scents | Fragrance Decants Australia</title>
-  <meta name="description" content="DeadEnd Scents offers designer, niche and Middle Eastern fragrance decants in Australia. Glass vials, $10 express postage and Australia-wide shipping." />
-  <meta name="keywords" content="fragrance decants Australia, perfume samples Australia, niche fragrance samples, designer fragrance decants, Middle Eastern fragrances, DeadEnd Scents" />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://lazyychef.github.io/deadend-scents/" />
-  <meta property="og:title" content="DeadEnd Scents | Fragrance Decants Australia" />
-  <meta property="og:description" content="Designer, niche and Middle Eastern fragrance decants. Search by scent, occasion, season and price." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://lazyychef.github.io/deadend-scents/" />
-  <meta name="theme-color" content="#18352A" />
-  <link rel="stylesheet" href="styles.css" />
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"Store",
-    "name":"DeadEnd Scents",
-    "description":"Fragrance decants and discovery sample packs in Australia.",
-    "url":"https://lazyychef.github.io/deadend-scents/",
-    "areaServed":"Australia"
-  }
-  </script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DeadEnd Scents | Premium Fragrance Decants Australia</title>
+  <meta name="description" content="DeadEnd Scents offers designer, niche, Middle Eastern and inspired-by fragrance decants in Australia. Glass vials, $10 express postage and Australia-wide shipping.">
+  <meta name="keywords" content="fragrance decants Australia, perfume samples Australia, cologne samples, niche fragrance decants, designer fragrance samples, inspired by fragrance decants, DeadEnd Scents">
+  <link rel="canonical" href="https://lazyychef.github.io/deadend-scents/">
+  <meta property="og:title" content="DeadEnd Scents | Best Value Premium Decants Australia">
+  <meta property="og:description" content="Designer, niche, Middle Eastern and inspired-by discovery sizes in glass vials.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://lazyychef.github.io/deadend-scents/">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <nav class="top-nav" aria-label="Main navigation">
+    <a href="#catalogue">Catalogue</a>
+    <a href="#packs">Packs</a>
+    <a href="#order">Cart / Order</a>
+  </nav>
+
   <header class="hero">
-    <nav class="nav">
-      <a href="#catalogue">Catalogue</a>
-      <a href="#packs">Packs</a>
-      <a href="#order">Cart / Order</a>
-    </nav>
-    <div class="hero-inner">
-      <svg class="line-graphic" viewBox="0 0 260 72" role="img" aria-label="DeadEnd Scents line graphic">
-        <path d="M18 54 C50 18, 92 18, 124 52 S198 86, 242 32" />
-        <path d="M55 50 L72 26 L88 50 Z" />
-        <path d="M166 48 C170 32, 190 32, 194 48 C198 63, 162 63, 166 48Z" />
-        <circle cx="217" cy="31" r="8" />
-      </svg>
-      <p class="eyebrow">Designer • Niche • Middle Eastern</p>
+    <div class="hero-card">
+      <div class="line-art" aria-hidden="true"><span></span><i></i><b></b></div>
+      <p class="eyebrow">Designer • Niche • Middle Eastern • Inspired by / Dupes</p>
       <h1>DeadEnd Scents</h1>
-      <p class="subhead">Best value premium decants Australia. Designer, niche and Middle Eastern discovery sizes in glass vials.</p>
-      <div class="hero-actions">
-        <a class="button primary" href="#catalogue">Browse samples</a>
-        <a class="button" href="#order">Order now</a>
-      </div>
+      <p class="subhead">Best value premium decants Australia. Discovery sizes in glass vials.</p>
       <div class="contact-row top-contact" aria-label="Contact DeadEnd Scents">
         <a id="heroMessengerLink" class="button primary" href="https://m.me/nickstreet09/" target="_blank" rel="noopener">Messenger</a>
         <a id="heroWhatsappLink" class="button" href="https://wa.me/61434432948?text=Hi%20DeadEnd%20Scents%2C%20I%27d%20like%20to%20order%20some%20samples." target="_blank" rel="noopener">WhatsApp</a>
@@ -55,56 +36,63 @@
       <div class="stats">
         <span><strong id="stat-count">0</strong> fragrances</span>
         <span>3mL · 5mL · 10mL</span>
-        <span>$10 express post</span><span>Glass vials</span>
+        <span>$10 express post</span>
+        <span>Glass vials</span>
       </div>
     </div>
   </header>
 
   <main>
-    <section class="panel sticky-search" aria-label="Catalogue controls">
-      <div class="control-wide">
-        <label for="search">Search</label>
-        <input id="search" type="search" placeholder="Try vanilla, apple, tobacco, summer, Naxos…" />
-      </div>
-      <div>
-        <label for="categoryFilter">Profile</label>
-        <select id="categoryFilter"><option value="all">All profiles</option></select>
-      </div>
-      <div>
-        <label for="occasionFilter">Occasion</label>
-        <select id="occasionFilter"><option value="all">All occasions</option></select>
-      </div>
-      <div>
-        <label for="statusFilter">Status</label>
-        <select id="statusFilter"><option value="all">All stock</option><option>In stock</option><option>Ordered</option></select>
-      </div>
-      <div>
-        <label for="sortBy">Sort by</label>
-        <select id="sortBy">
-          <option value="alphabetical">Alphabetical</option>
-          <option value="house">House</option>
-          <option value="inspirationHouse">Inspiration house</option>
-          <option value="priceLow">Price: low to high</option>
-          <option value="priceHigh">Price: high to low</option>
-          <option value="newest">Newest added</option>
-        </select>
+    <section class="controls-wrap" aria-label="Search and filters">
+      <div class="panel">
+        <label class="search-label">
+          <span>Search</span>
+          <input id="search" type="search" placeholder="Try vanilla, apple, tobacco, summer, Naxos...">
+        </label>
+        <label>
+          <span>Profile</span>
+          <select id="categoryFilter"><option value="all">All profiles</option></select>
+        </label>
+        <label>
+          <span>Occasion</span>
+          <select id="occasionFilter"><option value="all">All occasions</option></select>
+        </label>
+        <label>
+          <span>Status</span>
+          <select id="statusFilter"><option value="all">All stock</option><option>In stock</option><option>Ordered</option><option>Low stock</option><option>Sold out</option></select>
+        </label>
+        <label>
+          <span>Sort by</span>
+          <select id="sortBy">
+            <option value="newest">Newest added</option>
+            <option value="alphabetical">Alphabetical</option>
+            <option value="house">House</option>
+            <option value="inspirationHouse">Inspiration house</option>
+            <option value="priceLow">Price: low to high</option>
+            <option value="priceHigh">Price: high to low</option>
+          </select>
+        </label>
       </div>
     </section>
 
     <section id="catalogue" class="section">
       <div class="section-head">
-        <p class="eyebrow">Catalogue</p>
-        <h2>Fragrance samples</h2>
-        <p><span id="resultCount">0</span> matching samples</p>
+        <div>
+          <p class="eyebrow">Catalogue</p>
+          <h2>Fragrance samples</h2>
+        </div>
+        <p class="result-line"><span id="resultCount">0</span> matching samples</p>
       </div>
-      <div id="catalogueGrid" class="grid"></div>
+      <div id="catalogueGrid" class="grid"><div class="empty">Loading catalogue from Google Sheets...</div></div>
     </section>
 
     <section id="packs" class="section">
       <div class="section-head">
-        <p class="eyebrow">Discovery packs</p>
-        <h2>Easy starter sets</h2>
-        <p>Flexible discovery packs. Choose your own fragrances from the catalogue.</p>
+        <div>
+          <p class="eyebrow">Discovery Packs</p>
+          <h2>Build your set</h2>
+        </div>
+        <p class="result-line">Flexible 3, 5 and 8 packs</p>
       </div>
       <div id="packsGrid" class="packs-grid"></div>
     </section>
@@ -114,34 +102,24 @@
         <p class="eyebrow">Cart / Order</p>
         <h2>Your sample list</h2>
         <p>Tap a size/price on any fragrance to add it here. $10 express postage is added to orders. Shipping Australia wide in glass vials.</p>
-
         <div id="cartItems" class="cart-items empty-cart">No samples added yet.</div>
         <div class="shipping-summary"><span>Express postage</span><strong>$10</strong></div>
         <div class="cart-total"><span>Estimated total</span><strong id="cartTotal">$0</strong></div>
-
         <div class="contact-row cart-actions">
-          <a id="sendWhatsappCart" class="button primary" href="https://wa.me/61434432948?text=Hi%20DeadEnd%20Scents%2C%20I%27d%20like%20to%20order%20some%20samples." target="_blank" rel="noopener">Send WhatsApp order</a>
+          <a id="sendWhatsappCart" class="button primary" href="https://wa.me/61434432948" target="_blank" rel="noopener">Send WhatsApp order</a>
           <a id="messengerLink" class="button" href="https://m.me/nickstreet09/" target="_blank" rel="noopener">Open Messenger</a>
           <a id="instagramLink" class="button" href="https://instagram.com/deadendscents" target="_blank" rel="noopener">Instagram</a>
         </div>
-
-        <textarea id="orderText" readonly>Hi DeadEnd Scents, I’d like to order some samples:
-
-No samples added yet.
-
-Delivery area:</textarea>
+        <textarea id="orderText" readonly>Hi DeadEnd Scents, I’d like to order some samples:</textarea>
         <div class="contact-row cart-actions">
-          <button id="copyOrder" class="button">Copy order message</button>
-          <button id="clearCart" class="button danger">Clear cart</button>
+          <button id="copyOrder" class="button" type="button">Copy order message</button>
+          <button id="clearCart" class="button danger" type="button">Clear cart</button>
         </div>
       </div>
     </section>
   </main>
 
-  <footer>
-    <p>DeadEnd Scents · Glass fragrance vials · $10 express postage Australia wide</p>
-  </footer>
-
+  <footer>DeadEnd Scents · Best value premium decants Australia · Glass vials</footer>
   <script src="app.js"></script>
 </body>
 </html>
