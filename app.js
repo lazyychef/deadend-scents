@@ -23,9 +23,64 @@
   }
 
   async function getCsv(url){
-    const res = await fetch(url + (url.includes('?') ? '&' : '?') + 'cacheBust=' + Date.now(), { cache: 'no-store' });
-    if(!res.ok) throw new Error('Google Sheet returned ' + res.status);
-    return await res.text();
+    const noCacheUrl = url + (url.includes('?') ? '&' : '?') + 'cacheBust=' + Date.now();
+    try {
+      const res = await fetch(noCacheUrl, { cache: 'no-store', redirect: 'follow' });
+      if(!res.ok) throw new Error('Google Sheet returned ' + res.status);
+      const text = await res.text();
+      if (text && text.trim()) return text;
+      throw new Error('Google Sheet returned an empty CSV');
+    } catch (fetchError) {
+      console.warn('CSV fetch failed, trying Google Sheets JSONP fallback', fetchError);
+      return await getCsvViaGviz(url);
+    }
+  }
+
+  function getCsvViaGviz(url){
+    return new Promise((resolve, reject) => {
+      const match = url.match(/\/d\/e\/([^/]+)\/pub/);
+      const gidMatch = url.match(/[?&]gid=([^&]+)/);
+      if (!match || !gidMatch) return reject(new Error('Could not read published Google Sheet ID or gid from settings.json'));
+      const sheetId = match[1];
+      const gid = gidMatch[1];
+      const callbackName = '__deadendSheetCallback_' + Date.now();
+      const script = document.createElement('script');
+      const timeout = setTimeout(() => {
+        cleanup();
+        reject(new Error('Google Sheets JSONP fallback timed out'));
+      }, 12000);
+      function cleanup(){
+        clearTimeout(timeout);
+        if (script.parentNode) script.parentNode.removeChild(script);
+        try { delete window[callbackName]; } catch(e) { window[callbackName] = undefined; }
+      }
+      window[callbackName] = (response) => {
+        try {
+          const table = response && response.table;
+          if (!table || !Array.isArray(table.cols) || !Array.isArray(table.rows)) throw new Error('Invalid Google Sheets table response');
+          const rows = [];
+          rows.push(table.cols.map(col => col.label || col.id || '').join(','));
+          table.rows.forEach(row => {
+            const cells = (row.c || []).map(cell => csvEscape(cell ? (cell.f || cell.v || '') : ''));
+            rows.push(cells.join(','));
+          });
+          cleanup();
+          resolve(rows.join('\n'));
+        } catch (error) {
+          cleanup();
+          reject(error);
+        }
+      };
+      script.onerror = () => { cleanup(); reject(new Error('Google Sheets JSONP script could not load')); };
+      script.src = `https://docs.google.com/spreadsheets/d/e/${encodeURIComponent(sheetId)}/gviz/tq?gid=${encodeURIComponent(gid)}&tqx=responseHandler:${callbackName}`;
+      document.head.appendChild(script);
+    });
+  }
+
+  function csvEscape(value){
+    const text = String(value ?? '');
+    if (/[",\n\r]/.test(text)) return '"' + text.replace(/"/g, '""') + '"';
+    return text;
   }
 
   function parseCsv(text){
@@ -133,7 +188,7 @@
     const [loadedSettings, loadedPacks] = await Promise.all([getJson('settings.json', {}), getJson('packs.json', [])]);
     settings=loadedSettings || {}; packs=Array.isArray(loadedPacks) ? loadedPacks : [];
     try { data=csvToFragrances(await getCsv(settings.catalogueCsvUrl || DEFAULT_CSV)); }
-    catch(error){ console.error(error); if(grid) grid.innerHTML='<div class="empty">Catalogue could not load from Google Sheets. Check the published CSV link.</div>'; return; }
+    catch(error){ console.error(error); if(grid) grid.innerHTML='<div class="empty">Catalogue could not load from Google Sheets. Check the published CSV link or republish the Catalogue tab.<br><small>' + escapeHtml(error.message || error) + '</small></div>'; return; }
     if(!data.length){ if(grid) grid.innerHTML='<div class="empty">Catalogue is empty. Check the Catalogue tab headers.</div>'; return; }
     if(statCount) statCount.textContent=data.length;
     resetOptions(categoryFilter,'All scent styles',uniqueValues('category'));
