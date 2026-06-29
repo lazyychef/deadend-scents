@@ -138,8 +138,10 @@
       card.innerHTML=`
         <div class="card-top"><span class="emoji">${escapeHtml(f.emojis || '✨')}</span><span class="badge-row">${isNewArrival(f)?'<span class="new-badge">New</span>':''}${f.staffPick?'<span class="new-badge staff">Pick</span>':''}<span class="status ${String(f.status).toLowerCase().replace(/\s+/g,'-')}">${escapeHtml(f.status||'In stock')}</span></span></div>
         <h3>${escapeHtml(f.name)}</h3>
-        <p class="house">${escapeHtml(f.house || '')}</p>
-        <p class="inspo">${escapeHtml(f.inspiration || 'Original')}</p>
+        <div class="meta-lines">
+          <p class="house"><span>House</span>${escapeHtml(f.house || '')}</p>
+          <p class="inspo"><span>Inspired by</span>${escapeHtml(f.inspiration || 'Original')}</p>
+        </div>
         <p class="desc">${escapeHtml(f.notes || '')}</p>
         <div class="prices">${priceButton(f,'3mL',f.p3)}${priceButton(f,'5mL',f.p5)}${priceButton(f,'10mL',f.p10)}</div>
         <div class="card-links">${f.fragranticaUrl?`<a class="mini-link" href="${escapeAttr(f.fragranticaUrl)}" target="_blank" rel="noopener">${linkLabel}</a>`:''}<button class="mini-button" data-copy="${escapeAttr(f.name)}">Copy name</button></div>`;
