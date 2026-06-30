@@ -25,7 +25,7 @@
 
   <main>
     <section class="notice">
-      <strong>Command Centre V2.3:</strong> this is a static dashboard for GitHub Pages. It reads your public Google Sheet and local browser event logs. Google Analytics and Clarity are still the source of truth for all visitor data.
+      <strong>Command Centre V2.5:</strong> this is a static dashboard for GitHub Pages. It reads your public Google Sheet and local browser event logs. Google Analytics and Clarity are still the source of truth for all visitor data.
     </section>
 
     <section class="kpi-grid" id="summaryCards">
@@ -33,6 +33,29 @@
       <article><span>New this month</span><strong id="newThisMonth">—</strong><small>Added Date within 30 days</small></article>
       <article><span>Fragrance of the Week</span><strong id="featuredName">—</strong><small id="featuredStatus">Featured check</small></article>
       <article><span>Local cart adds</span><strong id="localCartAdds">—</strong><small>This browser only</small></article>
+    </section>
+
+    <section class="panel form-panel purchase-builder" id="purchaseBuilder">
+      <div class="panel-head stacked">
+        <div>
+          <p class="eyebrow">Daily action</p>
+          <h2>Add Purchase / Bottle</h2>
+          <p class="help-text">Use this one form for new bottles and restocks. Add purchase details once, then add one bottle line per fragrance. Existing bottles update stock/cost details. New bottles also add a new row to Catalogue.</p>
+        </div>
+        <span>write-back ready</span>
+      </div>
+      <form id="purchaseForm" class="admin-form">
+        <div class="form-grid purchase-header-grid">
+          <label>Purchase date<input name="purchaseDate" type="date" required></label>
+          <label>Seller<input name="seller" placeholder="Marketplace, WITR, Jalu..." required></label>
+          <label>Source<select name="source"><option>Marketplace</option><option>Retail</option><option>Online</option><option>Supplier</option><option>Free</option><option>Other</option></select></label>
+          <label>Total paid<input name="totalPaid" type="number" min="0" step="0.01" required></label>
+          <label class="wide">Purchase notes<input name="notes" placeholder="Bundle, cash, delivery included, condition notes, etc."></label>
+        </div>
+        <div class="panel-subhead"><strong>Bottles in this purchase</strong><button type="button" id="addPurchaseItem">Add bottle line</button></div>
+        <div id="purchaseItems" class="purchase-items"></div>
+        <div class="form-actions"><button type="submit">Save purchase</button><button type="button" id="copyPurchaseRows">Copy staged payload</button></div>
+      </form>
     </section>
 
     <section class="feature-panel" id="featurePanel">
@@ -100,47 +123,6 @@
     </section>
 
 
-
-    <section class="grid-two">
-      <article class="panel form-panel">
-        <div class="panel-head"><h2>Add Purchase</h2><span>write-back ready</span></div>
-        <p class="help-text">Log bottle purchases from the Command Centre. Until your Apps Script endpoint is connected, this saves locally and gives you rows to paste/test.</p>
-        <form id="purchaseForm" class="admin-form">
-          <div class="form-grid">
-            <label>Purchase date<input name="purchaseDate" type="date" required></label>
-            <label>Seller<input name="seller" placeholder="Marketplace, WITR, Jalu..." required></label>
-            <label>Source<select name="source"><option>Marketplace</option><option>Retail</option><option>Online</option><option>Supplier</option><option>Free</option><option>Other</option></select></label>
-            <label>Total paid<input name="totalPaid" type="number" min="0" step="0.01" required></label>
-            <label class="wide">Notes<input name="notes" placeholder="Bundle, cash, delivery included, etc."></label>
-          </div>
-          <div class="panel-subhead"><strong>Bottles in this purchase</strong><button type="button" id="addPurchaseItem">Add bottle line</button></div>
-          <div id="purchaseItems" class="purchase-items"></div>
-          <div class="form-actions"><button type="submit">Save purchase</button><button type="button" id="copyPurchaseRows">Copy rows</button></div>
-        </form>
-      </article>
-
-      <article class="panel form-panel">
-        <div class="panel-head"><h2>Add Bottle</h2><span>staging form</span></div>
-        <p class="help-text">Add a new bottle without editing the spreadsheet directly. This can write to Google Sheets once the Apps Script endpoint is connected.</p>
-        <form id="bottleForm" class="admin-form">
-          <div class="form-grid">
-            <label>House<input name="house" required></label>
-            <label>Fragrance<input name="fragrance" required></label>
-            <label>Type<select name="collection"><option>Designer Original</option><option>Niche Original</option><option>Middle Eastern</option><option>Inspired By</option></select></label>
-            <label>Scent Style<select name="scentStyle"><option>Fresh Citrus</option><option>Fresh Aquatic</option><option>Fruity</option><option>Woody</option><option>Leather</option><option>Spicy</option><option>Gourmand</option><option>Tobacco</option><option>Floral</option><option>Dark / Night</option></select></label>
-            <label>3mL<input name="p3" type="number" min="0" step="0.01"></label>
-            <label>5mL<input name="p5" type="number" min="0" step="0.01"></label>
-            <label>10mL<input name="p10" type="number" min="0" step="0.01"></label>
-            <label>Purchase price<input name="purchasePrice" type="number" min="0" step="0.01"></label>
-            <label>Bottle size mL<input name="bottleSize" type="number" min="0" step="1"></label>
-            <label>Current mL<input name="currentMl" type="number" min="0" step="0.1"></label>
-            <label class="wide">Fragrantica<input name="fragrantica" type="url" placeholder="https://www.fragrantica.com/..."></label>
-            <label class="wide">Description<input name="description" placeholder="3-5 word scent profile"></label>
-          </div>
-          <div class="form-actions"><button type="submit">Save bottle</button><button type="button" id="copyBottleRow">Copy row</button></div>
-        </form>
-      </article>
-    </section>
 
     <section class="panel">
       <div class="panel-head"><h2>Command Centre write status</h2><span id="writeMode">local mode</span></div>

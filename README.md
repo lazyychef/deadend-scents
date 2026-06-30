@@ -1,67 +1,20 @@
-# DeadEnd Scents V2.2 Admin Foundation
+# DeadEnd Scents V2.7 - Fast Purchase Flow
 
-## Upload
-Replace the existing GitHub files with this ZIP contents.
+## What's new
+- Purchase form now defaults to **Auto detect**.
+- Type a fragrance name:
+  - exact catalogue match = restock/update existing bottle
+  - no match = new bottle entry
+- Fixed the V2.6 issue where purchase items could save as an empty array.
+- If Total Paid is entered and bottle line costs are blank, costs are auto-split across bottle lines.
+- Keep using this on a feature branch first.
 
-## Public site
-The public site keeps the V2.1 analytics and SEO setup:
-- GA4: `G-ZQFKZ1RXLC`
-- Microsoft Clarity: `xeuxtee2iy`
-- `sitemap.xml`
-- `robots.txt`
-- `CNAME`
+## Test checklist
+1. Open `/admin/`.
+2. Add Purchase / Bottle.
+3. Type an existing fragrance and save. JSON should show `mode: existing` and at least one item.
+4. Type a new fragrance and save. JSON should show `mode: new` and at least one item.
+5. Add 2 bottle lines, enter Total Paid, leave costs blank. JSON should auto-split costs.
 
-## Admin dashboard
-Open:
-
-`https://deadendscents.com/admin/`
-
-This first admin version is a static dashboard. It reads:
-- your public Google Sheet catalogue
-- local event data from the browser you are using
-
-Google Analytics and Microsoft Clarity remain the source of truth for all visitors. The local admin data is useful for testing events and checking catalogue health quickly.
-
-## What the dashboard shows
-- total fragrances
-- new this month
-- current featured fragrance
-- local cart adds
-- catalogue by type
-- catalogue by scent style
-- local searches from this browser
-- local add-to-cart events from this browser
-- quick checks for GA, Clarity, site URL and featured settings
-
-## Security note
-This dashboard does not show private customer data. It is marked `noindex,nofollow` and blocked in `robots.txt`, but it is not password protected because GitHub Pages is static hosting.
-
-
-## V2.3 Command Centre
-
-Open `/admin/` to view the Command Centre.
-
-This version adds:
-
-- Featured fragrance promo status
-- Catalogue health checks
-- Type, scent style and house breakdowns
-- Local conversion funnel
-- Local search and cart-add tracking
-- Price coverage checks
-- Quick action links
-- GitHub workflow guide
-
-Note: `/admin/` is static and not password protected on GitHub Pages. It is blocked from indexing in `robots.txt`, but anyone with the URL can open it.
-
-
-## V2.4 Command Centre Write-Back
-
-This release adds Command Centre forms for:
-
-- Add Purchase
-- Add Bottle
-
-They work in local test mode immediately. To write directly to Google Sheets, open the `google-apps-script/Code.gs` file, paste it into Apps Script attached to the master sheet, deploy it as a Web App, then paste the Web App URL into `settings.json` as `adminWriteEndpoint`.
-
-The new master workbook is `DeadEnd_Scents_Master_Database_v4_single_catalogue.xlsx`. It removes the separate Inventory sheet and keeps business fields on the Catalogue tab.
+## Important
+The form still saves locally until `adminWriteEndpoint` is connected in `settings.json`.
