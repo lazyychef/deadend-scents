@@ -1,98 +1,10 @@
 [
-  {
-    "id": "fresh-starter",
-    "name": "Fresh Starter Pack",
-    "emojis": "🍋🌊🌿",
-    "description": "Easy fresh scents for everyday wear.",
-    "size": "3mL",
-    "quantity": 5,
-    "price": 28,
-    "items": [
-      "Kaaf",
-      "Supremacy in Heaven",
-      "Ocean Drip",
-      "Acqua di Giò Eau de Parfum",
-      "Cedrat Boise"
-    ]
-  },
-  {
-    "id": "tobacco-pack",
-    "name": "Tobacco Pack",
-    "emojis": "🥃🚬🔥",
-    "description": "Warm tobacco, boozy and smoky scents. Swap options if needed.",
-    "size": "3mL",
-    "quantity": 5,
-    "price": 35,
-    "items": [
-      "Casanova",
-      "Cuban Tobacco",
-      "Rifaqaat",
-      "Incense 01",
-      "Greek Tobacco"
-    ]
-  },
-  {
-    "id": "summer-pack",
-    "name": "Summer Pack",
-    "emojis": "☀️🍋🌊",
-    "description": "Fresh, citrus, aquatic and warm-weather options.",
-    "size": "3mL",
-    "quantity": 5,
-    "price": 35,
-    "items": [
-      "SANAYA",
-      "Kaaf",
-      "Supremacy in Heaven",
-      "Opulent Dubai",
-      "Fusion d'Issey Extrême"
-    ]
-  },
-  {
-    "id": "date-night",
-    "name": "Date Night Pack",
-    "emojis": "🌙🥃🔥",
-    "description": "Sweet, warm and confident night-out scents.",
-    "size": "3mL",
-    "quantity": 5,
-    "price": 38,
-    "items": [
-      "9PM - Night Out",
-      "The Most Wanted Intense",
-      "Boss Bottled Absolu Parfum",
-      "Teriaq Intense",
-      "Grand Soir"
-    ]
-  },
-  {
-    "id": "office-rotation",
-    "name": "Office Rotation Pack",
-    "emojis": "💼🌿🧼",
-    "description": "Clean, polished scents that work around people.",
-    "size": "3mL",
-    "quantity": 5,
-    "price": 30,
-    "items": [
-      "Boss Bottled EDT",
-      "Kaaf",
-      "Supremacy in Heaven",
-      "L'Eau d'Issey Intense",
-      "Luxe Street"
-    ]
-  },
-  {
-    "id": "luxury-icons",
-    "name": "Luxury Icons Pack",
-    "emojis": "💎🥂✨",
-    "description": "Premium designer and niche-style favourites.",
-    "size": "3mL",
-    "quantity": 5,
-    "price": 48,
-    "items": [
-      "SANAYA",
-      "Gladiator",
-      "Grand Soir",
-      "Cedrat Boise",
-      "XJ 1861 Naxos"
-    ]
-  }
+  {"id":"fresh-starter","name":"Fresh Starter Pack","emojis":"🍋🌊🌿","description":"Clean, easy and fresh scents for everyday wear.","size":"3mL","quantity":5,"price":28,"items":["Kaaf","Supremacy in Heaven","Ocean Drip","Acqua di Giò Eau de Parfum","Cedrat Boise"]},
+  {"id":"tobacco-pack","name":"Tobacco Pack","emojis":"🥃🚬🔥","description":"Warm tobacco, boozy and smoky scents. Swap options if needed.","size":"3mL","quantity":5,"price":35,"items":["Casanova","Cuban Tobacco","Rifaqaat","Incense 01","Greek Tobacco"]},
+  {"id":"summer-pack","name":"Summer Pack","emojis":"☀️🍋🌊","description":"Fresh, citrus, aquatic and warm-weather options.","size":"3mL","quantity":5,"price":35,"items":["SANAYA","Kaaf","Supremacy in Heaven","Opulent Dubai","Fusion d'Issey Extrême"]},
+  {"id":"date-night","name":"Date Night Pack","emojis":"🌙🥃🔥","description":"Sweet, warm and confident night-out scents.","size":"3mL","quantity":5,"price":38,"items":["9PM - Night Out","The Most Wanted Intense","Boss Bottled Absolu Parfum","Teriaq Intense","Grand Soir"]},
+  {"id":"office-rotation","name":"Office Rotation Pack","emojis":"💼🌿🧼","description":"Clean, polished scents that work around people.","size":"3mL","quantity":5,"price":30,"items":["Boss Bottled EDT","Kaaf","Supremacy in Heaven","L'Eau d'Issey Intense","Luxe Street"]},
+  {"id":"luxury-icons","name":"Luxury Icons Pack","emojis":"💎🥂✨","description":"Premium designer and niche-style favourites.","size":"3mL","quantity":5,"price":48,"items":["SANAYA","Gladiator","Grand Soir","Cedrat Boise","XJ 1861 Naxos"]},
+  {"id":"build-your-own-3","name":"Build Your Own 3","emojis":"🎯🧪✨","description":"Choose any three available fragrances. Premium fragrances may need a price check.","size":"3mL","quantity":3,"price":24,"items":[]},
+  {"id":"build-your-own-5","name":"Build Your Own 5","emojis":"🔥🧪📦","description":"Choose any five available fragrances. Better value than buying singles.","size":"3mL","quantity":5,"price":38,"items":[]}
 ]

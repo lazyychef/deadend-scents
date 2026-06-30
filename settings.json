@@ -1,10 +1,13 @@
 {
   "catalogueCsvUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vS1yQxI1LA53T40lgn1ZZ_9RmljQsDgjYLmlC0xDlNU1dQ8RZQJQ2J-8h5he3nBdA/pub?gid=863343549&single=true&output=csv",
   "expressPostage": 10,
-  "newArrivalDays": 14,
-  "googleAnalyticsId": "G-ZQFKZ1RXLC",
-  "microsoftClarityId": "xeuxtee2iy",
   "facebookMessengerUrl": "https://m.me/nickstreet09/",
   "whatsAppUrl": "https://wa.me/61434432948?text=Hi%20DeadEnd%20Scents%2C%20I%27d%20like%20to%20order%20some%20samples.",
-  "instagramUrl": "https://instagram.com/deadendscents"
+  "instagramUrl": "https://instagram.com/deadendscents",
+  "googleAnalyticsId": "G-ZQFKZ1RXLC",
+  "microsoftClarityId": "xeuxtee2iy",
+  "newArrivalDays": 14,
+  "fragranceOfWeekDiscountPercent": 20,
+  "roundFeaturedSalePrices": "floor",
+  "adminWriteEndpoint": "https://script.google.com/macros/s/AKfycbxKVU2Qt1XTu4z_ezx_BcjdfCuaOphLGBxqV3uGzfqaz3CX2tDIZmIG28QkbT7rpRTr/exec"
 }
