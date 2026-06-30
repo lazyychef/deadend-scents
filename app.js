@@ -178,6 +178,7 @@
         p10:moneyText(get(row,['10mL','10 ml','10'])),
         fragranticaUrl:get(row,['Fragrantica','Fragrantica URL','Fragrantica Link']),
         addedDate:toIsoDate(get(row,['Added Date','Date Added','Added'])),
+        purchaseDate:toIsoDate(get(row,['Purchase Date','Date Purchased','Purchased'])),
         featured:truthy(get(row,['Featured'])),
         featuredStart:toIsoDate(get(row,['Featured Start','Feature Start','Featured Date','Feature Date','Fragrance of the Week Start'])),
         featuredNote:get(row,['Featured Note','Feature Note','Promo Note']),
@@ -215,8 +216,13 @@
     return fieldContains(f.category,categoryFilter.value) && fieldContains(f.collection,collectionFilter.value) && fieldContains(f.occasion,occasionFilter.value) && (!q || combined.includes(q));
   }
   function isNewArrival(f){
-    const raw=f.addedDate; if(!raw) return false; const added=new Date(raw); if(Number.isNaN(added.getTime())) return false;
-    const days=Number(settings.newArrivalDays || 45); return (Date.now()-added.getTime()) <= days*24*60*60*1000;
+    const raw=f.purchaseDate || f.addedDate;
+    if(!raw) return false;
+    const added=new Date(raw);
+    if(Number.isNaN(added.getTime())) return false;
+    const days=Number(settings.newArrivalDays || 14);
+    const diff=Date.now()-added.getTime();
+    return diff >= 0 && diff <= days*24*60*60*1000;
   }
   function inspirationHouse(f){ if(f.inspirationHouse) return f.inspirationHouse; const insp=String(f.inspiration||'').trim(); if(!insp || insp.toLowerCase()==='original' || insp.toLowerCase().includes('original creation') || insp.toLowerCase()==='unique') return ''; return insp.split(' - ')[0].trim(); }
   function parseMoney(value){ const text=String(value||'').trim(); const matches=[...text.matchAll(/\$\s*(\d+(?:\.\d{1,2})?)/g)]; if(matches.length) return Number(matches[matches.length-1][1]); const plain=text.match(/^(\d+(?:\.\d{1,2})?)$/); return plain?Number(plain[1]):0; }
@@ -254,7 +260,7 @@
     return money(original * 0.8);
   }
   function firstAvailablePrice(f){ return [f.p3,f.p5,f.p10].map(parseMoney).find(n=>n>0)||0; }
-  function newDateValue(f){ const date=f.addedDate?new Date(f.addedDate):null; return date&&!Number.isNaN(date.getTime())?date.getTime():0; }
+  function newDateValue(f){ const raw=f.purchaseDate || f.addedDate; const date=raw?new Date(raw):null; return date&&!Number.isNaN(date.getTime())?date.getTime():0; }
   function sortFragrances(items){
     const mode=sortBy?sortBy.value:'newest'; const sorted=[...items];
     const byText=getter=>sorted.sort((a,b)=>String(getter(a)||'').localeCompare(String(getter(b)||''),undefined,{sensitivity:'base'}) || String(a.name||'').localeCompare(String(b.name||''),undefined,{sensitivity:'base'}));

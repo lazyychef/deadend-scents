@@ -18,3 +18,8 @@
 
 ## Important
 The form still saves locally until `adminWriteEndpoint` is connected in `settings.json`.
+
+
+## New fragrance badge rule
+
+New badges and Command Centre new fragrance counts use `Purchase Date` first, then `Added Date`, and only show/count fragrances less than 14 days old.

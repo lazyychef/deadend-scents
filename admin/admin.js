@@ -41,6 +41,7 @@ async function init(){
     style: pick(r,['Scent Style','Style','Profile']),
     occasion: pick(r,['Occasion']),
     added: pick(r,['Added Date','Date Added']),
+    purchaseDate: pick(r,['Purchase Date','Date Purchased','Purchased']),
     featured: truthy(pick(r,['Featured'])),
     featuredStart: pick(r,['Featured Start','Feature Start']),
     p3: pick(r,['3mL','3 ml']), p5: pick(r,['5mL','5 ml']), p10: pick(r,['10mL','10 ml']),
@@ -49,10 +50,10 @@ async function init(){
   currentFrags = frags;
   setupForms(frags, settings);
 
-  const now=Date.now(), thirty=30*24*60*60*1000;
+  const now=Date.now(), newWindow=Number(settings.newArrivalDays || 14)*24*60*60*1000;
   const featured=frags.find(f=>f.featured);
   $('totalFragrances').textContent=frags.length;
-  $('newThisMonth').textContent=frags.filter(f=>f.added && now-dateValue(f.added)<=thirty).length;
+  $('newThisMonth').textContent=frags.filter(f=>{ const d=dateValue(f.purchaseDate || f.added); return d && now-d>=0 && now-d<=newWindow; }).length;
   $('featuredName').textContent=featured?featured.name:'None';
   $('featuredStatus').textContent=featured ? `${featured.house || 'House missing'}${featured.featuredStart ? ' · '+featured.featuredStart : ''}` : 'Set Featured = TRUE';
   $('localCartAdds').textContent=events().filter(e=>e.name==='add_to_cart'||e.name==='discovery_pack_add').length;
