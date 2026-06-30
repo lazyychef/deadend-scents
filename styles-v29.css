@@ -1,0 +1,91 @@
+/* V2.9 mobile polish */
+
+@media (max-width: 720px) {
+  .featured-section,
+  .featured,
+  #featured,
+  .featured-wrap {
+    margin-top: 1.25rem;
+  }
+
+  .featured-header,
+  .section-header {
+    gap: .5rem;
+    align-items: flex-start;
+  }
+
+  .featured-header h2,
+  .section-header h2 {
+    font-size: clamp(2rem, 10vw, 3rem);
+    line-height: .95;
+  }
+
+  .featured-subtitle,
+  .featured-tagline {
+    font-size: 1rem;
+    line-height: 1.35;
+  }
+
+  .featured-card,
+  .fragrance-week-card,
+  .pick-card {
+    padding: 1.15rem;
+    border-radius: 1.4rem;
+  }
+
+  .featured-card h3,
+  .featured-title {
+    font-size: clamp(2rem, 10vw, 3rem);
+    line-height: .9;
+    margin-bottom: .2rem;
+  }
+
+  .featured-card .house,
+  .featured-house {
+    font-size: 1.2rem;
+    letter-spacing: .16em;
+  }
+
+  .featured-price-grid,
+  .featured-prices,
+  .promo-price-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .55rem;
+  }
+
+  .featured-price-grid button,
+  .featured-prices button,
+  .promo-price-grid button,
+  .price-tile {
+    min-width: 0;
+    padding: .75rem .25rem;
+  }
+
+  .featured-price-grid .price,
+  .featured-prices .price,
+  .promo-price-grid .price,
+  .price-tile strong {
+    font-size: 1.35rem;
+  }
+
+  .featured-card .description,
+  .featured-description {
+    font-size: 1.05rem;
+    line-height: 1.4;
+  }
+
+  .pack-card {
+    padding: 1.25rem;
+  }
+
+  .pack-card h3 {
+    font-size: 1.75rem;
+  }
+
+  .pack-card p,
+  .pack-card li {
+    font-size: 1rem;
+    line-height: 1.45;
+  }
+}

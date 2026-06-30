@@ -1,25 +1,19 @@
-# DeadEnd Scents V2.7 - Fast Purchase Flow
+# DeadEnd Scents V2.9 – Mobile Packs + Fragrance of the Week
 
-## What's new
-- Purchase form now defaults to **Auto detect**.
-- Type a fragrance name:
-  - exact catalogue match = restock/update existing bottle
-  - no match = new bottle entry
-- Fixed the V2.6 issue where purchase items could save as an empty array.
-- If Total Paid is entered and bottle line costs are blank, costs are auto-split across bottle lines.
-- Keep using this on a feature branch first.
+## Included
+- Mobile Fragrance of the Week tidy-up.
+- Fragrance of the Week sale prices rounded down to whole dollars.
+- Discovery packs moved toward curated packs.
+- Tobacco Pack updated to remove Cinder Kiss.
+- Mobile GitHub update guide included.
 
-## Test checklist
-1. Open `/admin/`.
-2. Add Purchase / Bottle.
-3. Type an existing fragrance and save. JSON should show `mode: existing` and at least one item.
-4. Type a new fragrance and save. JSON should show `mode: new` and at least one item.
-5. Add 2 bottle lines, enter Total Paid, leave costs blank. JSON should auto-split costs.
+## Files
+Upload these files to your GitHub repo:
+- `packs.json`
+- `settings.json`
+- `styles-v29.css`
+- `v29-patch.js`
+- `GITHUB_MOBILE_UPDATE_GUIDE.md`
+- `GITHUB_WORKFLOW.md`
 
-## Important
-The form still saves locally until `adminWriteEndpoint` is connected in `settings.json`.
-
-
-## New fragrance badge rule
-
-New badges and Command Centre new fragrance counts use `Purchase Date` first, then `Added Date`, and only show/count fragrances less than 14 days old.
+Then add the two include lines from `INDEX_INCLUDE_NOTES.txt` to `index.html`.

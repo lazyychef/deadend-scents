@@ -1,17 +1,34 @@
 {
-  "businessName": "DeadEnd Scents",
-  "tagline": "Best value premium decants Australia",
-  "catalogueCsvUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vS1yQxI1LA53T40lgn1ZZ_9RmljQsDgjYLmlC0xDlNU1dQ8RZQJQ2J-8h5he3nBdA/pub?gid=863343549&single=true&output=csv",
-  "facebookMessengerUrl": "https://m.me/nickstreet09/",
-  "whatsAppUrl": "https://wa.me/61434432948?text=Hi%20DeadEnd%20Scents%2C%20I%27d%20like%20to%20order%20some%20samples.",
-  "instagramUrl": "https://instagram.com/deadendscents",
-  "expressPostage": 10,
-  "shippingLine": "$10 express postage \u00b7 Australia-wide shipping \u00b7 Glass vials",
   "newArrivalDays": 14,
-  "googleAnalyticsId": "G-ZQFKZ1RXLC",
-  "microsoftClarityId": "xeuxtee2iy",
-  "weeklyDiscountPercent": 20,
-  "weeklyDiscountDays": 7,
-  "siteUrl": "https://deadendscents.com",
-  "adminWriteEndpoint": "https://script.google.com/macros/s/AKfycbxKVU2Qt1XTu4z_ezx_BcjdfCuaOphLGBxqV3uGzfqaz3CX2tDIZmIG28QkbT7rpRTr/exec"
+  "fragranceOfWeekDiscountPercent": 20,
+  "roundFeaturedSalePrices": "floor",
+  "discoveryPackMode": "curated",
+  "premiumBuildYourOwn": {
+    "enabled": true,
+    "creditBased": true,
+    "premiumCollectionsCountAsTwoCredits": [
+      "Niche Original",
+      "Designer Original"
+    ],
+    "packs": [
+      {
+        "name": "Build Your Own 3",
+        "credits": 3,
+        "size": "3mL",
+        "price": 24
+      },
+      {
+        "name": "Build Your Own 5",
+        "credits": 5,
+        "size": "3mL",
+        "price": 38
+      },
+      {
+        "name": "Build Your Own 8",
+        "credits": 8,
+        "size": "3mL",
+        "price": 58
+      }
+    ]
+  }
 }
