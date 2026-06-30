@@ -26,10 +26,15 @@ function funnelCounts(){ const ev=events(); return [
 ]; }
 function renderFunnel(){ const data=funnelCounts(); const max=Math.max(...data.map(x=>x[1]),1); $('funnel').innerHTML=data.map(([name,count])=>`<div class="funnel-step"><strong>${escapeHtml(name)}</strong><div class="funnel-track"><div class="funnel-fill" style="width:${Math.round(count/max*100)}%"></div></div><span>${count}</span></div>`).join(''); }
 
+let appSettings = {};
+let currentFrags = [];
+
 async function init(){
   const settings=await getJson(DEFAULT_SETTINGS);
+  appSettings = settings;
   const rows=csvToObjects(await getCsv(settings.catalogueCsvUrl));
   const frags=rows.map(r=>({
+    id: pick(r,['ID','Fragrance ID']),
     name: pick(r,['Fragrance','Name']),
     house: pick(r,['House','Brand']),
     type: pick(r,['Category','Type','Collection']),
@@ -41,6 +46,8 @@ async function init(){
     p3: pick(r,['3mL','3 ml']), p5: pick(r,['5mL','5 ml']), p10: pick(r,['10mL','10 ml']),
     fragrantica: pick(r,['Fragrantica','Fragrantica URL','Fragrantica Link'])
   })).filter(f=>f.name);
+  currentFrags = frags;
+  setupForms(frags, settings);
 
   const now=Date.now(), thirty=30*24*60*60*1000;
   const featured=frags.find(f=>f.featured);
@@ -93,6 +100,99 @@ async function init(){
   checks.push({status:'good',title:'Local events',text:`${events().length} events on this device`});
   renderChecks('quickChecks', checks);
 }
+
+
+
+function todayIso(){ return new Date().toISOString().slice(0,10); }
+function makePurchaseId(){ return 'P-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + String(Date.now()).slice(-4); }
+function formDataObject(form){ return Object.fromEntries(new FormData(form).entries()); }
+function money(n){ const v=Number(n||0); return Math.round(v*100)/100; }
+function writeStatusCards(settings){
+  const hasEndpoint=!!settings.adminWriteEndpoint;
+  $('writeMode').textContent=hasEndpoint ? 'Google Sheet write-back ready' : 'Local test mode';
+  renderChecks('writeStatus', [
+    {status:hasEndpoint?'good':'warn', title:'Write endpoint', text:hasEndpoint ? 'Connected to Apps Script' : 'Not connected yet. Saves locally only.'},
+    {status:'good', title:'Catalogue source', text:settings.catalogueCsvUrl ? 'Google Sheet CSV connected' : 'Missing CSV'},
+    {status:'good', title:'Safe testing', text:'Local mode will not change your live sheet'}
+  ]);
+}
+function setupForms(frags, settings){
+  writeStatusCards(settings);
+  const purchaseDate=document.querySelector('#purchaseForm [name="purchaseDate"]'); if(purchaseDate && !purchaseDate.value) purchaseDate.value=todayIso();
+  const itemWrap=$('purchaseItems');
+  const fragOptions=frags.map(f=>`<option value="${escapeHtml(f.id)}" data-name="${escapeHtml(f.name)}">${escapeHtml(f.name)}${f.house?' · '+escapeHtml(f.house):''}</option>`).join('');
+  function addLine(){
+    const div=document.createElement('div'); div.className='purchase-line';
+    div.innerHTML=`<div class="purchase-line-grid">
+      <label>Fragrance<select name="fragranceId">${fragOptions}</select></label>
+      <label>Bottle mL<input name="bottleSize" type="number" min="0" step="1" value="100"></label>
+      <label>Full %<input name="fullness" type="number" min="0" max="100" step="1" value="100"></label>
+      <label>Cost<input name="allocatedCost" type="number" min="0" step="0.01"></label>
+      <label>Current mL<input name="currentMl" type="number" min="0" step="0.1"></label>
+      <button class="remove-line" type="button">×</button>
+    </div>`;
+    itemWrap.appendChild(div);
+    const size=div.querySelector('[name="bottleSize"]'), full=div.querySelector('[name="fullness"]'), curr=div.querySelector('[name="currentMl"]');
+    function calc(){ if(size.value && full.value) curr.value=money(Number(size.value)*Number(full.value)/100); }
+    size.addEventListener('input',calc); full.addEventListener('input',calc); calc();
+    div.querySelector('.remove-line').addEventListener('click',()=>div.remove());
+  }
+  $('addPurchaseItem').addEventListener('click',addLine); if(!itemWrap.children.length) addLine();
+  $('purchaseForm').addEventListener('submit', async (e)=>{ e.preventDefault(); await savePurchase(); });
+  $('bottleForm').addEventListener('submit', async (e)=>{ e.preventDefault(); await saveBottle(); });
+  $('copyPurchaseRows').addEventListener('click',()=>copyText($('stagedOutput').value || buildPurchasePayload().summary));
+  $('copyBottleRow').addEventListener('click',()=>copyText(JSON.stringify(buildBottlePayload().row,null,2)));
+}
+function selectedFragName(select){ const opt=select.options[select.selectedIndex]; return opt ? opt.textContent.split(' · ')[0] : ''; }
+function buildPurchasePayload(){
+  const f=formDataObject($('purchaseForm'));
+  const purchaseId=makePurchaseId();
+  const lines=[...document.querySelectorAll('.purchase-line')].map(line=>{
+    const sel=line.querySelector('[name="fragranceId"]');
+    return {
+      purchaseId,
+      fragranceId: sel.value,
+      fragrance: selectedFragName(sel),
+      bottleSize: Number(line.querySelector('[name="bottleSize"]').value||0),
+      fullness: Number(line.querySelector('[name="fullness"]').value||0),
+      currentMl: Number(line.querySelector('[name="currentMl"]').value||0),
+      allocatedCost: Number(line.querySelector('[name="allocatedCost"]').value||0)
+    };
+  });
+  const purchase={purchaseId,purchaseDate:f.purchaseDate,seller:f.seller,source:f.source,totalPaid:Number(f.totalPaid||0),bottlesCount:lines.length,notes:f.notes||''};
+  const summary=`Purchase ${purchaseId}\n${purchase.purchaseDate} · ${purchase.seller} · $${purchase.totalPaid}\n` + lines.map(l=>`${l.fragrance} | ${l.bottleSize}mL | ${l.fullness}% | ${l.currentMl}mL | $${l.allocatedCost}`).join('\n');
+  return {action:'addPurchase', purchase, items:lines, summary};
+}
+function buildBottlePayload(){
+  const f=formDataObject($('bottleForm'));
+  const row={
+    house:f.house, fragrance:f.fragrance, collection:f.collection, scentStyle:f.scentStyle,
+    description:f.description, p3:money(f.p3), p5:money(f.p5), p10:money(f.p10), fragrantica:f.fragrantica,
+    addedDate:todayIso(), purchaseDate:todayIso(), purchasePrice:money(f.purchasePrice), bottleSize:Number(f.bottleSize||0), currentMl:Number(f.currentMl||0)
+  };
+  return {action:'addBottle', row};
+}
+function saveLocal(kind, payload){
+  const key='deadend_'+kind; const arr=JSON.parse(localStorage.getItem(key)||'[]'); arr.push({...payload, savedAt:new Date().toISOString()}); localStorage.setItem(key, JSON.stringify(arr));
+}
+async function postToEndpoint(payload){
+  if(!appSettings.adminWriteEndpoint) return {mode:'local'};
+  await fetch(appSettings.adminWriteEndpoint, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(payload)});
+  return {mode:'remote'};
+}
+async function savePurchase(){
+  const payload=buildPurchasePayload();
+  saveLocal('purchases', payload);
+  const res=await postToEndpoint(payload);
+  $('stagedOutput').value=(res.mode==='remote'?'Sent to Google Sheets.\n\n':'Saved locally only.\n\n')+payload.summary+'\n\nJSON:\n'+JSON.stringify(payload,null,2);
+}
+async function saveBottle(){
+  const payload=buildBottlePayload();
+  saveLocal('bottles', payload);
+  const res=await postToEndpoint(payload);
+  $('stagedOutput').value=(res.mode==='remote'?'Sent to Google Sheets.\n\n':'Saved locally only.\n\n')+JSON.stringify(payload.row,null,2);
+}
+async function copyText(text){ try{ await navigator.clipboard.writeText(text); alert('Copied'); }catch(e){ $('stagedOutput').select(); document.execCommand('copy'); } }
 
 $('clearLocalData').addEventListener('click',()=>{ if(confirm('Clear local dashboard event data from this browser?')){ localStorage.removeItem('deadend_admin_events'); location.reload(); }});
 $('refreshDashboard').addEventListener('click',()=>location.reload());

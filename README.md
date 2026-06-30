@@ -53,3 +53,15 @@ This version adds:
 - GitHub workflow guide
 
 Note: `/admin/` is static and not password protected on GitHub Pages. It is blocked from indexing in `robots.txt`, but anyone with the URL can open it.
+
+
+## V2.4 Command Centre Write-Back
+
+This release adds Command Centre forms for:
+
+- Add Purchase
+- Add Bottle
+
+They work in local test mode immediately. To write directly to Google Sheets, open the `google-apps-script/Code.gs` file, paste it into Apps Script attached to the master sheet, deploy it as a Web App, then paste the Web App URL into `settings.json` as `adminWriteEndpoint`.
+
+The new master workbook is `DeadEnd_Scents_Master_Database_v4_single_catalogue.xlsx`. It removes the separate Inventory sheet and keeps business fields on the Catalogue tab.

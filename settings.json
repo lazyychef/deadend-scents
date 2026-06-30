@@ -12,5 +12,6 @@
   "microsoftClarityId": "xeuxtee2iy",
   "weeklyDiscountPercent": 20,
   "weeklyDiscountDays": 7,
-  "siteUrl": "https://deadendscents.com"
+  "siteUrl": "https://deadendscents.com",
+  "adminWriteEndpoint": ""
 }
