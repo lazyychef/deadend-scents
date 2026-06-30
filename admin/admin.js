@@ -118,59 +118,185 @@ function writeStatusCards(settings){
 }
 function setupForms(frags, settings){
   writeStatusCards(settings);
-  const purchaseDate=document.querySelector('#purchaseForm [name="purchaseDate"]'); if(purchaseDate && !purchaseDate.value) purchaseDate.value=todayIso();
+  window.__adminFrags = frags;
+  const purchaseDate=document.querySelector('#purchaseForm [name="purchaseDate"]');
+  if(purchaseDate && !purchaseDate.value) purchaseDate.value=todayIso();
   const itemWrap=$('purchaseItems');
-  const fragOptions=frags.map(f=>`<option value="${escapeHtml(f.id)}" data-name="${escapeHtml(f.name)}">${escapeHtml(f.name)}${f.house?' · '+escapeHtml(f.house):''}</option>`).join('');
+
+  let list=document.getElementById('existingFragranceList');
+  if(!list){
+    list=document.createElement('datalist');
+    list.id='existingFragranceList';
+    document.body.appendChild(list);
+  }
+  list.innerHTML = frags.map(f=>`<option value="${escapeHtml(f.name)} · ${escapeHtml(f.house)}"></option>`).join('');
+
+  function findExisting(value){
+    const clean=String(value||'').trim().toLowerCase();
+    if(!clean) return null;
+    return frags.find(f => `${f.name} · ${f.house}`.toLowerCase() === clean)
+      || frags.find(f => f.name.toLowerCase() === clean)
+      || null;
+  }
+
   function addLine(){
     const div=document.createElement('div'); div.className='purchase-line';
-    div.innerHTML=`<div class="purchase-line-grid">
-      <label>Fragrance<select name="fragranceId">${fragOptions}</select></label>
-      <label>Bottle mL<input name="bottleSize" type="number" min="0" step="1" value="100"></label>
-      <label>Full %<input name="fullness" type="number" min="0" max="100" step="1" value="100"></label>
-      <label>Cost<input name="allocatedCost" type="number" min="0" step="0.01"></label>
-      <label>Current mL<input name="currentMl" type="number" min="0" step="0.1"></label>
-      <button class="remove-line" type="button">×</button>
-    </div>`;
+    div.innerHTML=`
+      <div class="purchase-mode improved-mode">
+        <label>Bottle action
+          <select name="bottleAction">
+            <option value="auto">Auto detect</option>
+            <option value="existing">Existing bottle / restock</option>
+            <option value="new">New bottle</option>
+          </select>
+        </label>
+        <p class="help-text">Fast mode: type the fragrance name. If it matches your Catalogue it becomes a restock. If it does not match, it becomes a new bottle entry.</p>
+      </div>
+      <div class="existing-fields">
+        <div class="purchase-line-grid existing-grid">
+          <label class="wide">Fragrance
+            <input name="existingFragranceName" list="existingFragranceList" placeholder="Start typing, e.g. Cedrat Boise, SANAYA, Paranoid..." autocomplete="off">
+            <input name="existingFragranceId" type="hidden">
+          </label>
+          <label>Bottle mL<input name="bottleSize" type="number" min="0" step="1" value="100"></label>
+          <label>Full %<input name="fullness" type="number" min="0" max="100" step="1" value="100"></label>
+          <label>Cost<input name="allocatedCost" type="number" min="0" step="0.01"></label>
+          <label>Current mL<input name="currentMl" type="number" min="0" step="0.1"></label>
+          <button class="remove-line" type="button">×</button>
+        </div>
+        <p class="match-hint" data-match-status>Select an existing fragrance to update current mL / cost details.</p>
+      </div>
+      <div class="new-fields" hidden>
+        <div class="form-grid new-bottle-grid">
+          <label>Collection<select name="collection"><option>Designer Original</option><option>Niche Original</option><option>Middle Eastern</option><option>Inspired By</option></select></label>
+          <label>House<input name="house" placeholder="Lattafa, Jalu, Mancera..."></label>
+          <label>Fragrance<input name="fragrance" placeholder="Fragrance name"></label>
+          <label>Scent Style<select name="scentStyle"><option>Fresh Citrus</option><option>Fresh Aquatic</option><option>Fruity</option><option>Woody</option><option>Leather</option><option>Spicy</option><option>Gourmand</option><option>Tobacco</option><option>Floral</option><option>Dark / Night</option></select></label>
+          <label>Gender<select name="gender"><option>Men / Unisex</option><option>Women</option><option>Unisex</option></select></label>
+          <label>Emojis<input name="emojis" placeholder="🍋🌿"></label>
+          <label>Inspiration House<input name="inspirationHouse" placeholder="Creed, LV, Xerjoff..."></label>
+          <label>Inspiration<input name="inspiration" placeholder="Aventus, Imagination..."></label>
+          <label>3mL<input name="p3" type="number" min="0" step="0.01"></label>
+          <label>5mL<input name="p5" type="number" min="0" step="0.01"></label>
+          <label>10mL<input name="p10" type="number" min="0" step="0.01"></label>
+          <label>Added Date<input name="addedDate" type="date" value="${todayIso()}"></label>
+          <label class="wide">Description<input name="description" placeholder="3-5 word scent profile"></label>
+          <label class="wide">Fragrantica<input name="fragrantica" type="url" placeholder="https://www.fragrantica.com/..."></label>
+        </div>
+        <div class="purchase-line-grid inventory-grid">
+          <label>Bottle mL<input name="newBottleSize" type="number" min="0" step="1" value="100"></label>
+          <label>Full %<input name="newFullness" type="number" min="0" max="100" step="1" value="100"></label>
+          <label>Cost<input name="newAllocatedCost" type="number" min="0" step="0.01"></label>
+          <label>Current mL<input name="newCurrentMl" type="number" min="0" step="0.1"></label>
+          <button class="remove-line" type="button">×</button>
+        </div>
+      </div>`;
     itemWrap.appendChild(div);
-    const size=div.querySelector('[name="bottleSize"]'), full=div.querySelector('[name="fullness"]'), curr=div.querySelector('[name="currentMl"]');
-    function calc(){ if(size.value && full.value) curr.value=money(Number(size.value)*Number(full.value)/100); }
-    size.addEventListener('input',calc); full.addEventListener('input',calc); calc();
-    div.querySelector('.remove-line').addEventListener('click',()=>div.remove());
+    const action=div.querySelector('[name="bottleAction"]');
+    const existing=div.querySelector('.existing-fields');
+    const newFields=div.querySelector('.new-fields');
+    const existingName=div.querySelector('[name="existingFragranceName"]');
+    const existingId=div.querySelector('[name="existingFragranceId"]');
+    const status=div.querySelector('[data-match-status]');
+    function getMatch(){ return findExisting(existingName.value); }
+    function setMode(){
+      const match=getMatch();
+      const typed=String(existingName.value||'').trim();
+      const forcedNew=action.value==='new';
+      const forcedExisting=action.value==='existing';
+      const autoNew=action.value==='auto' && typed && !match;
+      const isNew=forcedNew || autoNew;
+      existing.hidden=false;
+      newFields.hidden=!isNew;
+      if(match){
+        existingId.value=match.id;
+        status.textContent=`Matched existing bottle: ${match.name} · ${match.house}. This will save as a restock/update.`;
+        status.classList.add('good');
+        status.classList.remove('warn');
+      } else if(isNew){
+        existingId.value='';
+        status.textContent='No existing match found. This will save as a NEW bottle and add it to Catalogue.';
+        status.classList.remove('good');
+        status.classList.add('warn');
+      } else {
+        existingId.value='';
+        status.textContent=forcedExisting ? 'Choose a matching existing fragrance from the list.' : 'Start typing. Exact match = restock, no match = new bottle.';
+        status.classList.remove('good','warn');
+      }
+      if(isNew){
+        const newName=div.querySelector('[name="fragrance"]');
+        if(newName && typed && !newName.value) newName.value=typed.replace(/\s+·\s+.*$/,'');
+      }
+    }
+    action.addEventListener('change',setMode); setMode();
+    function checkExisting(){ setMode(); }
+    existingName.addEventListener('input',checkExisting);
+    existingName.addEventListener('change',checkExisting);
+    function bindCalc(sizeSel, fullSel, currSel){
+      const size=div.querySelector(sizeSel), full=div.querySelector(fullSel), curr=div.querySelector(currSel);
+      function calc(){ if(size.value && full.value) curr.value=money(Number(size.value)*Number(full.value)/100); }
+      size.addEventListener('input',calc); full.addEventListener('input',calc); calc();
+    }
+    bindCalc('[name="bottleSize"]','[name="fullness"]','[name="currentMl"]');
+    bindCalc('[name="newBottleSize"]','[name="newFullness"]','[name="newCurrentMl"]');
+    div.querySelectorAll('.remove-line').forEach(btn=>btn.addEventListener('click',()=>div.remove()));
   }
   $('addPurchaseItem').addEventListener('click',addLine); if(!itemWrap.children.length) addLine();
   $('purchaseForm').addEventListener('submit', async (e)=>{ e.preventDefault(); await savePurchase(); });
-  $('bottleForm').addEventListener('submit', async (e)=>{ e.preventDefault(); await saveBottle(); });
   $('copyPurchaseRows').addEventListener('click',()=>copyText($('stagedOutput').value || buildPurchasePayload().summary));
-  $('copyBottleRow').addEventListener('click',()=>copyText(JSON.stringify(buildBottlePayload().row,null,2)));
 }
-function selectedFragName(select){ const opt=select.options[select.selectedIndex]; return opt ? opt.textContent.split(' · ')[0] : ''; }
+function selectedFragName(input){ return String(input && input.value || '').replace(/\s+·\s+.*$/,'').trim(); }
+function lineMode(line){
+  const action=line.querySelector('[name="bottleAction"]')?.value || 'auto';
+  const id=line.querySelector('[name="existingFragranceId"]')?.value || '';
+  const typed=selectedFragName(line.querySelector('[name="existingFragranceName"]'));
+  if(action==='new') return 'new';
+  if(action==='existing') return 'existing';
+  if(id) return 'existing';
+  return typed ? 'new' : 'existing';
+}
+function val(line, selector){ const el=line.querySelector(selector); return el ? el.value : ''; }
 function buildPurchasePayload(){
   const f=formDataObject($('purchaseForm'));
   const purchaseId=makePurchaseId();
   const lines=[...document.querySelectorAll('.purchase-line')].map(line=>{
-    const sel=line.querySelector('[name="fragranceId"]');
+    const mode=lineMode(line);
+    if(mode==='new'){
+      const bottleSize=Number(val(line,'[name="newBottleSize"]')||0);
+      const fullness=Number(val(line,'[name="newFullness"]')||0);
+      const currentMl=Number(val(line,'[name="newCurrentMl"]')||0);
+      const allocatedCost=Number(val(line,'[name="newAllocatedCost"]')||0);
+      return {
+        mode:'new', purchaseId,
+        fragranceId:'', fragrance:val(line,'[name="fragrance"]'), house:val(line,'[name="house"]'), collection:val(line,'[name="collection"]'),
+        inspirationHouse:val(line,'[name="inspirationHouse"]'), inspiration:val(line,'[name="inspiration"]'), scentStyle:val(line,'[name="scentStyle"]'), gender:val(line,'[name="gender"]'),
+        emojis:val(line,'[name="emojis"]'), description:val(line,'[name="description"]'), fragrantica:val(line,'[name="fragrantica"]'),
+        p3:money(val(line,'[name="p3"]')), p5:money(val(line,'[name="p5"]')), p10:money(val(line,'[name="p10"]')), addedDate:val(line,'[name="addedDate"]')||todayIso(),
+        bottleSize, fullness, currentMl, allocatedCost
+      };
+    }
+    const nameInput=line.querySelector('[name="existingFragranceName"]');
+    const idInput=line.querySelector('[name="existingFragranceId"]');
     return {
-      purchaseId,
-      fragranceId: sel.value,
-      fragrance: selectedFragName(sel),
-      bottleSize: Number(line.querySelector('[name="bottleSize"]').value||0),
-      fullness: Number(line.querySelector('[name="fullness"]').value||0),
-      currentMl: Number(line.querySelector('[name="currentMl"]').value||0),
-      allocatedCost: Number(line.querySelector('[name="allocatedCost"]').value||0)
+      mode:'existing', purchaseId,
+      fragranceId: idInput ? idInput.value : '',
+      fragrance: selectedFragName(nameInput),
+      bottleSize: Number(val(line,'[name="bottleSize"]')||0),
+      fullness: Number(val(line,'[name="fullness"]')||0),
+      currentMl: Number(val(line,'[name="currentMl"]')||0),
+      allocatedCost: Number(val(line,'[name="allocatedCost"]')||0)
     };
-  });
-  const purchase={purchaseId,purchaseDate:f.purchaseDate,seller:f.seller,source:f.source,totalPaid:Number(f.totalPaid||0),bottlesCount:lines.length,notes:f.notes||''};
-  const summary=`Purchase ${purchaseId}\n${purchase.purchaseDate} · ${purchase.seller} · $${purchase.totalPaid}\n` + lines.map(l=>`${l.fragrance} | ${l.bottleSize}mL | ${l.fullness}% | ${l.currentMl}mL | $${l.allocatedCost}`).join('\n');
+  }).filter(l=>l.mode==='new' ? (l.fragrance && l.house) : (l.fragranceId && l.fragrance));
+  const totalPaid=Number(f.totalPaid||0);
+  const specifiedTotal=lines.reduce((sum,l)=>sum+(Number(l.allocatedCost)||0),0);
+  const missingCost=lines.filter(l=>!Number(l.allocatedCost));
+  if(totalPaid && missingCost.length){
+    const each=Math.max((totalPaid-specifiedTotal)/missingCost.length,0);
+    missingCost.forEach(l=>l.allocatedCost=money(each));
+  }
+  const purchase={purchaseId,purchaseDate:f.purchaseDate,seller:f.seller,source:f.source,totalPaid,bottlesCount:lines.length,notes:f.notes||''};
+  const summary=`Purchase ${purchaseId}\n${purchase.purchaseDate} · ${purchase.seller} · $${purchase.totalPaid}\n` + lines.map(l=>`${l.mode==='new'?'NEW':'RESTOCK'} | ${l.fragrance} | ${l.bottleSize}mL | ${l.fullness}% | ${l.currentMl}mL | $${l.allocatedCost}`).join('\n');
   return {action:'addPurchase', purchase, items:lines, summary};
-}
-function buildBottlePayload(){
-  const f=formDataObject($('bottleForm'));
-  const row={
-    house:f.house, fragrance:f.fragrance, collection:f.collection, scentStyle:f.scentStyle,
-    description:f.description, p3:money(f.p3), p5:money(f.p5), p10:money(f.p10), fragrantica:f.fragrantica,
-    addedDate:todayIso(), purchaseDate:todayIso(), purchasePrice:money(f.purchasePrice), bottleSize:Number(f.bottleSize||0), currentMl:Number(f.currentMl||0)
-  };
-  return {action:'addBottle', row};
 }
 function saveLocal(kind, payload){
   const key='deadend_'+kind; const arr=JSON.parse(localStorage.getItem(key)||'[]'); arr.push({...payload, savedAt:new Date().toISOString()}); localStorage.setItem(key, JSON.stringify(arr));
@@ -185,12 +311,6 @@ async function savePurchase(){
   saveLocal('purchases', payload);
   const res=await postToEndpoint(payload);
   $('stagedOutput').value=(res.mode==='remote'?'Sent to Google Sheets.\n\n':'Saved locally only.\n\n')+payload.summary+'\n\nJSON:\n'+JSON.stringify(payload,null,2);
-}
-async function saveBottle(){
-  const payload=buildBottlePayload();
-  saveLocal('bottles', payload);
-  const res=await postToEndpoint(payload);
-  $('stagedOutput').value=(res.mode==='remote'?'Sent to Google Sheets.\n\n':'Saved locally only.\n\n')+JSON.stringify(payload.row,null,2);
 }
 async function copyText(text){ try{ await navigator.clipboard.writeText(text); alert('Copied'); }catch(e){ $('stagedOutput').select(); document.execCommand('copy'); } }
 
