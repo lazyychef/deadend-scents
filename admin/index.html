@@ -4,34 +4,48 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <title>DeadEnd Scents Admin</title>
+  <title>DeadEnd Scents Command Centre</title>
   <link rel="stylesheet" href="admin.css">
 </head>
 <body>
   <header class="admin-hero">
     <div>
       <p class="eyebrow">Owner dashboard</p>
-      <h1>DeadEnd Scents Admin</h1>
-      <p>Catalogue health, local event tracking and quick links in one place.</p>
+      <h1>Command Centre</h1>
+      <p>Catalogue health, local behaviour tracking, featured fragrance checks and quick business links.</p>
     </div>
     <nav>
       <a href="../">View site</a>
       <a href="https://analytics.google.com" target="_blank" rel="noopener">Analytics</a>
       <a href="https://clarity.microsoft.com" target="_blank" rel="noopener">Clarity</a>
       <a href="https://search.google.com/search-console" target="_blank" rel="noopener">Search Console</a>
+      <button id="refreshDashboard" type="button">Refresh</button>
     </nav>
   </header>
 
   <main>
     <section class="notice">
-      <strong>Note:</strong> this dashboard is a static first version. It reads your public Google Sheet and the local browser events captured on this device. Google Analytics and Clarity remain the source of truth for all visitors.
+      <strong>Command Centre V2.3:</strong> this is a static dashboard for GitHub Pages. It reads your public Google Sheet and local browser event logs. Google Analytics and Clarity are still the source of truth for all visitor data.
     </section>
 
-    <section class="cards" id="summaryCards">
-      <article><span>Total fragrances</span><strong id="totalFragrances">—</strong></article>
-      <article><span>New this month</span><strong id="newThisMonth">—</strong></article>
-      <article><span>Featured</span><strong id="featuredName">—</strong></article>
-      <article><span>Local cart adds</span><strong id="localCartAdds">—</strong></article>
+    <section class="kpi-grid" id="summaryCards">
+      <article><span>Total fragrances</span><strong id="totalFragrances">—</strong><small>Live from Google Sheet</small></article>
+      <article><span>New this month</span><strong id="newThisMonth">—</strong><small>Added Date within 30 days</small></article>
+      <article><span>Fragrance of the Week</span><strong id="featuredName">—</strong><small id="featuredStatus">Featured check</small></article>
+      <article><span>Local cart adds</span><strong id="localCartAdds">—</strong><small>This browser only</small></article>
+    </section>
+
+    <section class="feature-panel" id="featurePanel">
+      <div>
+        <p class="eyebrow">Weekly promo</p>
+        <h2 id="featureTitle">Fragrance of the Week</h2>
+        <p id="featureMeta">Loading featured fragrance...</p>
+      </div>
+      <div class="promo-box">
+        <span>20% off status</span>
+        <strong id="promoStatus">—</strong>
+        <small id="promoDates">—</small>
+      </div>
     </section>
 
     <section class="grid-two">
@@ -47,12 +61,41 @@
 
     <section class="grid-two">
       <article class="panel">
-        <div class="panel-head"><h2>Local searches</h2><button id="clearLocalData">Clear local data</button></div>
+        <div class="panel-head"><h2>Top catalogue houses</h2><span id="houseCount">—</span></div>
+        <div id="houseBreakdown" class="list"></div>
+      </article>
+      <article class="panel">
+        <div class="panel-head"><h2>Price coverage</h2><span>missing prices</span></div>
+        <div id="priceChecks" class="checks compact"></div>
+      </article>
+    </section>
+
+    <section class="grid-two">
+      <article class="panel">
+        <div class="panel-head"><h2>Local searches</h2><button id="clearLocalData" type="button">Clear local data</button></div>
         <div id="searchBreakdown" class="list empty">No local searches logged yet.</div>
       </article>
       <article class="panel">
         <div class="panel-head"><h2>Local add-to-cart</h2><span>from this browser</span></div>
         <div id="cartBreakdown" class="list empty">No local cart events logged yet.</div>
+      </article>
+    </section>
+
+    <section class="grid-two">
+      <article class="panel">
+        <div class="panel-head"><h2>Local conversion funnel</h2><span>this browser</span></div>
+        <div id="funnel" class="funnel"></div>
+      </article>
+      <article class="panel">
+        <div class="panel-head"><h2>Quick actions</h2><span>daily tools</span></div>
+        <div class="actions-grid">
+          <a href="https://docs.google.com/spreadsheets" target="_blank" rel="noopener">Open Google Sheets</a>
+          <a href="https://analytics.google.com" target="_blank" rel="noopener">Open Analytics</a>
+          <a href="https://clarity.microsoft.com" target="_blank" rel="noopener">Open Clarity</a>
+          <a href="https://search.google.com/search-console" target="_blank" rel="noopener">Open Search Console</a>
+          <a href="../#catalogue">View Catalogue</a>
+          <a href="../#order">Test Cart</a>
+        </div>
       </article>
     </section>
 

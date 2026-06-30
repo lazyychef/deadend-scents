@@ -35,3 +35,21 @@ Google Analytics and Microsoft Clarity remain the source of truth for all visito
 
 ## Security note
 This dashboard does not show private customer data. It is marked `noindex,nofollow` and blocked in `robots.txt`, but it is not password protected because GitHub Pages is static hosting.
+
+
+## V2.3 Command Centre
+
+Open `/admin/` to view the Command Centre.
+
+This version adds:
+
+- Featured fragrance promo status
+- Catalogue health checks
+- Type, scent style and house breakdowns
+- Local conversion funnel
+- Local search and cart-add tracking
+- Price coverage checks
+- Quick action links
+- GitHub workflow guide
+
+Note: `/admin/` is static and not password protected on GitHub Pages. It is blocked from indexing in `robots.txt`, but anyone with the URL can open it.
