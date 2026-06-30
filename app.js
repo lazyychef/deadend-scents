@@ -255,12 +255,9 @@
     return days > 0 ? `Ends in ${days}d ${hours}h` : `Ends in ${hours}h`;
   }
   function discountedPriceText(price, f){
-  const original = parseMoney(price);
-  if (!original || !isFeaturedDiscountActive(f)) return String(price || '').trim();
-
-  const discounted = Math.floor(original * 0.8);
-  return '$' + discounted;
-}
+    const original = parseMoney(price);
+    if (!original || !isFeaturedDiscountActive(f)) return String(price || '').trim();
+    return '$' + Math.floor(original * 0.8);
   }
   function firstAvailablePrice(f){ return [f.p3,f.p5,f.p10].map(parseMoney).find(n=>n>0)||0; }
   function newDateValue(f){ const raw=f.purchaseDate || f.addedDate; const date=raw?new Date(raw):null; return date&&!Number.isNaN(date.getTime())?date.getTime():0; }
@@ -341,8 +338,14 @@
   }
   function renderPacks(){
     const packsGrid=$('packsGrid'); if(!packsGrid || !packs.length) return; packsGrid.innerHTML='';
-    packs.forEach(pack=>{ const div=document.createElement('article'); div.className='pack-card'; const itemLines=Array.isArray(pack.items)&&pack.items.length?pack.items.map(i=>`<li>${escapeHtml(i)}</li>`).join(''):'<li>Choose from any available catalogue fragrance</li><li>Add the pack, then list your picks in the order message</li>'; div.innerHTML=`<span class="pack-emoji">${escapeHtml(pack.emojis||'🧪')}</span><h3>${escapeHtml(pack.name)}</h3><p>${escapeHtml(pack.desc||'')}</p><strong>${escapeHtml(pack.price)}</strong><ul>${itemLines}</ul><button class="button pack-add" type="button" data-pack="${escapeAttr(pack.name)}" data-price="${escapeAttr(pack.price)}">Add pack</button>`; packsGrid.appendChild(div); });
-    document.querySelectorAll('.pack-add').forEach(btn=>{ if(btn.dataset.bound) return; btn.dataset.bound='1'; btn.addEventListener('click',()=>{ addToCart({type:'pack',name:btn.dataset.pack,size:'Pack',price:btn.dataset.price,house:'Choose fragrances in message'}); trackEvent('discovery_pack_add', { pack_name: btn.dataset.pack, value: parseMoney(btn.dataset.price), currency: 'AUD' }); btn.textContent='Added to cart'; setTimeout(()=>btn.textContent='Add pack',1000); }); });
+    packs.forEach(pack=>{
+      const div=document.createElement('article'); div.className='pack-card';
+      const itemLines=Array.isArray(pack.items)&&pack.items.length?pack.items.map(i=>`<li>${escapeHtml(i)}</li>`).join(''):'<li>Choose from any available catalogue fragrance</li><li>Add the pack, then list your picks in the order message</li>';
+      const priceLine = pack.quantity && pack.size ? `${pack.quantity} x ${pack.size} — $${pack.price}` : String(pack.price || '');
+      div.innerHTML=`<span class="pack-emoji">${escapeHtml(pack.emojis||'🧪')}</span><h3>${escapeHtml(pack.name)}</h3><p>${escapeHtml(pack.description || pack.desc || '')}</p><strong>${escapeHtml(priceLine)}</strong><ul>${itemLines}</ul><button class="button pack-add" type="button" data-pack="${escapeAttr(pack.name)}" data-price="${escapeAttr('$' + pack.price)}">Add pack</button>`;
+      packsGrid.appendChild(div);
+    });
+    document.querySelectorAll('.pack-add').forEach(btn=>{ if(btn.dataset.bound) return; btn.dataset.bound='1'; btn.addEventListener('click',()=>{ addToCart({type:'pack',name:btn.dataset.pack,size:'Pack',price:btn.dataset.price,house:'Pack selections in message'}); trackEvent('discovery_pack_add', { pack_name: btn.dataset.pack, value: parseMoney(btn.dataset.price), currency: 'AUD' }); btn.textContent='Added to cart'; setTimeout(()=>btn.textContent='Add pack',1000); }); });
   }
   function addToCart(item){ cart.push(item); updateCart(); }
   function buildOrderMessage(){
@@ -412,7 +415,8 @@
   if(collectionFilter) collectionFilter.addEventListener('input',()=>{ render(); trackEvent('filter_type', { filter_value: collectionFilter.value }); });
   if(occasionFilter) occasionFilter.addEventListener('input',()=>{ render(); trackEvent('filter_occasion', { filter_value: occasionFilter.value }); });
   if(sortBy) sortBy.addEventListener('input',()=>{ render(); trackEvent('sort_catalogue', { sort_value: sortBy.value }); });
-  $('copyOrder').addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText($('orderText').value); $('copyOrder').textContent='Copied'; trackEvent('copy_order_message', { cart_items: cart.length }); setTimeout(()=>$('copyOrder').textContent='Copy order message',1400); }catch(e){ $('orderText').select(); document.execCommand('copy'); } });
+  const copyOrder = $('copyOrder');
+  if(copyOrder) copyOrder.addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText($('orderText').value); copyOrder.textContent='Copied'; trackEvent('copy_order_message', { cart_items: cart.length }); setTimeout(()=>copyOrder.textContent='Copy order message',1400); }catch(e){ $('orderText').select(); document.execCommand('copy'); } });
   const clearCart=$('clearCart'); if(clearCart) clearCart.addEventListener('click',()=>{ trackEvent('clear_cart', { cart_items: cart.length }); cart.length=0; updateCart(); });
   if(floatingCart) floatingCart.addEventListener('click',()=>{ trackEvent('floating_cart_click', { cart_items: cart.length }); const order=$('order'); if(order) order.scrollIntoView({behavior:'smooth',block:'start'}); });
   init();
