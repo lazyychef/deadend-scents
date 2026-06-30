@@ -255,9 +255,12 @@
     return days > 0 ? `Ends in ${days}d ${hours}h` : `Ends in ${hours}h`;
   }
   function discountedPriceText(price, f){
-    const original = parseMoney(price);
-    if (!original || !isFeaturedDiscountActive(f)) return String(price || '').trim();
-    return money(original * 0.8);
+  const original = parseMoney(price);
+  if (!original || !isFeaturedDiscountActive(f)) return String(price || '').trim();
+
+  const discounted = Math.floor(original * 0.8);
+  return '$' + discounted;
+}
   }
   function firstAvailablePrice(f){ return [f.p3,f.p5,f.p10].map(parseMoney).find(n=>n>0)||0; }
   function newDateValue(f){ const raw=f.purchaseDate || f.addedDate; const date=raw?new Date(raw):null; return date&&!Number.isNaN(date.getTime())?date.getTime():0; }
