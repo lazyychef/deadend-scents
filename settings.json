@@ -8,8 +8,9 @@
   "expressPostage": 10,
   "shippingLine": "$10 express postage \u00b7 Australia-wide shipping \u00b7 Glass vials",
   "newArrivalDays": 45,
-  "googleAnalyticsId": "",
-  "microsoftClarityId": "",
+  "googleAnalyticsId": "G-ZQFKZ1RXLC",
+  "microsoftClarityId": "xeuxtee2iy",
   "weeklyDiscountPercent": 20,
-  "weeklyDiscountDays": 7
+  "weeklyDiscountDays": 7,
+  "siteUrl": "https://deadendscents.com"
 }
