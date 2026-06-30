@@ -1,15 +1,33 @@
-# DeadEnd Scents V2.9 Replacement Files
+# DeadEnd Scents V2.7 - Fast Purchase Flow
 
-Replace these files in your GitHub repo root:
+## What's new
+- Purchase form now defaults to **Auto detect**.
+- Type a fragrance name:
+  - exact catalogue match = restock/update existing bottle
+  - no match = new bottle entry
+- Fixed the V2.6 issue where purchase items could save as an empty array.
+- If Total Paid is entered and bottle line costs are blank, costs are auto-split across bottle lines.
+- Keep using this on a feature branch first.
 
-- `v29-patch.js`
-- `styles-v29.css`
-- `packs.json`
+## Test checklist
+1. Open `/admin/`.
+2. Add Purchase / Bottle.
+3. Type an existing fragrance and save. JSON should show `mode: existing` and at least one item.
+4. Type a new fragrance and save. JSON should show `mode: new` and at least one item.
+5. Add 2 bottle lines, enter Total Paid, leave costs blank. JSON should auto-split costs.
 
-You do not need to edit `index.html` again. Your current file already loads the patch and CSS.
+## Important
+The form still saves locally until `adminWriteEndpoint` is connected in `settings.json`.
 
-## Fixes
-- Fragrance of the Week prices display as whole dollars.
-- Mobile Fragrance of the Week card is tighter.
-- Tobacco Pack no longer includes Cinder Kiss.
-- Pack list stays curated.
+
+## New fragrance badge rule
+
+New badges and Command Centre new fragrance counts use `Purchase Date` first, then `Added Date`, and only show/count fragrances less than 14 days old.
+
+
+## V2.8 AU date workflow
+
+- Admin purchase and added date fields now use DD/MM/YYYY text input.
+- Today's date auto-fills in Australian format.
+- Apps Script converts DD/MM/YYYY into real Google Sheet dates on write-back.
+- New badges still use the 14-day Purchase Date / Added Date rule.
