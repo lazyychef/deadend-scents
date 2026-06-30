@@ -1,21 +1,13 @@
-# DeadEnd Scents v3.0.0
+# DeadEnd Scents v3.0.2
 
-Upload these files to the root of the GitHub Pages repository and replace the existing root files.
+## Update notes
+- Keeps the dark green v3 style.
+- Adds refined top header with Messenger, WhatsApp and Instagram icons.
+- Restores v2.8-style fragrance tiles.
+- Mobile catalogue now uses 2 columns on phones and 3 columns on larger mobile/tablet widths.
+- Fragrance cards show all catalogue emojis in a smaller row.
+- Cards include house, fragrance, inspired by where relevant, New/Staff Pick badges, collection badge, main accords, 3mL/5mL/10mL prices and Fragrantica link.
+- Keeps curated discovery packs from v3.0 using live catalogue pricing.
 
-Included:
-- index.html
-- styles.css
-- app.js
-- settings.json
-- packs.json
-
-Do not delete the `/admin` folder. This ZIP only replaces the customer-facing root files and keeps the existing Command Centre/write-back setup separate.
-
-v3.0.0 changes:
-- Mobile-first homepage and catalogue layout
-- Curated discovery packs only
-- Pack pricing calculated from live 3mL catalogue prices
-- Pack discounts handled in packs.json
-- Pack items mapped by fragrance ID with fallbackItems
-- Cinder Kiss removed from packs
-- Fragrance cards show House, Fragrance, Collection badge, Main accords, 3mL/5mL/10mL prices and Fragrantica link only
+## Upload
+Upload all root files to GitHub. Keep the `/admin` folder.
