@@ -1,17 +1,31 @@
-# DeadEnd Scents GitHub Workflow
+# V2.9 GitHub workflow
 
-## Branches
-- `main` = live website.
-- `develop` = stable testing branch.
-- `feature/*` = individual changes.
+## Branch
+Use:
 
-## Recommended workflow
-1. Create/switch to a feature branch, e.g. `feature/v2.7-fast-purchase-flow`.
-2. Upload the updated files.
-3. Commit with a clear message.
-4. Test `/admin/`.
-5. Merge into `develop` if you want another testing step.
-6. Merge into `main` when ready to go live.
+`feature/v2.9-mobile-packs`
 
-## Simple option while the site is small
-For admin-only changes, you can test on the feature branch and merge straight to `main` once happy.
+## Files to upload
+Upload these to the repository root:
+
+- `packs.json`
+- `settings.json`
+- `styles-v29.css`
+- `v29-patch.js`
+- `GITHUB_MOBILE_UPDATE_GUIDE.md`
+
+Then edit `index.html` using `INDEX_INCLUDE_NOTES.txt`.
+
+## Commit message
+`V2.9 mobile packs and featured fragrance polish`
+
+## Test
+Open:
+
+`https://deadendscents.com/?v=29`
+
+Check:
+- Featured prices are whole dollars.
+- Mobile featured card is shorter.
+- Tobacco Pack does not show Cinder Kiss.
+- Packs show curated options.

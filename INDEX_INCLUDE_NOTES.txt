@@ -1,0 +1,9 @@
+Add this before </head> in index.html:
+
+<link rel="stylesheet" href="styles-v29.css">
+
+Add this before </body>, after app.js:
+
+<script src="v29-patch.js"></script>
+
+Do not duplicate these lines if they already exist.
