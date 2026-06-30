@@ -118,59 +118,107 @@ function writeStatusCards(settings){
 }
 function setupForms(frags, settings){
   writeStatusCards(settings);
-  const purchaseDate=document.querySelector('#purchaseForm [name="purchaseDate"]'); if(purchaseDate && !purchaseDate.value) purchaseDate.value=todayIso();
+  const purchaseDate=document.querySelector('#purchaseForm [name="purchaseDate"]');
+  if(purchaseDate && !purchaseDate.value) purchaseDate.value=todayIso();
   const itemWrap=$('purchaseItems');
-  const fragOptions=frags.map(f=>`<option value="${escapeHtml(f.id)}" data-name="${escapeHtml(f.name)}">${escapeHtml(f.name)}${f.house?' · '+escapeHtml(f.house):''}</option>`).join('');
+  const fragOptions='<option value="">Select existing fragrance...</option>' + frags.map(f=>`<option value="${escapeHtml(f.id)}" data-name="${escapeHtml(f.name)}" data-house="${escapeHtml(f.house)}">${escapeHtml(f.name)}${f.house?' · '+escapeHtml(f.house):''}</option>`).join('');
   function addLine(){
     const div=document.createElement('div'); div.className='purchase-line';
-    div.innerHTML=`<div class="purchase-line-grid">
-      <label>Fragrance<select name="fragranceId">${fragOptions}</select></label>
-      <label>Bottle mL<input name="bottleSize" type="number" min="0" step="1" value="100"></label>
-      <label>Full %<input name="fullness" type="number" min="0" max="100" step="1" value="100"></label>
-      <label>Cost<input name="allocatedCost" type="number" min="0" step="0.01"></label>
-      <label>Current mL<input name="currentMl" type="number" min="0" step="0.1"></label>
-      <button class="remove-line" type="button">×</button>
-    </div>`;
+    div.innerHTML=`
+      <div class="purchase-mode">
+        <label><input type="radio" name="mode_${Date.now()}" value="existing" checked> Existing bottle / restock</label>
+        <label><input type="radio" name="mode_${Date.now()}" value="new"> New bottle</label>
+      </div>
+      <div class="existing-fields">
+        <div class="purchase-line-grid existing-grid">
+          <label>Existing fragrance<select name="fragranceId">${fragOptions}</select></label>
+          <label>Bottle mL<input name="bottleSize" type="number" min="0" step="1" value="100"></label>
+          <label>Full %<input name="fullness" type="number" min="0" max="100" step="1" value="100"></label>
+          <label>Cost<input name="allocatedCost" type="number" min="0" step="0.01"></label>
+          <label>Current mL<input name="currentMl" type="number" min="0" step="0.1"></label>
+          <button class="remove-line" type="button">×</button>
+        </div>
+      </div>
+      <div class="new-fields" hidden>
+        <div class="form-grid new-bottle-grid">
+          <label>Collection<select name="collection"><option>Designer Original</option><option>Niche Original</option><option>Middle Eastern</option><option>Inspired By</option></select></label>
+          <label>House<input name="house" placeholder="Lattafa, Jalu, Mancera..."></label>
+          <label>Fragrance<input name="fragrance" placeholder="Fragrance name"></label>
+          <label>Scent Style<select name="scentStyle"><option>Fresh Citrus</option><option>Fresh Aquatic</option><option>Fruity</option><option>Woody</option><option>Leather</option><option>Spicy</option><option>Gourmand</option><option>Tobacco</option><option>Floral</option><option>Dark / Night</option></select></label>
+          <label>Gender<select name="gender"><option>Men / Unisex</option><option>Women</option><option>Unisex</option></select></label>
+          <label>Emojis<input name="emojis" placeholder="🍋🌿"></label>
+          <label>Inspiration House<input name="inspirationHouse" placeholder="Creed, LV, Xerjoff..."></label>
+          <label>Inspiration<input name="inspiration" placeholder="Aventus, Imagination..."></label>
+          <label>3mL<input name="p3" type="number" min="0" step="0.01"></label>
+          <label>5mL<input name="p5" type="number" min="0" step="0.01"></label>
+          <label>10mL<input name="p10" type="number" min="0" step="0.01"></label>
+          <label>Added Date<input name="addedDate" type="date" value="${todayIso()}"></label>
+          <label class="wide">Description<input name="description" placeholder="3-5 word scent profile"></label>
+          <label class="wide">Fragrantica<input name="fragrantica" type="url" placeholder="https://www.fragrantica.com/..."></label>
+        </div>
+        <div class="purchase-line-grid inventory-grid">
+          <label>Bottle mL<input name="newBottleSize" type="number" min="0" step="1" value="100"></label>
+          <label>Full %<input name="newFullness" type="number" min="0" max="100" step="1" value="100"></label>
+          <label>Cost<input name="newAllocatedCost" type="number" min="0" step="0.01"></label>
+          <label>Current mL<input name="newCurrentMl" type="number" min="0" step="0.1"></label>
+          <button class="remove-line" type="button">×</button>
+        </div>
+      </div>`;
     itemWrap.appendChild(div);
-    const size=div.querySelector('[name="bottleSize"]'), full=div.querySelector('[name="fullness"]'), curr=div.querySelector('[name="currentMl"]');
-    function calc(){ if(size.value && full.value) curr.value=money(Number(size.value)*Number(full.value)/100); }
-    size.addEventListener('input',calc); full.addEventListener('input',calc); calc();
-    div.querySelector('.remove-line').addEventListener('click',()=>div.remove());
+    const radios=[...div.querySelectorAll('.purchase-mode input')];
+    const existing=div.querySelector('.existing-fields');
+    const newFields=div.querySelector('.new-fields');
+    function setMode(){ const isNew=radios.find(r=>r.checked)?.value==='new'; existing.hidden=isNew; newFields.hidden=!isNew; }
+    radios.forEach(r=>r.addEventListener('change',setMode)); setMode();
+    function bindCalc(sizeSel, fullSel, currSel){
+      const size=div.querySelector(sizeSel), full=div.querySelector(fullSel), curr=div.querySelector(currSel);
+      function calc(){ if(size.value && full.value) curr.value=money(Number(size.value)*Number(full.value)/100); }
+      size.addEventListener('input',calc); full.addEventListener('input',calc); calc();
+    }
+    bindCalc('[name="bottleSize"]','[name="fullness"]','[name="currentMl"]');
+    bindCalc('[name="newBottleSize"]','[name="newFullness"]','[name="newCurrentMl"]');
+    div.querySelectorAll('.remove-line').forEach(btn=>btn.addEventListener('click',()=>div.remove()));
   }
   $('addPurchaseItem').addEventListener('click',addLine); if(!itemWrap.children.length) addLine();
   $('purchaseForm').addEventListener('submit', async (e)=>{ e.preventDefault(); await savePurchase(); });
-  $('bottleForm').addEventListener('submit', async (e)=>{ e.preventDefault(); await saveBottle(); });
   $('copyPurchaseRows').addEventListener('click',()=>copyText($('stagedOutput').value || buildPurchasePayload().summary));
-  $('copyBottleRow').addEventListener('click',()=>copyText(JSON.stringify(buildBottlePayload().row,null,2)));
 }
 function selectedFragName(select){ const opt=select.options[select.selectedIndex]; return opt ? opt.textContent.split(' · ')[0] : ''; }
+function lineMode(line){ return line.querySelector('.purchase-mode input:checked')?.value || 'existing'; }
+function val(line, selector){ const el=line.querySelector(selector); return el ? el.value : ''; }
 function buildPurchasePayload(){
   const f=formDataObject($('purchaseForm'));
   const purchaseId=makePurchaseId();
   const lines=[...document.querySelectorAll('.purchase-line')].map(line=>{
+    const mode=lineMode(line);
+    if(mode==='new'){
+      const bottleSize=Number(val(line,'[name="newBottleSize"]')||0);
+      const fullness=Number(val(line,'[name="newFullness"]')||0);
+      const currentMl=Number(val(line,'[name="newCurrentMl"]')||0);
+      const allocatedCost=Number(val(line,'[name="newAllocatedCost"]')||0);
+      return {
+        mode:'new', purchaseId,
+        fragranceId:'', fragrance:val(line,'[name="fragrance"]'), house:val(line,'[name="house"]'), collection:val(line,'[name="collection"]'),
+        inspirationHouse:val(line,'[name="inspirationHouse"]'), inspiration:val(line,'[name="inspiration"]'), scentStyle:val(line,'[name="scentStyle"]'), gender:val(line,'[name="gender"]'),
+        emojis:val(line,'[name="emojis"]'), description:val(line,'[name="description"]'), fragrantica:val(line,'[name="fragrantica"]'),
+        p3:money(val(line,'[name="p3"]')), p5:money(val(line,'[name="p5"]')), p10:money(val(line,'[name="p10"]')), addedDate:val(line,'[name="addedDate"]')||todayIso(),
+        bottleSize, fullness, currentMl, allocatedCost
+      };
+    }
     const sel=line.querySelector('[name="fragranceId"]');
     return {
-      purchaseId,
+      mode:'existing', purchaseId,
       fragranceId: sel.value,
       fragrance: selectedFragName(sel),
-      bottleSize: Number(line.querySelector('[name="bottleSize"]').value||0),
-      fullness: Number(line.querySelector('[name="fullness"]').value||0),
-      currentMl: Number(line.querySelector('[name="currentMl"]').value||0),
-      allocatedCost: Number(line.querySelector('[name="allocatedCost"]').value||0)
+      bottleSize: Number(val(line,'[name="bottleSize"]')||0),
+      fullness: Number(val(line,'[name="fullness"]')||0),
+      currentMl: Number(val(line,'[name="currentMl"]')||0),
+      allocatedCost: Number(val(line,'[name="allocatedCost"]')||0)
     };
-  });
+  }).filter(l=>l.mode==='new' ? (l.fragrance && l.house) : l.fragranceId);
   const purchase={purchaseId,purchaseDate:f.purchaseDate,seller:f.seller,source:f.source,totalPaid:Number(f.totalPaid||0),bottlesCount:lines.length,notes:f.notes||''};
-  const summary=`Purchase ${purchaseId}\n${purchase.purchaseDate} · ${purchase.seller} · $${purchase.totalPaid}\n` + lines.map(l=>`${l.fragrance} | ${l.bottleSize}mL | ${l.fullness}% | ${l.currentMl}mL | $${l.allocatedCost}`).join('\n');
+  const summary=`Purchase ${purchaseId}\n${purchase.purchaseDate} · ${purchase.seller} · $${purchase.totalPaid}\n` + lines.map(l=>`${l.mode==='new'?'NEW':'RESTOCK'} | ${l.fragrance} | ${l.bottleSize}mL | ${l.fullness}% | ${l.currentMl}mL | $${l.allocatedCost}`).join('\n');
   return {action:'addPurchase', purchase, items:lines, summary};
-}
-function buildBottlePayload(){
-  const f=formDataObject($('bottleForm'));
-  const row={
-    house:f.house, fragrance:f.fragrance, collection:f.collection, scentStyle:f.scentStyle,
-    description:f.description, p3:money(f.p3), p5:money(f.p5), p10:money(f.p10), fragrantica:f.fragrantica,
-    addedDate:todayIso(), purchaseDate:todayIso(), purchasePrice:money(f.purchasePrice), bottleSize:Number(f.bottleSize||0), currentMl:Number(f.currentMl||0)
-  };
-  return {action:'addBottle', row};
 }
 function saveLocal(kind, payload){
   const key='deadend_'+kind; const arr=JSON.parse(localStorage.getItem(key)||'[]'); arr.push({...payload, savedAt:new Date().toISOString()}); localStorage.setItem(key, JSON.stringify(arr));
@@ -185,12 +233,6 @@ async function savePurchase(){
   saveLocal('purchases', payload);
   const res=await postToEndpoint(payload);
   $('stagedOutput').value=(res.mode==='remote'?'Sent to Google Sheets.\n\n':'Saved locally only.\n\n')+payload.summary+'\n\nJSON:\n'+JSON.stringify(payload,null,2);
-}
-async function saveBottle(){
-  const payload=buildBottlePayload();
-  saveLocal('bottles', payload);
-  const res=await postToEndpoint(payload);
-  $('stagedOutput').value=(res.mode==='remote'?'Sent to Google Sheets.\n\n':'Saved locally only.\n\n')+JSON.stringify(payload.row,null,2);
 }
 async function copyText(text){ try{ await navigator.clipboard.writeText(text); alert('Copied'); }catch(e){ $('stagedOutput').select(); document.execCommand('copy'); } }
 
