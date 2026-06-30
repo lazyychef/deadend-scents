@@ -372,8 +372,19 @@
     }
   }
 
+  function saveLocalEvent(name, params={}){
+    try {
+      const key = 'deadend_admin_events';
+      const existing = JSON.parse(localStorage.getItem(key) || '[]');
+      existing.push({ name, params, timestamp: new Date().toISOString(), page: location.pathname + location.hash });
+      const trimmed = existing.slice(-1000);
+      localStorage.setItem(key, JSON.stringify(trimmed));
+    } catch(e){}
+  }
+
   function trackEvent(name, params={}){
     const cleanParams = Object.assign({ event_category: 'DeadEnd Scents' }, params);
+    saveLocalEvent(name, cleanParams);
     try { if(window.gtag) window.gtag('event', name, cleanParams); } catch(e){}
     try { if(window.clarity) window.clarity('event', name); } catch(e){}
   }

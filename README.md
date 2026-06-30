@@ -1,21 +1,37 @@
-# DeadEnd Scents V2.1 Analytics + SEO
+# DeadEnd Scents V2.2 Admin Foundation
 
-This version keeps the V22 user experience and adds the analytics/SEO layer for the custom domain.
+## Upload
+Replace the existing GitHub files with this ZIP contents.
 
-## Included
-
-- Google Analytics 4: `G-ZQFKZ1RXLC`
+## Public site
+The public site keeps the V2.1 analytics and SEO setup:
+- GA4: `G-ZQFKZ1RXLC`
 - Microsoft Clarity: `xeuxtee2iy`
-- Custom event tracking for search, filters, add-to-cart, removals, WhatsApp, Messenger, Instagram, packs and featured fragrance activity
-- Updated `robots.txt` using `https://deadendscents.com`
-- Updated `sitemap.xml` using `https://deadendscents.com`
-- Added `CNAME` file for GitHub Pages custom domain
-- Updated canonical, Open Graph and structured data to the custom domain
+- `sitemap.xml`
+- `robots.txt`
+- `CNAME`
 
-## After upload
+## Admin dashboard
+Open:
 
-1. Upload/replace all files in the GitHub repository.
-2. Wait for GitHub Pages to redeploy.
-3. In Google Search Console, resubmit `https://deadendscents.com/sitemap.xml`.
-4. In GA4, use Realtime to confirm visits.
-5. In Microsoft Clarity, wait for first recordings to appear.
+`https://deadendscents.com/admin/`
+
+This first admin version is a static dashboard. It reads:
+- your public Google Sheet catalogue
+- local event data from the browser you are using
+
+Google Analytics and Microsoft Clarity remain the source of truth for all visitors. The local admin data is useful for testing events and checking catalogue health quickly.
+
+## What the dashboard shows
+- total fragrances
+- new this month
+- current featured fragrance
+- local cart adds
+- catalogue by type
+- catalogue by scent style
+- local searches from this browser
+- local add-to-cart events from this browser
+- quick checks for GA, Clarity, site URL and featured settings
+
+## Security note
+This dashboard does not show private customer data. It is marked `noindex,nofollow` and blocked in `robots.txt`, but it is not password protected because GitHub Pages is static hosting.

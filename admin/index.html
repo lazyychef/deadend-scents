@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>DeadEnd Scents Admin</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <header class="admin-hero">
+    <div>
+      <p class="eyebrow">Owner dashboard</p>
+      <h1>DeadEnd Scents Admin</h1>
+      <p>Catalogue health, local event tracking and quick links in one place.</p>
+    </div>
+    <nav>
+      <a href="../">View site</a>
+      <a href="https://analytics.google.com" target="_blank" rel="noopener">Analytics</a>
+      <a href="https://clarity.microsoft.com" target="_blank" rel="noopener">Clarity</a>
+      <a href="https://search.google.com/search-console" target="_blank" rel="noopener">Search Console</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="notice">
+      <strong>Note:</strong> this dashboard is a static first version. It reads your public Google Sheet and the local browser events captured on this device. Google Analytics and Clarity remain the source of truth for all visitors.
+    </section>
+
+    <section class="cards" id="summaryCards">
+      <article><span>Total fragrances</span><strong id="totalFragrances">—</strong></article>
+      <article><span>New this month</span><strong id="newThisMonth">—</strong></article>
+      <article><span>Featured</span><strong id="featuredName">—</strong></article>
+      <article><span>Local cart adds</span><strong id="localCartAdds">—</strong></article>
+    </section>
+
+    <section class="grid-two">
+      <article class="panel">
+        <div class="panel-head"><h2>Catalogue by type</h2><span id="typeCount">—</span></div>
+        <div id="typeBreakdown" class="list"></div>
+      </article>
+      <article class="panel">
+        <div class="panel-head"><h2>Catalogue by scent style</h2><span id="styleCount">—</span></div>
+        <div id="styleBreakdown" class="list"></div>
+      </article>
+    </section>
+
+    <section class="grid-two">
+      <article class="panel">
+        <div class="panel-head"><h2>Local searches</h2><button id="clearLocalData">Clear local data</button></div>
+        <div id="searchBreakdown" class="list empty">No local searches logged yet.</div>
+      </article>
+      <article class="panel">
+        <div class="panel-head"><h2>Local add-to-cart</h2><span>from this browser</span></div>
+        <div id="cartBreakdown" class="list empty">No local cart events logged yet.</div>
+      </article>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><h2>Quick checks</h2><span>useful weekly</span></div>
+      <div id="quickChecks" class="checks"></div>
+    </section>
+  </main>
+
+  <script src="admin.js"></script>
+</body>
+</html>
