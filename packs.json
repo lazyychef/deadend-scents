@@ -1,51 +1,264 @@
 [
   {
-    "name": "Choose Any 3",
-    "emojis": "🎯🧪✨",
-    "price": "3 x 3mL — $22",
-    "items": [],
-    "desc": "Pick any 3 fragrances from the catalogue. Add this pack to cart, then list your choices in the order message."
+    "id": "night-shift",
+    "title": "Night Shift",
+    "emoji": "🌙",
+    "tagline": "Sweet, loud and made for nights out.",
+    "description": "Warm night scents with sweet, spicy and attention-grabbing profiles.",
+    "discount": 15,
+    "sizeMl": 3,
+    "items": [
+      "ME003",
+      "DES012",
+      "INS008"
+    ],
+    "fallbackItems": [
+      "DES002",
+      "INS009",
+      "ME012"
+    ],
+    "itemNames": [
+      "9PM - Night Out",
+      "Spicebomb Infrared EDP",
+      "Booz Extreme"
+    ],
+    "fallbackNames": [
+      "The Most Wanted Intense",
+      "Midnight Booz",
+      "Lumière Garçon"
+    ]
   },
   {
-    "name": "Choose Any 5",
-    "emojis": "🔥🧪📦",
-    "price": "5 x 3mL — $35",
-    "items": [],
-    "desc": "Pick any 5 fragrances from the catalogue. Best balance of value and variety."
+    "id": "fresh-clean",
+    "title": "Fresh & Clean",
+    "emoji": "🍋",
+    "tagline": "Easy daily scents that stay clean.",
+    "description": "Fresh citrus, aquatic and clean profiles for warm days and daily wear.",
+    "discount": 15,
+    "sizeMl": 3,
+    "items": [
+      "ME005",
+      "ME002",
+      "DES001",
+      "INS032",
+      "ME004"
+    ],
+    "fallbackItems": [
+      "INS010",
+      "INS011",
+      "INS024",
+      "ME013"
+    ],
+    "itemNames": [
+      "Kaaf",
+      "Supremacy in Heaven",
+      "Acqua di Giò Eau de Parfum",
+      "Nirvana",
+      "Aqua Oud"
+    ],
+    "fallbackNames": [
+      "Shu Helou",
+      "High Tide Mojito",
+      "ICE",
+      "Teas Me"
+    ]
   },
   {
-    "name": "Choose Any 8",
-    "emojis": "💎🧪🚀",
-    "price": "8 x 3mL — $55",
-    "items": [],
-    "desc": "Pick any 8 fragrances from the catalogue. Best value discovery option."
+    "id": "office-rotation",
+    "title": "Office Rotation",
+    "emoji": "💼",
+    "tagline": "Clean, polished and safe for work.",
+    "description": "Wearable scents that smell put together without being too much.",
+    "discount": 15,
+    "sizeMl": 3,
+    "items": [
+      "DES010",
+      "INS032",
+      "ME013",
+      "ME014",
+      "DES001"
+    ],
+    "fallbackItems": [
+      "ME005",
+      "INS013",
+      "ME019"
+    ],
+    "itemNames": [
+      "Boss Bottled Parfum",
+      "Nirvana",
+      "Teas Me",
+      "Moonstone Bleu",
+      "Acqua di Giò Eau de Parfum"
+    ],
+    "fallbackNames": [
+      "Kaaf",
+      "Bossman",
+      "French Tobacco"
+    ]
   },
   {
-    "name": "Tobacco Pack",
-    "emojis": "🚬🥃🔥",
-    "price": "5 x 3mL — $35",
-    "items": ["Cinder Kiss", "Casanova", "Cuban Tobacco", "Rifaqaat", "Incense 01"],
-    "desc": "Warm tobacco, boozy and smoky scents. Swap options if needed."
+    "id": "date-night",
+    "title": "Date Night",
+    "emoji": "❤️",
+    "tagline": "Smooth, warm and dressed-up.",
+    "description": "Sweet, spicy and confident scents for dinner, drinks and cooler nights.",
+    "discount": 12,
+    "sizeMl": 3,
+    "items": [
+      "NIC003",
+      "DES011",
+      "DES012",
+      "ME022",
+      "ME003"
+    ],
+    "fallbackItems": [
+      "DES002",
+      "INS012",
+      "ME012",
+      "INS008"
+    ],
+    "itemNames": [
+      "XJ 1861 Naxos",
+      "Boss Bottled Absolu Parfum",
+      "Spicebomb Infrared EDP",
+      "Rifaqaat",
+      "9PM - Night Out"
+    ],
+    "fallbackNames": [
+      "The Most Wanted Intense",
+      "Mafia Boss",
+      "Lumière Garçon",
+      "Booz Extreme"
+    ]
   },
   {
-    "name": "Summer Pack",
-    "emojis": "☀️🍋🌊",
-    "price": "5 x 3mL — $35",
-    "items": ["SANAYA", "Kaaf", "Supremacy in Heaven", "Opulent Dubai", "Fusion d'Issey Extrême"],
-    "desc": "Fresh, citrus, aquatic and warm-weather options."
+    "id": "whisky-tobacco",
+    "title": "Whisky & Tobacco",
+    "emoji": "🥃",
+    "tagline": "Tobacco, booze, spice and warmth.",
+    "description": "Rich tobacco and boozy profiles. Cinder Kiss has been removed.",
+    "discount": 12,
+    "sizeMl": 3,
+    "items": [
+      "ME017",
+      "ME018",
+      "INS028",
+      "ME015",
+      "INS023"
+    ],
+    "fallbackItems": [
+      "INS002",
+      "INS007",
+      "ME011",
+      "NIC003"
+    ],
+    "itemNames": [
+      "Mexican Tobacco",
+      "Cuban Tobacco",
+      "Casanova",
+      "Greek Tobacco",
+      "Smoldering Sir"
+    ],
+    "fallbackNames": [
+      "Gladiator",
+      "Booz",
+      "Royal Taboo",
+      "XJ 1861 Naxos"
+    ]
   },
   {
-    "name": "Office Collection",
-    "emojis": "💼🧼🌲",
-    "price": "5 x 3mL — $35",
-    "items": ["Seasons Drift", "Boss Bottled Parfum", "Nirvana", "Teas Me", "Moonstone Bleu"],
-    "desc": "Clean, polished and easy daily wear."
+    "id": "luxury-collection",
+    "title": "Luxury Collection",
+    "emoji": "💎",
+    "tagline": "Premium picks without full-bottle prices.",
+    "description": "Higher-priced samples with a smaller discount so the pack still makes sense.",
+    "discount": 10,
+    "sizeMl": 3,
+    "items": [
+      "NIC003",
+      "ME006",
+      "ME009"
+    ],
+    "fallbackItems": [
+      "DES011",
+      "DES012",
+      "ME015"
+    ],
+    "itemNames": [
+      "XJ 1861 Naxos",
+      "Ignite Oud",
+      "Wild Colt"
+    ],
+    "fallbackNames": [
+      "Boss Bottled Absolu Parfum",
+      "Spicebomb Infrared EDP",
+      "Greek Tobacco"
+    ]
   },
   {
-    "name": "Date Night Pack",
-    "emojis": "🌙🔥🥃",
-    "price": "5 x 3mL — $35",
-    "items": ["XJ 1861 Naxos", "Rifaqaat", "Boss Bottled Absolu Parfum", "Spicebomb Infrared EDP", "9PM - Night Out"],
-    "desc": "Sweet, warm, spicy and dressed-up options."
+    "id": "compliment-magnet",
+    "title": "Compliment Magnet",
+    "emoji": "🔥",
+    "tagline": "Easy wins with strong appeal.",
+    "description": "Mass-appealing scents picked for projection, sweetness and broad wearability.",
+    "discount": 15,
+    "sizeMl": 3,
+    "items": [
+      "ME003",
+      "DES002",
+      "ME005",
+      "INS015",
+      "DES010"
+    ],
+    "fallbackItems": [
+      "INS013",
+      "DES001",
+      "ME002"
+    ],
+    "itemNames": [
+      "9PM - Night Out",
+      "The Most Wanted Intense",
+      "Kaaf",
+      "Kingsman",
+      "Boss Bottled Parfum"
+    ],
+    "fallbackNames": [
+      "Bossman",
+      "Acqua di Giò Eau de Parfum",
+      "Supremacy in Heaven"
+    ]
+  },
+  {
+    "id": "travel-pack",
+    "title": "Travel Pack",
+    "emoji": "✈️",
+    "tagline": "One pack for day, night and warm weather.",
+    "description": "Versatile picks for trips when you only want to pack a few vials.",
+    "discount": 15,
+    "sizeMl": 3,
+    "items": [
+      "ME005",
+      "DES001",
+      "ME003",
+      "ME009",
+      "INS032"
+    ],
+    "fallbackItems": [
+      "ME002",
+      "INS013",
+      "DES010"
+    ],
+    "itemNames": [
+      "Kaaf",
+      "Acqua di Giò Eau de Parfum",
+      "9PM - Night Out",
+      "Wild Colt",
+      "Nirvana"
+    ],
+    "fallbackNames": [
+      "Supremacy in Heaven",
+      "Bossman",
+      "Boss Bottled Parfum"
+    ]
   }
 ]

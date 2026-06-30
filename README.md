@@ -1,33 +1,21 @@
-# DeadEnd Scents V2.7 - Fast Purchase Flow
+# DeadEnd Scents v3.0.0
 
-## What's new
-- Purchase form now defaults to **Auto detect**.
-- Type a fragrance name:
-  - exact catalogue match = restock/update existing bottle
-  - no match = new bottle entry
-- Fixed the V2.6 issue where purchase items could save as an empty array.
-- If Total Paid is entered and bottle line costs are blank, costs are auto-split across bottle lines.
-- Keep using this on a feature branch first.
+Upload these files to the root of the GitHub Pages repository and replace the existing root files.
 
-## Test checklist
-1. Open `/admin/`.
-2. Add Purchase / Bottle.
-3. Type an existing fragrance and save. JSON should show `mode: existing` and at least one item.
-4. Type a new fragrance and save. JSON should show `mode: new` and at least one item.
-5. Add 2 bottle lines, enter Total Paid, leave costs blank. JSON should auto-split costs.
+Included:
+- index.html
+- styles.css
+- app.js
+- settings.json
+- packs.json
 
-## Important
-The form still saves locally until `adminWriteEndpoint` is connected in `settings.json`.
+Do not delete the `/admin` folder. This ZIP only replaces the customer-facing root files and keeps the existing Command Centre/write-back setup separate.
 
-
-## New fragrance badge rule
-
-New badges and Command Centre new fragrance counts use `Purchase Date` first, then `Added Date`, and only show/count fragrances less than 14 days old.
-
-
-## V2.8 AU date workflow
-
-- Admin purchase and added date fields now use DD/MM/YYYY text input.
-- Today's date auto-fills in Australian format.
-- Apps Script converts DD/MM/YYYY into real Google Sheet dates on write-back.
-- New badges still use the 14-day Purchase Date / Added Date rule.
+v3.0.0 changes:
+- Mobile-first homepage and catalogue layout
+- Curated discovery packs only
+- Pack pricing calculated from live 3mL catalogue prices
+- Pack discounts handled in packs.json
+- Pack items mapped by fragrance ID with fallbackItems
+- Cinder Kiss removed from packs
+- Fragrance cards show House, Fragrance, Collection badge, Main accords, 3mL/5mL/10mL prices and Fragrantica link only
