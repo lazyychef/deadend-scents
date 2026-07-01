@@ -1,24 +1,51 @@
-# DeadEnd Scents v3.0.2
+# DeadEnd Scents v3.1
 
-## Update notes
-- Keeps the dark green v3 style.
-- Adds refined top header with Messenger, WhatsApp and Instagram icons.
-- Restores v2.8-style fragrance tiles.
-- Mobile catalogue now uses 2 columns on phones and 3 columns on larger mobile/tablet widths.
-- Fragrance cards show all catalogue emojis in a smaller row.
-- Cards include house, fragrance, inspired by where relevant, New/Staff Pick badges, collection badge, main accords, 3mL/5mL/10mL prices and Fragrantica link.
-- Keeps curated discovery packs from v3.0 using live catalogue pricing.
+## What changed
+- The website now treats the Master Database as the main source of truth.
+- Catalogue loads from the `Catalogue` tab.
+- Discovery packs load from the `Discovery Packs` tab.
+- `packs.json` remains only as an emergency backup if the sheet cannot load.
+- Current dark green UI, fragrance cards, filters, Fragrance of the Week and cart flow stay the same.
+
+## Sheet setup
+The site is connected to this Master Database:
+`1GSW1Bytauoi53o4orbojoZl9K-ixL4Y4Mj6NyehzCrc`
+
+Expected tabs:
+- `Catalogue`
+- `Discovery Packs`
+
+The Discovery Packs tab can use either format:
+
+### Simple one-row-per-pack format
+- Pack ID
+- Pack Name
+- Emojis
+- Description
+- Discount
+- Size mL
+- Items or Fragrance IDs
+- Fallback Items
+- Active
+
+### Database row-per-fragrance format
+- Pack ID
+- Pack Name
+- Fragrance ID
+- Order
+- Discount
+- Size mL
+- Active
+
+Fragrance IDs are best. Names still work as a backup.
 
 ## Upload
-Upload all root files to GitHub. Keep the `/admin` folder.
-
-## v3.0.3
-- Added blocked-network catalogue fallback.
-- Loading order is now: live Google Sheets CSV → Google Sheets JSONP → local `catalogue-fallback.json` → browser cache.
-- This helps on networks that block Google Sheets published CSV/JSONP, including some protected work networks.
-- If the backup notice appears, the catalogue is loading from the local backup and may not reflect the newest prices/stock.
+Upload all ZIP contents to the GitHub root.
+Keep the `/admin` folder.
 
 
-## V3.0.5
-- Fixed JavaScript syntax issue that stopped catalogue, packs and weekly fragrance rendering.
-- No design changes.
+## v3.1.1
+- Fixes live app still reading packs.json first.
+- Discovery Packs now reads from the Master Database Discovery Packs tab via settings.discoveryPacksCsvUrl.
+- packs.json remains as backup only.
+- Do not delete /admin.

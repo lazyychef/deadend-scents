@@ -14,5 +14,7 @@
   "weeklyDiscountDays": 7,
   "siteUrl": "https://deadendscents.com",
   "adminWriteEndpoint": "https://script.google.com/macros/s/AKfycbxKVU2Qt1XTu4z_ezx_BcjdfCuaOphLGBxqV3uGzfqaz3CX2tDIZmIG28QkbT7rpRTr/exec",
-  "catalogueFallbackFile": "catalogue-fallback.json"
+  "catalogueFallbackFile": "catalogue-fallback.json",
+  "masterSheetId": "1GSW1Bytauoi53o4orbojoZl9K-ixL4Y4Mj6NyehzCrc",
+  "discoveryPacksCsvUrl": "https://docs.google.com/spreadsheets/d/1GSW1Bytauoi53o4orbojoZl9K-ixL4Y4Mj6NyehzCrc/gviz/tq?tqx=out:csv&sheet=Discovery%20Packs"
 }

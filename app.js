@@ -2,7 +2,9 @@
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   window.addEventListener('load', () => { if (!location.hash) window.scrollTo({ top: 0, left: 0, behavior: 'auto' }); });
 
-  const DEFAULT_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS1yQxI1LA53T40lgn1ZZ_9RmljQsDgjYLmlC0xDlNU1dQ8RZQJQ2J-8h5he3nBdA/pub?gid=863343549&single=true&output=csv';
+  const MASTER_SHEET_ID = '1GSW1Bytauoi53o4orbojoZl9K-ixL4Y4Mj6NyehzCrc';
+  const DEFAULT_CSV = `https://docs.google.com/spreadsheets/d/${MASTER_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Catalogue`;
+  const DEFAULT_PACKS_CSV = `https://docs.google.com/spreadsheets/d/${MASTER_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Discovery%20Packs`;
   const $ = (id) => document.getElementById(id);
   const grid = $('catalogueGrid');
   const search = $('search');
@@ -69,6 +71,21 @@
     }
   }
 
+
+  async function getSheetCsvOnly(url){
+    const noCacheUrl = url + (url.includes('?') ? '&' : '?') + 'cacheBust=' + Date.now();
+    try {
+      const res = await fetch(noCacheUrl, { cache: 'no-store', redirect: 'follow' });
+      if(!res.ok) throw new Error('Google Sheet returned ' + res.status);
+      const text = await res.text();
+      if(text && text.trim()) return text;
+      throw new Error('Google Sheet returned an empty CSV');
+    } catch(fetchError) {
+      console.warn('Sheet CSV fetch failed, trying JSONP', fetchError);
+    }
+    return await getCsvViaGviz(url);
+  }
+
   async function getLocalCatalogueBackup(){
     const backupFile = settings.catalogueFallbackFile || 'catalogue-fallback.json';
     try {
@@ -114,11 +131,14 @@
 
   function getCsvViaGviz(url){
     return new Promise((resolve, reject) => {
-      const match = url.match(/\/d\/e\/([^/]+)\/pub/);
+      const publishedMatch = url.match(/\/d\/e\/([^/]+)\//);
+      const editMatch = url.match(/\/d\/([^/]+)\//);
+      const sheetId = publishedMatch ? publishedMatch[1] : (editMatch ? editMatch[1] : '');
       const gidMatch = url.match(/[?&]gid=([^&]+)/);
-      if (!match || !gidMatch) return reject(new Error('Could not read published Google Sheet ID or gid from settings.json'));
-      const sheetId = match[1];
-      const gid = gidMatch[1];
+      const sheetMatch = url.match(/[?&]sheet=([^&]+)/);
+      const sheetName = sheetMatch ? decodeURIComponent(sheetMatch[1].replace(/\+/g,' ')) : '';
+      if (!sheetId || (!gidMatch && !sheetName)) return reject(new Error('Could not read Google Sheet ID, gid, or sheet name from settings.json'));
+      const gid = gidMatch ? gidMatch[1] : '';
       const callbackName = '__deadendSheetCallback_' + Date.now();
       const script = document.createElement('script');
       const timeout = setTimeout(() => {
@@ -148,7 +168,9 @@
         }
       };
       script.onerror = () => { cleanup(); reject(new Error('Google Sheets JSONP script could not load')); };
-      script.src = `https://docs.google.com/spreadsheets/d/e/${encodeURIComponent(sheetId)}/gviz/tq?gid=${encodeURIComponent(gid)}&tqx=responseHandler:${callbackName}`;
+      const base = publishedMatch ? `https://docs.google.com/spreadsheets/d/e/${encodeURIComponent(sheetId)}/gviz/tq` : `https://docs.google.com/spreadsheets/d/${encodeURIComponent(sheetId)}/gviz/tq`;
+      const params = gid ? `gid=${encodeURIComponent(gid)}` : `sheet=${encodeURIComponent(sheetName)}`;
+      script.src = `${base}?${params}&tqx=responseHandler:${callbackName}`;
       document.head.appendChild(script);
     });
   }
@@ -271,12 +293,105 @@
     }).filter(f => f.name);
   }
 
+
+  function sheetCsvUrl(sheetName){
+    const id = settings.masterSheetId || MASTER_SHEET_ID;
+    if(!id) return '';
+    return `https://docs.google.com/spreadsheets/d/${encodeURIComponent(id)}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
+  }
+
+  function getPackCsvUrl(){
+    return settings.discoveryPacksCsvUrl || settings.packsCsvUrl || sheetCsvUrl('Discovery Packs') || DEFAULT_PACKS_CSV;
+  }
+
+  async function loadDiscoveryPacks(){
+    try {
+      const csv = await getSheetCsvOnly(getPackCsvUrl());
+      const parsed = csvToPacks(csv);
+      if(parsed.length) return parsed;
+      throw new Error('Discovery Packs sheet returned no active packs');
+    } catch(error) {
+      console.warn('Discovery Packs sheet failed, using packs.json backup', error);
+      const fallback = await getJson('packs.json', []);
+      return Array.isArray(fallback) ? fallback : [];
+    }
+  }
+
+  function csvToPacks(csvText){
+    const rows=parseCsv(csvText); if(!rows.length) return [];
+    const headers=rows[0].map(cleanHeader);
+    const objects=rows.slice(1).map(cols=>{ const row={}; headers.forEach((h,i)=>row[h]=cols[i]||''); return row; });
+    const groups = new Map();
+    objects.forEach((row, idx)=>{
+      const active = get(row,['Active','Visible','Show','Enabled']);
+      const status = get(row,['Status']);
+      if(active && ['no','false','0','hide','hidden','off'].includes(active.toLowerCase())) return;
+      if(status && ['inactive','hidden','hide','off','no'].includes(status.toLowerCase())) return;
+      const id = get(row,['Pack ID','PackID','ID','Pack Code']) || slugify(get(row,['Pack Name','Name','Title']) || ('pack-' + idx));
+      if(!id) return;
+      const key = id.toLowerCase();
+      if(!groups.has(key)){
+        groups.set(key, {
+          id,
+          title:get(row,['Pack Name','Name','Title']) || id,
+          name:get(row,['Pack Name','Name','Title']) || id,
+          emoji:get(row,['Emoji','Emojis']) || '🧪',
+          emojis:get(row,['Emoji','Emojis']) || '🧪',
+          tagline:get(row,['Tagline','Short Description','Subtitle']) || 'Curated discovery pack',
+          description:get(row,['Description','Desc','Notes']) || '',
+          discount:Number(get(row,['Discount','Discount %','Discount Percent']) || settings.packDiscountPercent || 15),
+          sizeMl:Number(String(get(row,['Size mL','Size','Sample Size','mL']) || '3').replace(/[^0-9.]/g,'')) || 3,
+          count:Number(get(row,['Count','Samples','Number of Samples']) || 0),
+          items:[],
+          itemNames:[],
+          fallbackItems:[],
+          fallbackNames:[]
+        });
+      }
+      const pack = groups.get(key);
+      const order = Number(get(row,['Order','Sort','Position']) || idx + 1);
+      addPackTokens(pack.items, get(row,['Fragrance ID','FragranceID','Item ID','ItemID','Catalogue ID','CatalogueID','IDs','Items','Fragrance IDs']));
+      addPackTokens(pack.itemNames, get(row,['Fragrance','Fragrance Name','Item','Items by Name','Names','Fragrances']));
+      addPackTokens(pack.fallbackItems, get(row,['Fallback ID','FallbackID','Fallback IDs','Fallback Items']));
+      addPackTokens(pack.fallbackNames, get(row,['Fallback','Fallback Name','Fallback Names']));
+      pack._order = Math.min(pack._order ?? order, order);
+    });
+    return [...groups.values()]
+      .map(pack=>{
+        pack.items = uniqueTokens(pack.items);
+        pack.itemNames = uniqueTokens(pack.itemNames);
+        pack.fallbackItems = uniqueTokens(pack.fallbackItems);
+        pack.fallbackNames = uniqueTokens(pack.fallbackNames);
+        if(!pack.count) pack.count = pack.items.length || pack.itemNames.length || 3;
+        return pack;
+      })
+      .filter(pack => pack.items.length || pack.itemNames.length)
+      .sort((a,b)=>(a._order||999)-(b._order||999));
+  }
+
+  function addPackTokens(target, value){
+    String(value || '')
+      .split(/[\n;,|]+/)
+      .map(v=>v.trim())
+      .filter(Boolean)
+      .forEach(v=>target.push(v));
+  }
+
+  function uniqueTokens(values){
+    const seen=new Set();
+    return values.filter(v=>{ const key=String(v).trim().toLowerCase(); if(!key || seen.has(key)) return false; seen.add(key); return true; });
+  }
+
+  function slugify(value){ return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+
   async function init(){
-    const [loadedSettings, loadedPacks] = await Promise.all([getJson('settings.json', {}), getJson('packs.json', [])]);
-    settings=loadedSettings || {}; packs=Array.isArray(loadedPacks) ? loadedPacks : [];
-    try { data=csvToFragrances(await getCsv(settings.catalogueCsvUrl || DEFAULT_CSV)); }
+    settings = await getJson('settings.json', {});
+    settings = settings || {};
+    if(!settings.masterSheetId) settings.masterSheetId = MASTER_SHEET_ID;
+    try { data=csvToFragrances(await getCsv(settings.catalogueCsvUrl || sheetCsvUrl('Catalogue') || DEFAULT_CSV)); }
     catch(error){ console.error(error); if(grid) grid.innerHTML='<div class="empty">Catalogue could not load from Google Sheets or the local backup.<br><small>' + escapeHtml(error.message || error) + '</small></div>'; return; }
     if(!data.length){ if(grid) grid.innerHTML='<div class="empty">Catalogue is empty. Check the Catalogue tab headers.</div>'; return; }
+    packs = await loadDiscoveryPacks();
     showCatalogueSourceNotice();
     if(statCount) statCount.textContent=data.length;
     resetOptions(categoryFilter,'All scent styles',uniqueValues('category'));
