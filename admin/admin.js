@@ -158,9 +158,9 @@ function setupForms(frags, settings){
             <input name="existingFragranceName" list="existingFragranceList" placeholder="Start typing, e.g. Cedrat Boise, SANAYA, Paranoid..." autocomplete="off">
             <input name="existingFragranceId" type="hidden">
           </label>
-          <label>Bottle mL<input name="bottleSize" type="number" min="0" step="1" value="100"></label>
+          <label>Bottle mL<input name="bottleSize" type="number" min="0" step="1" inputmode="numeric" value="100"></label>
           <label>Full %<input name="fullness" type="number" min="0" max="100" step="1" value="100"></label>
-          <label>Cost<input name="allocatedCost" type="number" min="0" step="0.01"></label>
+          <label>Cost<input name="allocatedCost" type="number" min="0" step="0.01" inputmode="decimal"></label>
           <label>Current mL<input name="currentMl" type="number" min="0" step="0.1"></label>
           <button class="remove-line" type="button">×</button>
         </div>
@@ -168,25 +168,25 @@ function setupForms(frags, settings){
       </div>
       <div class="new-fields" hidden>
         <div class="form-grid new-bottle-grid">
-          <label>Collection<select name="collection"><option>Designer Original</option><option>Niche Original</option><option>Middle Eastern</option><option>Inspired By</option></select></label>
+          <label>Collection<select name="collection"><option>🟦 Designer Original</option><option>🟪 Niche Original</option><option>🟨 Middle Eastern</option><option>🟩 Inspired By</option></select></label>
           <label>House<input name="house" placeholder="Lattafa, Jalu, Mancera..."></label>
           <label>Fragrance<input name="fragrance" placeholder="Fragrance name"></label>
           <label>Scent Style<select name="scentStyle"><option>Fresh Citrus</option><option>Fresh Aquatic</option><option>Fruity</option><option>Woody</option><option>Leather</option><option>Spicy</option><option>Gourmand</option><option>Tobacco</option><option>Floral</option><option>Dark / Night</option></select></label>
-          <label>Gender<select name="gender"><option>Men / Unisex</option><option>Women</option><option>Unisex</option></select></label>
-          <label>Emojis<input name="emojis" placeholder="🍋🌿"></label>
+          <label>Gender<select name="gender"><option>Men / Unisex</option><option>Unisex</option><option>Men</option><option>Women</option></select></label>
+          <label>Emojis<input name="emojis" placeholder="🍋🌿🧼" inputmode="text"></label>
           <label>Inspiration House<input name="inspirationHouse" placeholder="Creed, LV, Xerjoff..."></label>
           <label>Inspiration<input name="inspiration" placeholder="Aventus, Imagination..."></label>
-          <label>3mL<input name="p3" type="number" min="0" step="0.01"></label>
-          <label>5mL<input name="p5" type="number" min="0" step="0.01"></label>
-          <label>10mL<input name="p10" type="number" min="0" step="0.01"></label>
+          <label>3mL<input name="p3" type="number" min="0" step="0.01" inputmode="decimal"></label>
+          <label>5mL<input name="p5" type="number" min="0" step="0.01" inputmode="decimal"></label>
+          <label>10mL<input name="p10" type="number" min="0" step="0.01" inputmode="decimal"></label>
           <label>Added Date<input name="addedDate" type="date" value="${todayIso()}"></label>
-          <label class="wide">Description<input name="description" placeholder="3-5 word scent profile"></label>
-          <label class="wide">Fragrantica<input name="fragrantica" type="url" placeholder="https://www.fragrantica.com/..."></label>
+          <label class="wide">Description<input name="description" placeholder="citrus, ginger, tea, clean amber"></label>
+          <label class="wide">Fragrantica<input name="fragrantica" type="url" inputmode="url" placeholder="https://www.fragrantica.com/..."></label>
         </div>
         <div class="purchase-line-grid inventory-grid">
-          <label>Bottle mL<input name="newBottleSize" type="number" min="0" step="1" value="100"></label>
+          <label>Bottle mL<input name="newBottleSize" type="number" min="0" step="1" inputmode="numeric" value="100"></label>
           <label>Full %<input name="newFullness" type="number" min="0" max="100" step="1" value="100"></label>
-          <label>Cost<input name="newAllocatedCost" type="number" min="0" step="0.01"></label>
+          <label>Cost<input name="newAllocatedCost" type="number" min="0" step="0.01" inputmode="decimal"></label>
           <label>Current mL<input name="newCurrentMl" type="number" min="0" step="0.1"></label>
           <button class="remove-line" type="button">×</button>
         </div>

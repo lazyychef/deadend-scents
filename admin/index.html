@@ -2,60 +2,68 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex,nofollow">
-  <title>DeadEnd Scents Command Centre</title>
+  <title>DeadEnd Scents Admin</title>
   <link rel="stylesheet" href="admin.css">
 </head>
 <body>
-  <header class="admin-hero">
+  <header class="admin-top">
     <div>
-      <p class="eyebrow">Owner dashboard</p>
-      <h1>Command Centre</h1>
-      <p>Catalogue health, local behaviour tracking, featured fragrance checks and quick business links.</p>
+      <p class="eyebrow">Command Centre</p>
+      <h1>DeadEnd Scents Admin</h1>
+      <p>Add bottles, restocks and quick catalogue updates from your phone.</p>
     </div>
-    <nav>
+    <nav class="admin-actions" aria-label="Admin actions">
       <a href="../">View site</a>
-      <a href="https://analytics.google.com" target="_blank" rel="noopener">Analytics</a>
-      <a href="https://clarity.microsoft.com" target="_blank" rel="noopener">Clarity</a>
-      <a href="https://search.google.com/search-console" target="_blank" rel="noopener">Search Console</a>
       <button id="refreshDashboard" type="button">Refresh</button>
     </nav>
   </header>
 
   <main>
-    <section class="notice">
-      <strong>Command Centre V2.5:</strong> this is a static dashboard for GitHub Pages. It reads your public Google Sheet and local browser event logs. Google Analytics and Clarity are still the source of truth for all visitor data.
+    <section class="kpi-strip" id="summaryCards">
+      <article><span>Total</span><strong id="totalFragrances">—</strong><small>fragrances</small></article>
+      <article><span>New</span><strong id="newThisMonth">—</strong><small>30 days</small></article>
+      <article><span>Featured</span><strong id="featuredName">—</strong><small id="featuredStatus">—</small></article>
+      <article><span>Cart adds</span><strong id="localCartAdds">—</strong><small>this device</small></article>
     </section>
 
-    <section class="kpi-grid" id="summaryCards">
-      <article><span>Total fragrances</span><strong id="totalFragrances">—</strong><small>Live from Google Sheet</small></article>
-      <article><span>New this month</span><strong id="newThisMonth">—</strong><small>Added Date within 30 days</small></article>
-      <article><span>Fragrance of the Week</span><strong id="featuredName">—</strong><small id="featuredStatus">Featured check</small></article>
-      <article><span>Local cart adds</span><strong id="localCartAdds">—</strong><small>This browser only</small></article>
-    </section>
-
-    <section class="panel form-panel purchase-builder" id="purchaseBuilder">
+    <section class="panel hero-form" id="purchaseBuilder">
       <div class="panel-head stacked">
         <div>
           <p class="eyebrow">Daily action</p>
-          <h2>Add Purchase / Bottle</h2>
-          <p class="help-text">Use this one form for new bottles and restocks. Add purchase details once, then add one bottle line per fragrance. Existing bottles update stock/cost details. New bottles also add a new row to Catalogue.</p>
+          <h2>Add / Edit Bottle</h2>
+          <p class="help-text">Type a fragrance name. Exact match = restock/update. No match = new bottle. Use this as your main mobile form.</p>
         </div>
-        <span>write-back ready</span>
+        <span class="status-pill">v3.2 mobile</span>
       </div>
+
       <form id="purchaseForm" class="admin-form">
         <div class="form-grid purchase-header-grid">
           <label>Purchase date<input name="purchaseDate" type="date" required></label>
           <label>Seller<input name="seller" placeholder="Marketplace, WITR, Jalu..." required></label>
           <label>Source<select name="source"><option>Marketplace</option><option>Retail</option><option>Online</option><option>Supplier</option><option>Free</option><option>Other</option></select></label>
-          <label>Total paid<input name="totalPaid" type="number" min="0" step="0.01" required></label>
-          <label class="wide">Purchase notes<input name="notes" placeholder="Bundle, cash, delivery included, condition notes, etc."></label>
+          <label>Total paid<input name="totalPaid" type="number" min="0" step="0.01" placeholder="0.00" inputmode="decimal" required></label>
+          <label class="wide">Purchase notes<input name="notes" placeholder="Bundle, delivery included, condition notes..."></label>
         </div>
-        <div class="panel-subhead"><strong>Bottles in this purchase</strong><button type="button" id="addPurchaseItem">Add bottle line</button></div>
+
+        <div class="panel-subhead">
+          <strong>Bottles in this purchase</strong>
+          <button type="button" id="addPurchaseItem">+ Add line</button>
+        </div>
         <div id="purchaseItems" class="purchase-items"></div>
-        <div class="form-actions"><button type="submit">Save purchase</button><button type="button" id="copyPurchaseRows">Copy staged payload</button></div>
+
+        <div class="form-actions sticky-actions">
+          <button type="submit" class="primary-save">Save to database</button>
+          <button type="button" id="copyPurchaseRows">Copy payload</button>
+        </div>
       </form>
+    </section>
+
+    <section class="panel compact-panel">
+      <div class="panel-head"><h2>Write Status</h2><span id="writeMode">checking</span></div>
+      <div id="writeStatus" class="checks"></div>
+      <textarea id="stagedOutput" class="output-box" readonly placeholder="Saved rows / test payloads will appear here."></textarea>
     </section>
 
     <section class="feature-panel" id="featurePanel">
@@ -71,70 +79,27 @@
       </div>
     </section>
 
-    <section class="grid-two">
-      <article class="panel">
-        <div class="panel-head"><h2>Catalogue by type</h2><span id="typeCount">—</span></div>
-        <div id="typeBreakdown" class="list"></div>
-      </article>
-      <article class="panel">
-        <div class="panel-head"><h2>Catalogue by scent style</h2><span id="styleCount">—</span></div>
-        <div id="styleBreakdown" class="list"></div>
-      </article>
+    <section class="grid-two dashboard-grid">
+      <article class="panel"><div class="panel-head"><h2>Catalogue by type</h2><span id="typeCount">—</span></div><div id="typeBreakdown" class="list"></div></article>
+      <article class="panel"><div class="panel-head"><h2>Catalogue by scent style</h2><span id="styleCount">—</span></div><div id="styleBreakdown" class="list"></div></article>
     </section>
 
-    <section class="grid-two">
-      <article class="panel">
-        <div class="panel-head"><h2>Top catalogue houses</h2><span id="houseCount">—</span></div>
-        <div id="houseBreakdown" class="list"></div>
-      </article>
-      <article class="panel">
-        <div class="panel-head"><h2>Price coverage</h2><span>missing prices</span></div>
-        <div id="priceChecks" class="checks compact"></div>
-      </article>
+    <section class="grid-two dashboard-grid">
+      <article class="panel"><div class="panel-head"><h2>Top houses</h2><span id="houseCount">—</span></div><div id="houseBreakdown" class="list"></div></article>
+      <article class="panel"><div class="panel-head"><h2>Price coverage</h2><span>missing prices</span></div><div id="priceChecks" class="checks compact"></div></article>
     </section>
 
-    <section class="grid-two">
-      <article class="panel">
-        <div class="panel-head"><h2>Local searches</h2><button id="clearLocalData" type="button">Clear local data</button></div>
-        <div id="searchBreakdown" class="list empty">No local searches logged yet.</div>
-      </article>
-      <article class="panel">
-        <div class="panel-head"><h2>Local add-to-cart</h2><span>from this browser</span></div>
-        <div id="cartBreakdown" class="list empty">No local cart events logged yet.</div>
-      </article>
+    <section class="grid-two dashboard-grid">
+      <article class="panel"><div class="panel-head"><h2>Local searches</h2><button id="clearLocalData" type="button">Clear</button></div><div id="searchBreakdown" class="list empty">No local searches logged yet.</div></article>
+      <article class="panel"><div class="panel-head"><h2>Local add-to-cart</h2><span>this browser</span></div><div id="cartBreakdown" class="list empty">No local cart events logged yet.</div></article>
     </section>
 
-    <section class="grid-two">
-      <article class="panel">
-        <div class="panel-head"><h2>Local conversion funnel</h2><span>this browser</span></div>
-        <div id="funnel" class="funnel"></div>
-      </article>
-      <article class="panel">
-        <div class="panel-head"><h2>Quick actions</h2><span>daily tools</span></div>
-        <div class="actions-grid">
-          <a href="https://docs.google.com/spreadsheets" target="_blank" rel="noopener">Open Google Sheets</a>
-          <a href="https://analytics.google.com" target="_blank" rel="noopener">Open Analytics</a>
-          <a href="https://clarity.microsoft.com" target="_blank" rel="noopener">Open Clarity</a>
-          <a href="https://search.google.com/search-console" target="_blank" rel="noopener">Open Search Console</a>
-          <a href="../#catalogue">View Catalogue</a>
-          <a href="../#order">Test Cart</a>
-        </div>
-      </article>
+    <section class="grid-two dashboard-grid">
+      <article class="panel"><div class="panel-head"><h2>Local funnel</h2><span>this browser</span></div><div id="funnel" class="funnel"></div></article>
+      <article class="panel"><div class="panel-head"><h2>Quick actions</h2><span>tools</span></div><div class="actions-grid"><a href="https://docs.google.com/spreadsheets" target="_blank" rel="noopener">Open Sheets</a><a href="https://analytics.google.com" target="_blank" rel="noopener">Analytics</a><a href="https://clarity.microsoft.com" target="_blank" rel="noopener">Clarity</a><a href="../#catalogue">Catalogue</a></div></article>
     </section>
 
-
-
-    <section class="panel">
-      <div class="panel-head"><h2>Command Centre write status</h2><span id="writeMode">local mode</span></div>
-      <div id="writeStatus" class="checks"></div>
-      <textarea id="stagedOutput" class="output-box" readonly placeholder="Saved rows / test payloads will appear here."></textarea>
-    </section>
-
-
-    <section class="panel">
-      <div class="panel-head"><h2>Quick checks</h2><span>useful weekly</span></div>
-      <div id="quickChecks" class="checks"></div>
-    </section>
+    <section class="panel compact-panel"><div class="panel-head"><h2>Quick checks</h2><span>weekly</span></div><div id="quickChecks" class="checks"></div></section>
   </main>
 
   <script src="admin.js"></script>

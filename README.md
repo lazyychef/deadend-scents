@@ -1,12 +1,14 @@
-# DeadEnd Scents v3.1.4
+# DeadEnd Scents v3.2 Admin Mobile
 
-Small UI refinement build.
+Public website files are carried forward from v3.1.4.
 
-## Changed
-- Shortened the desktop Fragrance of the Week card.
-- Moved weekly price buttons up beside the fragrance details on desktop.
-- Replaced benefit strip emojis with line-style icons.
-- Tightened mobile benefit strip formatting.
+Admin changes:
+- Mobile-first `/admin` layout.
+- Add / Edit Bottle form moved to the top.
+- Large phone-friendly fields and buttons.
+- Sticky save bar on mobile.
+- Existing bottle auto-detect retained.
+- New bottle fields aligned to the v3.1 Catalogue structure.
+- Dashboard/checks moved underneath the daily action form.
 
-## Upload
-Upload all files to the GitHub root. Keep `/admin`.
+Upload all files to the GitHub root. Keep the `/admin` folder structure.
