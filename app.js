@@ -20,24 +20,97 @@
   let data = [];
   let packs = [];
   let settings = {};
+  let catalogueSource = 'live';
 
   async function getJson(file, fallback){
     try { const res = await fetch(file, { cache: 'no-store' }); if(!res.ok) throw new Error(res.status); return await res.json(); }
     catch(error){ console.error('Could not load ' + file, error); return fallback; }
   }
 
+  async function getText(file){
+    const res = await fetch(file, { cache: 'no-store' });
+    if(!res.ok) throw new Error(file + ' returned ' + res.status);
+    const text = await res.text();
+    if(!text || !text.trim()) throw new Error(file + ' is empty');
+    return text;
+  }
+
   async function getCsv(url){
+    const errors = [];
     const noCacheUrl = url + (url.includes('?') ? '&' : '?') + 'cacheBust=' + Date.now();
     try {
       const res = await fetch(noCacheUrl, { cache: 'no-store', redirect: 'follow' });
       if(!res.ok) throw new Error('Google Sheet returned ' + res.status);
       const text = await res.text();
-      if (text && text.trim()) return text;
+      if (text && text.trim()) { catalogueSource = 'live'; saveCatalogueCache(text); return text; }
       throw new Error('Google Sheet returned an empty CSV');
     } catch (fetchError) {
+      errors.push(fetchError.message || String(fetchError));
       console.warn('CSV fetch failed, trying Google Sheets JSONP fallback', fetchError);
-      return await getCsvViaGviz(url);
     }
+
+    try {
+      const text = await getCsvViaGviz(url);
+      catalogueSource = 'jsonp';
+      saveCatalogueCache(text);
+      return text;
+    } catch (jsonpError) {
+      errors.push(jsonpError.message || String(jsonpError));
+      console.warn('Google Sheets JSONP fallback failed, trying local backup', jsonpError);
+    }
+
+    try {
+      const text = await getLocalCatalogueBackup();
+      catalogueSource = text.source;
+      return text.csv;
+    } catch (backupError) {
+      errors.push(backupError.message || String(backupError));
+      throw new Error('Catalogue could not load from live Google Sheets, JSONP, local backup, or browser cache. ' + errors.join(' | '));
+    }
+  }
+
+  async function getLocalCatalogueBackup(){
+    const backupFile = settings.catalogueFallbackFile || 'catalogue-fallback.json';
+    try {
+      const raw = await getText(backupFile);
+      const trimmed = raw.trim();
+      if(trimmed.startsWith('[') || trimmed.startsWith('{')){
+        const parsed = JSON.parse(trimmed);
+        const items = Array.isArray(parsed) ? parsed : (Array.isArray(parsed.items) ? parsed.items : []);
+        if(!items.length) throw new Error(backupFile + ' has no catalogue items');
+        return { source: 'backup-file', csv: fragrancesToCsv(items) };
+      }
+      return { source: 'backup-file', csv: raw };
+    } catch(fileError){
+      console.warn('Local catalogue backup file failed', fileError);
+    }
+    try {
+      const cached = localStorage.getItem('deadend_catalogue_csv_cache_v1');
+      if(cached && cached.trim()) return { source: 'browser-cache', csv: cached };
+    } catch(e) {}
+    throw new Error('No usable local catalogue backup found');
+  }
+
+  function saveCatalogueCache(csv){
+    try { localStorage.setItem('deadend_catalogue_csv_cache_v1', csv); } catch(e) {}
+  }
+
+  function fragrancesToCsv(items){
+    const headers=['ID','House','Fragrance','Collection','Scent Style','Gender','Main Accords','Emojis','Inspiration House','Inspired By','3mL','5mL','10mL','Fragrantica','Added Date','Featured','Featured Start','Featured Note','Staff Pick','Season','Occasion','Stock','Status'];
+    const rows=[headers];
+    items.forEach(item=>{
+      rows.push(headers.map(h=>{
+        const key = cleanHeader(h);
+        const val = item[key] ?? item[h] ?? item[camelKey(h)] ?? '';
+        return csvEscape(val);
+      }));
+    });
+    return rows.map(r=>r.join(',')).join('
+');
+  }
+
+  function camelKey(label){
+    return String(label || '').replace(/[^a-zA-Z0-9]+(.)/g,(_,c)=>c.toUpperCase()).replace(/^[A-Z]/,c=>c.toLowerCase());
   }
 
   function getCsvViaGviz(url){
@@ -203,8 +276,9 @@
     const [loadedSettings, loadedPacks] = await Promise.all([getJson('settings.json', {}), getJson('packs.json', [])]);
     settings=loadedSettings || {}; packs=Array.isArray(loadedPacks) ? loadedPacks : [];
     try { data=csvToFragrances(await getCsv(settings.catalogueCsvUrl || DEFAULT_CSV)); }
-    catch(error){ console.error(error); if(grid) grid.innerHTML='<div class="empty">Catalogue could not load from Google Sheets. Check the published CSV link or republish the Catalogue tab.<br><small>' + escapeHtml(error.message || error) + '</small></div>'; return; }
+    catch(error){ console.error(error); if(grid) grid.innerHTML='<div class="empty">Catalogue could not load from Google Sheets or the local backup.<br><small>' + escapeHtml(error.message || error) + '</small></div>'; return; }
     if(!data.length){ if(grid) grid.innerHTML='<div class="empty">Catalogue is empty. Check the Catalogue tab headers.</div>'; return; }
+    showCatalogueSourceNotice();
     if(statCount) statCount.textContent=data.length;
     resetOptions(categoryFilter,'All scent styles',uniqueValues('category'));
     resetOptions(collectionFilter,'All types',uniqueValues('collection'));
@@ -217,6 +291,17 @@
   function uniqueValues(key){ return [...new Set(data.map(x=>x[key]).filter(Boolean))].sort(); }
   function uniqueMultiValues(key){ const values=new Set(); data.forEach(x=>String(x[key]||'').split(',').map(v=>v.trim()).filter(Boolean).forEach(v=>values.add(v))); return [...values].sort(); }
   function resetOptions(select, allLabel, values){ if(!select) return; select.innerHTML=`<option value="all">${allLabel}</option>`; values.forEach(v=>{ const opt=document.createElement('option'); opt.value=v; opt.textContent=v; select.appendChild(opt); }); }
+  function showCatalogueSourceNotice(){
+    if(catalogueSource === 'live' || catalogueSource === 'jsonp') return;
+    const target = document.querySelector('.controls-wrap') || document.querySelector('main');
+    if(!target || document.querySelector('.backup-notice')) return;
+    const notice = document.createElement('div');
+    notice.className = 'backup-notice';
+    notice.innerHTML = catalogueSource === 'browser-cache'
+      ? '<strong>Catalogue loaded from browser backup.</strong> Live Google Sheets may be blocked on this network. Prices and stock may not be current.'
+      : '<strong>Catalogue loaded from backup.</strong> Live Google Sheets may be blocked on this network. Prices and stock may not be current.';
+    target.insertAdjacentElement('beforebegin', notice);
+  }
   function fieldContains(value, selected){ if(selected==='all') return true; return String(value||'').split(',').map(v=>v.trim()).includes(selected) || String(value||'')===selected; }
   function match(f){
     const q=search.value.trim().toLowerCase();
@@ -260,7 +345,7 @@
   function discountedPriceText(price, f){
     const original = parseMoney(price);
     if (!original || !isFeaturedDiscountActive(f)) return String(price || '').trim();
-    return money(original * 0.8);
+    return money(Math.floor(original * 0.8));
   }
   function firstAvailablePrice(f){ return [f.p3,f.p5,f.p10].map(parseMoney).find(n=>n>0)||0; }
   function newDateValue(f){ const date=f.addedDate?new Date(f.addedDate):null; return date&&!Number.isNaN(date.getTime())?date.getTime():0; }

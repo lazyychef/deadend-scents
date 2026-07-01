@@ -45,27 +45,41 @@
     </div>
     <div class="social-links" aria-label="Contact links">
       <a id="navMessengerLink" class="social messenger" href="https://m.me/nickstreet09/" target="_blank" rel="noopener" aria-label="Messenger">💬</a>
-      <a id="navWhatsappLink" class="social whatsapp" href="https://wa.me/61434432948" target="_blank" rel="noopener" aria-label="WhatsApp">☘</a>
-      <a id="navInstagramLink" class="social instagram" href="https://instagram.com/deadendscents" target="_blank" rel="noopener" aria-label="Instagram">◎</a>
+      <a id="navWhatsappLink" class="social whatsapp" href="https://wa.me/61434432948" target="_blank" rel="noopener" aria-label="WhatsApp"><span>☎</span></a>
+      <a id="navInstagramLink" class="social instagram" href="https://instagram.com/deadendscents" target="_blank" rel="noopener" aria-label="Instagram"><span>▣</span></a>
     </div>
   </nav>
 
-  <header class="hero">
-    <div class="hero-card">
-      <div class="line-art" aria-hidden="true"><span></span><i></i><b></b></div>
-      <p class="eyebrow">Designer • Niche • Middle Eastern • Inspired</p>
-      <h1>DeadEnd Scents</h1>
-      <p class="subhead">Premium fragrance decants with simple discovery sizes, fast ordering and Australia-wide express post.</p>
-      <div class="hero-actions" aria-label="Shop actions">
-        <a class="button primary" href="#packs">Shop discovery packs</a>
-        <a class="button" href="#catalogue">Browse catalogue</a>
-        <a class="button feature-button" href="#featured">Fragrance of the Week</a>
+  <header class="hero" id="featured">
+    <div class="hero-card hero-feature-layout">
+      <div class="hero-copy">
+        <div class="line-art" aria-hidden="true"><span></span><i></i><b></b></div>
+        <p class="eyebrow">Designer • Niche • Middle Eastern • Inspired</p>
+        <h1>DeadEnd Scents</h1>
+        <p class="subhead">Premium fragrance decants with simple discovery sizes, fast ordering and Australia-wide express post.</p>
+        <div class="hero-actions" aria-label="Shop actions">
+          <a class="button primary" href="#packs">Shop discovery packs</a>
+          <a class="button" href="#catalogue">Browse catalogue</a>
+          <a class="button feature-button" href="#featured">Fragrance of the Week</a>
+        </div>
+        <p class="hero-meta"><strong id="stat-count">0</strong> fragrances · 3mL · 5mL · 10mL · $10 express post · Glass vials</p>
       </div>
-      <p class="hero-meta"><strong id="stat-count">0</strong> fragrances · 3mL · 5mL · 10mL · $10 express post · Glass vials</p>
+      <div id="featuredGrid" class="featured-grid hero-feature"><div class="empty">Loading featured fragrance...</div></div>
     </div>
   </header>
 
   <main>
+    <section id="packs" class="section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Discovery Packs</p>
+          <h2>Pick your vibe</h2>
+        </div>
+        <p class="result-line">Fixed curated packs · priced from live catalogue</p>
+      </div>
+      <div id="packsGrid" class="packs-grid"></div>
+    </section>
+
     <section class="controls-wrap" aria-label="Search and filters">
       <div class="panel">
         <label class="search-label">
@@ -105,17 +119,6 @@
       </div>
     </section>
 
-    <section id="featured" class="section featured-section">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Featured</p>
-          <h2>Fragrance of the Week</h2>
-        </div>
-        <p class="result-line">20% off for 7 days — prices update automatically</p>
-      </div>
-      <div id="featuredGrid" class="featured-grid"><div class="empty">Loading featured fragrance...</div></div>
-    </section>
-
     <section id="catalogue" class="section">
       <div class="section-head">
         <div>
@@ -125,17 +128,6 @@
         <p class="result-line"><span id="resultCount">0</span> matching samples</p>
       </div>
       <div id="catalogueGrid" class="grid"><div class="empty">Loading catalogue from Google Sheets...</div></div>
-    </section>
-
-    <section id="packs" class="section">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Discovery Packs</p>
-          <h2>Pick your vibe</h2>
-        </div>
-        <p class="result-line">Flexible 3, 5 and 8 packs</p>
-      </div>
-      <div id="packsGrid" class="packs-grid"></div>
     </section>
 
     <section id="order" class="section order-section">

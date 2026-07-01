@@ -11,3 +11,9 @@
 
 ## Upload
 Upload all root files to GitHub. Keep the `/admin` folder.
+
+## v3.0.3
+- Added blocked-network catalogue fallback.
+- Loading order is now: live Google Sheets CSV → Google Sheets JSONP → local `catalogue-fallback.json` → browser cache.
+- This helps on networks that block Google Sheets published CSV/JSONP, including some protected work networks.
+- If the backup notice appears, the catalogue is loading from the local backup and may not reflect the newest prices/stock.
