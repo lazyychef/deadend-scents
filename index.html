@@ -44,14 +44,14 @@
       <a href="#order">Cart</a>
     </div>
     <div class="social-links" aria-label="Contact links">
-      <a id="navMessengerLink" class="social messenger" href="https://m.me/nickstreet09/" target="_blank" rel="noopener" aria-label="Messenger">💬</a>
-      <a id="navWhatsappLink" class="social whatsapp" href="https://wa.me/61434432948" target="_blank" rel="noopener" aria-label="WhatsApp"><span>☎</span></a>
-      <a id="navInstagramLink" class="social instagram" href="https://instagram.com/deadendscents" target="_blank" rel="noopener" aria-label="Instagram"><span>▣</span></a>
+      <a id="navMessengerLink" class="social messenger" href="https://m.me/nickstreet09/" target="_blank" rel="noopener" aria-label="Messenger"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C6.8 3 3 6.6 3 11.5c0 2.7 1.2 5 3.2 6.6V22l3.5-1.9c.8.2 1.5.3 2.3.3 5.2 0 9-3.6 9-8.5S17.2 3 12 3Zm.9 11.2-2.2-2.3-4.4 2.3 4.8-5.1 2.2 2.3 4.4-2.3-4.8 5.1Z"/></svg></a>
+      <a id="navWhatsappLink" class="social whatsapp" href="https://wa.me/61434432948" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.1 3a8.8 8.8 0 0 0-7.6 13.2L3.4 21l4.9-1.1A8.8 8.8 0 1 0 12.1 3Zm0 15.8c-1.3 0-2.6-.4-3.7-1l-.3-.2-2.9.7.7-2.8-.2-.3a7 7 0 1 1 6.4 3.6Zm3.9-5.2c-.2-.1-1.3-.6-1.5-.7-.2-.1-.4-.1-.5.1-.2.2-.6.7-.7.9-.1.1-.3.2-.5.1-.2-.1-.9-.3-1.7-1-.6-.6-1-1.3-1.2-1.5-.1-.2 0-.4.1-.5l.4-.5c.1-.2.2-.3.3-.5.1-.2.1-.3 0-.5 0-.1-.5-1.2-.7-1.6-.2-.4-.4-.4-.5-.4h-.5c-.2 0-.5.1-.7.3-.2.2-.9.9-.9 2.1s.9 2.4 1 2.5c.1.2 1.8 2.8 4.4 3.9.6.3 1.1.4 1.5.5.6.2 1.2.1 1.6.1.5-.1 1.3-.5 1.5-1 .2-.5.2-.9.1-1 0-.1-.2-.2-.4-.3Z"/></svg></a>
+      <a id="navInstagramLink" class="social instagram" href="https://instagram.com/deadendscents" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3h8a5 5 0 0 1 5 5v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V8a5 5 0 0 1 5-5Zm0 2.1A2.9 2.9 0 0 0 5.1 8v8A2.9 2.9 0 0 0 8 18.9h8a2.9 2.9 0 0 0 2.9-2.9V8A2.9 2.9 0 0 0 16 5.1H8Zm4 3a3.9 3.9 0 1 1 0 7.8 3.9 3.9 0 0 1 0-7.8Zm0 2.1a1.8 1.8 0 1 0 0 3.6 1.8 1.8 0 0 0 0-3.6Zm4.2-2.4a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"/></svg></a>
     </div>
   </nav>
 
   <header class="hero" id="featured">
-    <div class="hero-card hero-feature-layout">
+    <div class="hero-card">
       <div class="hero-copy">
         <div class="line-art" aria-hidden="true"><span></span><i></i><b></b></div>
         <p class="eyebrow">Designer • Niche • Middle Eastern • Inspired</p>
@@ -60,12 +60,16 @@
         <div class="hero-actions" aria-label="Shop actions">
           <a class="button primary" href="#packs">Shop discovery packs</a>
           <a class="button" href="#catalogue">Browse catalogue</a>
-          <a class="button feature-button" href="#featured">Fragrance of the Week</a>
         </div>
-        <p class="hero-meta"><strong id="stat-count">0</strong> fragrances · 3mL · 5mL · 10mL · $10 express post · Glass vials</p>
+        <div class="hero-benefits" aria-label="DeadEnd Scents benefits">
+          <span><i aria-hidden="true">⚗️</i><strong id="stat-count">0</strong> fragrances</span>
+          <span><i aria-hidden="true">🧪</i>3mL · 5mL · 10mL</span>
+          <span><i aria-hidden="true">🚚</i>$10 express post</span>
+          <span><i aria-hidden="true">🧴</i>Glass vials</span>
+        </div>
       </div>
-      <div id="featuredGrid" class="featured-grid hero-feature"><div class="empty">Loading featured fragrance...</div></div>
     </div>
+    <div id="featuredGrid" class="featured-grid hero-feature full-width-feature"><div class="empty">Loading featured fragrance...</div></div>
   </header>
 
   <main>

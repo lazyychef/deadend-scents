@@ -49,3 +49,9 @@ Keep the `/admin` folder.
 - Discovery Packs now reads from the Master Database Discovery Packs tab via settings.discoveryPacksCsvUrl.
 - packs.json remains as backup only.
 - Do not delete /admin.
+
+
+## v3.1.3
+- Uses the exact published Discovery Packs CSV URL in settings.json.
+- Catalogue CSV remains unchanged.
+- packs.json remains backup only.
