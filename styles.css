@@ -113,3 +113,39 @@ body{background:radial-gradient(circle at 18% 0%,rgba(200,164,77,.12),transparen
   body{background:#10261d}.top-nav{width:100%;border-bottom:1px solid rgba(200,164,77,.22);border-radius:0;margin:0;padding:.55rem .75rem;grid-template-columns:minmax(0,1fr) auto auto}.brand-mark{font-size:1rem!important;white-space:nowrap}.nav-links a{font-size:.72rem!important;padding:.38rem .55rem!important}.social{width:28px;height:28px}.social svg{width:17px;height:17px}.hero{width:100%;margin:0;padding:.65rem .65rem 0}.hero-card{border-radius:18px;padding:1rem .85rem}.hero h1{font-size:2.9rem;letter-spacing:-.08em}.hero .subhead{font-size:.95rem}.hero-actions{grid-template-columns:1fr 1fr;gap:.55rem;margin:.8rem 0 .8rem}.hero-actions .button{min-height:42px;font-size:.9rem;padding:.55rem .6rem}.hero-benefits{grid-template-columns:repeat(4,minmax(0,1fr));border-radius:18px}.hero-benefits span{padding:.58rem .38rem;gap:.32rem;font-size:.72rem;line-height:1.12;justify-content:center;text-align:left}.hero-benefits i{font-size:.9rem}.hero-feature.full-width-feature{margin:.7rem 0 0}.full-width-feature .featured-card.weekly-card{grid-template-columns:1fr;padding:.78rem;border-radius:18px}.full-width-feature .featured-main{grid-template-columns:auto 1fr;gap:.72rem}.full-width-feature .featured-mark{width:58px;height:58px;border-radius:18px;font-size:1.18rem}.full-width-feature .featured-label{font-size:.58rem;letter-spacing:.16em}.full-width-feature .featured-card h3{font-size:1.7rem;margin:.1rem 0 0}.full-width-feature .featured-house{font-size:.78rem;margin:0 0 .15rem}.full-width-feature .collection-pill{font-size:.5rem}.full-width-feature .featured-inspo,.full-width-feature .featured-desc{font-size:.78rem;line-height:1.25;margin:.22rem 0}.full-width-feature .weekly-offer{margin-top:.55rem;padding:.58rem;border-radius:14px}.full-width-feature .offer-kicker{font-size:.58rem}.full-width-feature .offer-main{font-size:.95rem}.full-width-feature .offer-ends{font-size:.72rem}.full-width-feature .featured-actions{gap:.38rem}.full-width-feature .featured-actions .price-add,.full-width-feature .featured-actions .price-unavailable{padding:.48rem .1rem}.full-width-feature .featured-actions strong{font-size:.82rem!important}.section{padding:1.05rem 0}.section-head h2{font-size:1.75rem}.result-line{font-size:.88rem}.controls-wrap{padding-top:.3rem}.collection-buttons{margin:.6rem 0 .55rem}.grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:.42rem}.card{padding:.42rem;border-radius:14px}.card-top{margin-bottom:.28rem}.emoji-row{gap:.12rem;margin:.05rem 0 .26rem}.emoji-row span{width:16px;height:16px;border-radius:7px;font-size:.66rem}.card .house{font-size:.48rem;letter-spacing:.1em;margin-bottom:.08rem}.card h3{font-size:.72rem;line-height:1.05;margin-bottom:.22rem}.card .inspo{font-size:.5rem;line-height:1.12;padding:.18rem .22rem;margin-bottom:.24rem;border-radius:8px}.card .inspo span{font-size:.38rem}.accords{font-size:.54rem;line-height:1.15;min-height:1.25em;margin:.1rem 0 .32rem;-webkit-line-clamp:2}.collection-pill{font-size:.42rem;padding:.12rem .22rem}.new-badge{font-size:.4rem;padding:.1rem .2rem}.prices{gap:.12rem;margin:.32rem 0}.price-add,.price-unavailable{border-radius:8px;padding:.22rem .04rem}.price-add strong,.price-unavailable strong{font-size:.58rem}.price-add span,.price-unavailable span{font-size:.42rem}.price-add small{display:none}.mini-link{font-size:.48rem;padding:.28rem .12rem}.floating-cart{transform:scale(.86);transform-origin:right bottom}}
 @media(max-width:390px){.hero h1{font-size:2.55rem}.brand-mark{font-size:.88rem!important}.nav-links a{font-size:.64rem!important;padding:.32rem .42rem!important}.social{width:24px;height:24px}.hero-benefits span{font-size:.64rem;padding:.52rem .25rem}.grid{gap:.34rem}.card{padding:.36rem}.card h3{font-size:.67rem}.card .inspo{font-size:.46rem}.accords{font-size:.5rem}.price-add strong,.price-unavailable strong{font-size:.54rem}.price-add span,.price-unavailable span{font-size:.38rem}}
 @media(min-width:761px){.hero{max-width:1440px}.hero-card{padding:1.25rem 1.35rem}.hero h1{font-size:clamp(3.2rem,6vw,5.25rem)}.hero-feature.full-width-feature{width:100%}.hero-benefits span{font-size:.92rem}.grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
+
+/* v3.1.4: compact weekly tile + line icon benefit strip */
+.benefit-icon{width:24px;height:24px;display:inline-grid;place-items:center;flex:0 0 auto;color:var(--accent2);filter:none!important}
+.benefit-icon svg{width:21px;height:21px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@media(min-width:761px){
+  .hero-benefits{max-width:980px;width:100%}
+  .hero-benefits span{justify-content:center;text-align:left;min-width:0}
+  .full-width-feature .featured-card.weekly-card{grid-template-columns:minmax(0,1.35fr) minmax(360px,.75fr)!important;align-items:center;padding:.78rem .95rem;min-height:auto}
+  .full-width-feature .featured-main{grid-template-columns:60px minmax(0,1fr);align-items:center;gap:.8rem}
+  .full-width-feature .featured-mark{width:58px;height:58px;border-radius:16px;font-size:1.2rem}
+  .full-width-feature .featured-label{font-size:.56rem;letter-spacing:.18em}
+  .full-width-feature .featured-card h3{font-size:1.55rem;margin:.02rem 0 0;line-height:.95}
+  .full-width-feature .featured-house{font-size:.72rem;margin:0 0 .12rem;line-height:1.05}
+  .full-width-feature .collection-pill{font-size:.5rem;padding:.15rem .4rem;margin:.08rem 0 .12rem}
+  .full-width-feature .featured-inspo{font-size:.78rem;margin:.12rem 0;line-height:1.2}
+  .full-width-feature .featured-desc{font-size:.74rem;margin:.08rem 0 0;line-height:1.2}
+  .full-width-feature .weekly-offer{margin:0;padding:.58rem;border-radius:14px;align-self:center}
+  .full-width-feature .offer-kicker{font-size:.55rem;letter-spacing:.14em}
+  .full-width-feature .offer-main{font-size:.95rem;margin:.06rem 0;color:#fff}
+  .full-width-feature .offer-ends{font-size:.7rem;margin-bottom:.45rem}
+  .full-width-feature .featured-actions{gap:.38rem}
+  .full-width-feature .featured-actions .price-add,.full-width-feature .featured-actions .price-unavailable{padding:.45rem .16rem;border-radius:11px}
+  .full-width-feature .featured-actions strong{font-size:.88rem!important}
+}
+@media(max-width:760px){
+  .top-nav{gap:.45rem;overflow-x:auto;scrollbar-width:none}.top-nav::-webkit-scrollbar{display:none}
+  .brand-mark{font-size:.98rem!important;min-width:max-content}.nav-links{gap:.32rem}.social-links{gap:.32rem;min-width:max-content}
+  .hero-benefits{grid-template-columns:repeat(4,minmax(0,1fr));width:100%}
+  .hero-benefits span{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:.18rem;min-height:58px;padding:.45rem .2rem!important;font-size:.64rem!important;line-height:1.05;word-break:normal;overflow:hidden}
+  .benefit-icon{width:19px;height:19px}.benefit-icon svg{width:18px;height:18px;stroke-width:1.9}
+  .hero-benefits strong{display:inline;font-size:.78rem}
+}
+@media(max-width:390px){
+  .hero-benefits span{font-size:.58rem!important;padding:.42rem .14rem!important}.benefit-icon{width:17px;height:17px}.benefit-icon svg{width:16px;height:16px}
+  .brand-mark{font-size:.86rem!important}.nav-links a{padding:.32rem .38rem!important}
+}
