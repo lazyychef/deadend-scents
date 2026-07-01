@@ -105,8 +105,7 @@
         return csvEscape(val);
       }));
     });
-    return rows.map(r=>r.join(',')).join('
-');
+    return rows.map(r=>r.join(',')).join('\n');
   }
 
   function camelKey(label){
