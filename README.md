@@ -1,23 +1,15 @@
-# DeadEnd Scents V4.0A.1 - Packs Index Patch
+# DeadEnd Scents V4.0A.2 — Live Packs Page
 
-Main page unchanged.
+This patch keeps the homepage unchanged.
 
-Fixes:
-- Adds `/packs/` landing page so the Packs URL no longer returns 404.
-- Keeps existing pack detail pages.
-- Updates sitemap to include `/packs/`.
+Changed:
+- `/packs/` now loads live Discovery Packs from the same published Google Sheet CSV used by the homepage.
+- Pack pricing is calculated from the live Catalogue CSV using 3mL prices.
+- Static generated pack cards on `/packs/` have been replaced with live data.
 
-Upload over the current root files. Keep `/admin` as-is unless you are intentionally updating admin files.
+Upload the full ZIP contents over the current site.
 
-# DeadEnd Scents V4.0A — SEO Pages Engine
-
-Homepage and main catalogue design unchanged.
-
-Added:
-- 95 static fragrance pages under `/fragrances/`
-- 27 house pages under `/houses/`
-- 8 discovery pack pages under `/packs/`
-- Updated sitemap.xml with 132 URLs
-- Dedicated `seo-pages.css` used only by the SEO pages
-
-Upload the ZIP contents to the GitHub root. This build does not require touching `/admin`.
+Test:
+- https://deadendscents.com/
+- https://deadendscents.com/packs/
+- https://deadendscents.com/sitemap.xml
