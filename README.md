@@ -1,14 +1,15 @@
-# DeadEnd Scents v3.2 Admin Mobile
+# DeadEnd Scents v3.3 SEO Foundation
 
-Public website files are carried forward from v3.1.4.
+This build keeps the public website and admin UI visually unchanged.
 
-Admin changes:
-- Mobile-first `/admin` layout.
-- Add / Edit Bottle form moved to the top.
-- Large phone-friendly fields and buttons.
-- Sticky save bar on mobile.
-- Existing bottle auto-detect retained.
-- New bottle fields aligned to the v3.1 Catalogue structure.
-- Dashboard/checks moved underneath the daily action form.
+Changes:
+- Improved homepage title and meta description for Australian fragrance sample searches.
+- Added Open Graph/Twitter sharing metadata.
+- Added Organization, WebSite/SearchAction and Store structured data.
+- Added client-side Product/ItemList structured data from the live catalogue.
+- Updated robots.txt and sitemap.xml.
+- Added no-script SEO fallback copy.
 
-Upload all files to the GitHub root. Keep the `/admin` folder structure.
+Upload all files to the GitHub root. Keep `/admin`.
+
+Next step after upload: add the site to Google Search Console and submit `https://deadendscents.com/sitemap.xml`.

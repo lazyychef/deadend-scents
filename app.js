@@ -397,7 +397,7 @@
     resetOptions(categoryFilter,'All scent styles',uniqueValues('category'));
     resetOptions(collectionFilter,'All types',uniqueValues('collection'));
     resetOptions(occasionFilter,'All occasions',uniqueMultiValues('occasion'));
-    setupContactLinks(); setupAnalytics(); renderFeatured(); renderPacks(); render(); updateCart();
+    setupContactLinks(); setupAnalytics(); injectSeoSchema(); applySearchQueryFromUrl(); renderFeatured(); renderPacks(); render(); updateCart();
     trackEvent('catalogue_loaded', { fragrance_count: data.length });
     setClarityTag('fragrance_count', data.length);
   }
@@ -621,6 +621,68 @@
   function formatMoney(value){ return `$${Math.round(value*100)/100}`.replace('.00',''); }
   function escapeHtml(value){ return String(value).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
   function escapeAttr(value){ return escapeHtml(value).replace(/`/g,'&#96;'); }
+  function injectSeoSchema(){
+    try {
+      if(!data || !data.length) return;
+      const siteUrl = String(settings.siteUrl || 'https://deadendscents.com').replace(/\/$/, '');
+      const itemList = data.slice(0, 100).map((f, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        url: siteUrl + '/#catalogue',
+        name: `${f.house ? f.house + ' ' : ''}${f.name}`.trim()
+      }));
+      const products = data.slice(0, 80).map((f) => {
+        const offers = [];
+        [['3mL', f.price3], ['5mL', f.price5], ['10mL', f.price10]].forEach(([size, price]) => {
+          const value = parseMoney(price);
+          if(value){
+            offers.push({
+              '@type': 'Offer',
+              priceCurrency: 'AUD',
+              price: String(value),
+              availability: String(f.status || '').toLowerCase().includes('sold') ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
+              itemCondition: 'https://schema.org/NewCondition',
+              url: siteUrl + '/#catalogue',
+              eligibleQuantity: { '@type': 'QuantitativeValue', value: Number(size.replace(/[^0-9.]/g,'')), unitCode: 'MLT' }
+            });
+          }
+        });
+        const descriptionParts = [];
+        if(f.notes) descriptionParts.push(f.notes);
+        if(f.inspiration && f.showInspiration) descriptionParts.push(`Inspired by ${f.inspiration}.`);
+        if(f.category) descriptionParts.push(`${f.category} fragrance sample.`);
+        if(f.season) descriptionParts.push(`Best for ${f.season}.`);
+        return {
+          '@type': 'Product',
+          name: `${f.house ? f.house + ' ' : ''}${f.name}`.trim(),
+          brand: f.house ? { '@type': 'Brand', name: f.house } : undefined,
+          category: f.collection || f.category || 'Fragrance samples',
+          description: descriptionParts.join(' '),
+          url: siteUrl + '/#catalogue',
+          offers: offers.length ? offers : undefined
+        };
+      }).map(obj => Object.fromEntries(Object.entries(obj).filter(([,v]) => v !== undefined && !(Array.isArray(v) && !v.length))));
+      const schema = {
+        '@context': 'https://schema.org',
+        '@graph': [
+          { '@type': 'ItemList', '@id': siteUrl + '/#catalogue-list', name: 'DeadEnd Scents fragrance samples catalogue', itemListElement: itemList },
+          ...products
+        ]
+      };
+      let script = document.getElementById('catalogueProductSchema');
+      if(!script){ script = document.createElement('script'); script.type = 'application/ld+json'; script.id = 'catalogueProductSchema'; document.head.appendChild(script); }
+      script.textContent = JSON.stringify(schema);
+    } catch(error){ console.warn('SEO schema injection failed', error); }
+  }
+
+  function applySearchQueryFromUrl(){
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const q = params.get('q');
+      if(q && search) search.value = q;
+    } catch(e) {}
+  }
+
   function setupContactLinks(){
     ['messengerLink','heroMessengerLink','navMessengerLink'].forEach(id=>{ const el=$(id); if(el&&settings.facebookMessengerUrl) el.href=settings.facebookMessengerUrl; if(el&&!el.dataset.trackBound){ el.dataset.trackBound='1'; el.addEventListener('click',()=>trackEvent('messenger_click',{ placement:id })); } });
     ['whatsappLink','heroWhatsappLink','navWhatsappLink','sendWhatsappCart'].forEach(id=>{ const el=$(id); if(el&&settings.whatsAppUrl&&id!=='sendWhatsappCart') el.href=settings.whatsAppUrl; if(el&&!el.dataset.trackBound){ el.dataset.trackBound='1'; el.addEventListener('click',()=>trackEvent('whatsapp_click',{ placement:id, cart_items: cart.length, cart_value: cart.reduce((sum,item)=>sum+parseMoney(item.price),0), currency:'AUD' })); } });
