@@ -20,3 +20,10 @@ Do not delete `settings.json`. It is still the backup/boot file.
 
 ## V4.0A.6
 - Fixed Fragrance of the Week size buttons so the discount label uses the live Settings sheet percentage.
+
+
+## V4.0A.7
+- Reads `Image`, `Image URL` or `Bottle Image URL` from Catalogue.
+- Uses bottle image only for Fragrance of the Week.
+- Catalogue tiles remain emoji-only.
+- Adds desktop glow/hover effect for the weekly bottle image.

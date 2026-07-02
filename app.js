@@ -276,6 +276,7 @@
         name, house, inspiration, inspirationHouse, collection, category, gender, notes,
         accords:get(row,['Main Accords','Accords','Main accords','Scent Notes','Notes']) || category,
         emojis:get(row,['Emojis','Emoji']) || '✨',
+        imageUrl:get(row,['Image','Image URL','Bottle Image URL','Bottle Image','BottleImageURL','Photo','Photo URL']),
         p3:moneyText(get(row,['3mL','3 ml','3'])),
         p5:moneyText(get(row,['5mL','5 ml','5'])),
         p10:moneyText(get(row,['10mL','10 ml','10'])),
@@ -585,11 +586,16 @@
     const discountPct = weeklyDiscountPercent();
     const inspirationLine = shouldShowInspiration(f) ? `<p class="featured-inspo">Inspired by <strong>${escapeHtml(f.inspiration)}</strong></p>` : `<p class="featured-inspo">${escapeHtml(f.collection || 'Featured fragrance')}</p>`;
     const note = f.featuredNote || f.notes || 'This week’s highlighted fragrance.';
+    const imageUrl = String(f.imageUrl || '').trim();
+    const hasImage = /^https?:\/\//i.test(imageUrl);
+    const featureVisual = hasImage
+      ? `<div class="featured-bottle-wrap"><img src="${escapeAttr(imageUrl)}" alt="${escapeAttr((f.house ? f.house + ' ' : '') + f.name)} bottle" loading="lazy" onerror="this.closest('.featured-bottle-wrap').outerHTML='<div class=&quot;featured-mark&quot;>${escapeAttr(f.emojis || '✨')}</div>';"></div>`
+      : `<div class="featured-mark">${escapeHtml(f.emojis || '✨')}</div>`;
     featuredGrid.innerHTML = `
-      <article class="featured-card weekly-card ${active ? 'discount-active' : ''}">
+      <article class="featured-card weekly-card ${hasImage ? 'has-bottle-image' : ''} ${active ? 'discount-active' : ''}">
         ${active ? `<div class="weekly-ribbon">${escapeHtml(discountPct)}% OFF</div>` : ''}
-        <div class="featured-main">
-          <div class="featured-mark">${escapeHtml(f.emojis || '✨')}</div>
+        <div class="featured-main ${hasImage ? 'with-image' : ''}">
+          ${featureVisual}
           <div>
             <div class="featured-label">Fragrance of the Week</div>
             <h3>${escapeHtml(f.name)}</h3>

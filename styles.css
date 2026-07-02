@@ -163,3 +163,14 @@ body{background:radial-gradient(circle at 18% 0%,rgba(200,164,77,.12),transparen
 @keyframes ribbonShine{0%,45%{transform:translateX(-120%)}75%,100%{transform:translateX(120%)}}
 @media (max-width:760px){.weekly-ribbon{top:13px;right:-52px;width:185px;font-size:.56rem;padding:.34rem 0}}
 @media (prefers-reduced-motion:reduce){.weekly-ribbon:after{animation:none}}
+
+/* V4.0A.7 Fragrance of the Week bottle image only */
+.featured-bottle-wrap{width:110px;height:132px;display:grid;place-items:center;align-self:center;justify-self:center;position:relative;isolation:isolate}
+.featured-bottle-wrap:before{content:"";position:absolute;inset:12% 5%;border-radius:999px;background:radial-gradient(circle,rgba(246,220,119,.28),rgba(246,220,119,.08) 45%,transparent 72%);filter:blur(14px);opacity:.85;z-index:-1;transition:opacity .22s ease,transform .22s ease}
+.featured-bottle-wrap img{max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 22px 24px rgba(0,0,0,.34)) drop-shadow(0 0 18px rgba(200,164,77,.16));transition:transform .22s ease,filter .22s ease}
+.featured-card.has-bottle-image:hover .featured-bottle-wrap img{transform:translateY(-5px) scale(1.035);filter:drop-shadow(0 28px 28px rgba(0,0,0,.38)) drop-shadow(0 0 26px rgba(246,220,119,.25))}
+.featured-card.has-bottle-image:hover .featured-bottle-wrap:before{opacity:1;transform:scale(1.05)}
+.full-width-feature .featured-main.with-image{grid-template-columns:132px minmax(0,1fr)!important;gap:1.15rem!important}
+.full-width-feature .featured-bottle-wrap{width:125px;height:152px}
+@media(min-width:761px){.full-width-feature .featured-card.has-bottle-image.weekly-card{grid-template-columns:minmax(0,1.42fr) minmax(360px,.8fr)!important}.full-width-feature .featured-main.with-image{grid-template-columns:150px minmax(0,1fr)!important}.full-width-feature .featured-bottle-wrap{width:142px;height:172px}}
+@media(max-width:760px){.featured-bottle-wrap{width:72px;height:86px}.full-width-feature .featured-main.with-image{grid-template-columns:78px minmax(0,1fr)!important;gap:.7rem!important}.full-width-feature .featured-bottle-wrap{width:72px;height:86px}.featured-card.has-bottle-image:hover .featured-bottle-wrap img{transform:none}}
