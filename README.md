@@ -1,15 +1,12 @@
-# DeadEnd Scents v3.3 SEO Foundation
+# DeadEnd Scents V4.0A — SEO Pages Engine
 
-This build keeps the public website and admin UI visually unchanged.
+Homepage and main catalogue design unchanged.
 
-Changes:
-- Improved homepage title and meta description for Australian fragrance sample searches.
-- Added Open Graph/Twitter sharing metadata.
-- Added Organization, WebSite/SearchAction and Store structured data.
-- Added client-side Product/ItemList structured data from the live catalogue.
-- Updated robots.txt and sitemap.xml.
-- Added no-script SEO fallback copy.
+Added:
+- 95 static fragrance pages under `/fragrances/`
+- 27 house pages under `/houses/`
+- 8 discovery pack pages under `/packs/`
+- Updated sitemap.xml with 132 URLs
+- Dedicated `seo-pages.css` used only by the SEO pages
 
-Upload all files to the GitHub root. Keep `/admin`.
-
-Next step after upload: add the site to Google Search Console and submit `https://deadendscents.com/sitemap.xml`.
+Upload the ZIP contents to the GitHub root. This build does not require touching `/admin`.
