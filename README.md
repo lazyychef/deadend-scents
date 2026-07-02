@@ -1,15 +1,20 @@
-# DeadEnd Scents V4.0A.2 — Live Packs Page
+# DeadEnd Scents V4.0A.3 — Settings Sync
 
-This patch keeps the homepage unchanged.
+This update keeps the public homepage unchanged and adds live Settings sheet support.
 
-Changed:
-- `/packs/` now loads live Discovery Packs from the same published Google Sheet CSV used by the homepage.
-- Pack pricing is calculated from the live Catalogue CSV using 3mL prices.
-- Static generated pack cards on `/packs/` have been replaced with live data.
+## What changed
+- `app.js` now loads `settings.json` first, then overlays values from the Master Database `Settings` tab.
+- `/packs/` also reads live settings before loading Catalogue and Discovery Packs.
+- `settings.json` now includes `settingsCsvUrl` as the fallback/start point.
+- `settings.json` remains the backup if the Settings sheet cannot load.
 
-Upload the full ZIP contents over the current site.
+## Upload
+Upload the full ZIP contents to the GitHub repository root.
+Keep `/admin` if it is already working.
 
-Test:
-- https://deadendscents.com/
-- https://deadendscents.com/packs/
-- https://deadendscents.com/sitemap.xml
+## Database
+Copy the Settings tab from `deadend-scents-settings-sheet-v4.0A.3.xlsx` into the Master Database.
+Headers must remain: Setting, Value, Notes.
+
+## Test
+Change `Weekly Discount %` in the Settings tab, wait 30-60 seconds, then hard refresh the website.

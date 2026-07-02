@@ -87,7 +87,52 @@
   async function loadSettings(){
     const res = await fetch('/settings.json?' + cacheBust(), {cache:'no-store'});
     if(!res.ok) throw new Error('Could not load settings.json');
-    return await res.json();
+    const base = await res.json();
+    return await loadLiveSettings(base || {});
+  }
+
+  function settingKey(label){
+    const k = norm(label);
+    const map = {
+      businessname:'businessName', tagline:'tagline', messenger:'facebookMessengerUrl', messengerurl:'facebookMessengerUrl', facebookmessengerurl:'facebookMessengerUrl', whatsapp:'whatsAppUrl', whatsappurl:'whatsAppUrl', instagram:'instagramUrl', instagramurl:'instagramUrl', shippingcost:'expressPostage', defaultpostage:'expressPostage', expresspostage:'expressPostage', shippingline:'shippingLine', shippingtext:'shippingLine', newbadgedays:'newArrivalDays', newarrivaldays:'newArrivalDays', weeklydiscount:'weeklyDiscountPercent', weeklydiscountpercent:'weeklyDiscountPercent', weeklydiscountdays:'weeklyDiscountDays', packdiscount:'packDiscountPercent', packdiscountpercent:'packDiscountPercent', siteurl:'siteUrl', websiteurl:'siteUrl', googleanalyticsid:'googleAnalyticsId', microsoftclarityid:'microsoftClarityId', adminwriteendpoint:'adminWriteEndpoint', cataloguecsvurl:'catalogueCsvUrl', discoverypackscsvurl:'discoveryPacksCsvUrl', packscsvurl:'discoveryPacksCsvUrl', settingscsvurl:'settingsCsvUrl', fallbackcataloguefile:'catalogueFallbackFile', mastersheetid:'masterSheetId'
+    };
+    return map[k] || '';
+  }
+
+  function castSettingValue(key, value){
+    if(['expressPostage','newArrivalDays','weeklyDiscountPercent','weeklyDiscountDays','packDiscountPercent'].includes(key)){
+      const n = Number(String(value || '').replace(/[^0-9.]/g,''));
+      return Number.isFinite(n) ? n : value;
+    }
+    return value;
+  }
+
+  function csvToSettings(csvText){
+    const rows = parseCsv(csvText); if(!rows.length) return {};
+    const headers = Object.keys(rows[0]);
+    const out = {};
+    rows.forEach(row => {
+      const label = get(row, ['Setting','Key','Name','Field']);
+      const value = get(row, ['Value','Setting Value','Data']);
+      const key = settingKey(label);
+      if(key && value !== '') out[key] = castSettingValue(key, value);
+    });
+    return out;
+  }
+
+  function sheetCsvUrl(settings, sheetName){
+    const id = settings.masterSheetId || '1GSW1Bytauoi53o4orbojoZl9K-ixL4Y4Mj6NyehzCrc';
+    return `https://docs.google.com/spreadsheets/d/${encodeURIComponent(id)}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
+  }
+
+  async function loadLiveSettings(base){
+    const url = base.settingsCsvUrl || sheetCsvUrl(base, 'Settings');
+    try{
+      const csv = await fetchText(url);
+      const live = csvToSettings(csv);
+      if(Object.keys(live).length) return Object.assign({}, base, live);
+    }catch(err){ console.warn('Settings sheet could not load, using settings.json fallback', err); }
+    return base;
   }
 
   const get = (row, names) => {

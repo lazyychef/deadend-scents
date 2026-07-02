@@ -384,9 +384,95 @@
 
   function slugify(value){ return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
 
+
+
+  function castSettingValue(key, value){
+    const numericKeys = new Set(['expressPostage','newArrivalDays','weeklyDiscountPercent','weeklyDiscountDays','packDiscountPercent']);
+    if(numericKeys.has(key)){
+      const n = Number(String(value || '').replace(/[^0-9.]/g,''));
+      return Number.isFinite(n) ? n : value;
+    }
+    return value;
+  }
+
+  function settingKey(label){
+    const k = cleanHeader(label);
+    const map = {
+      businessname:'businessName',
+      tagline:'tagline',
+      facebookmessengerurl:'facebookMessengerUrl',
+      messengerurl:'facebookMessengerUrl',
+      messenger:'facebookMessengerUrl',
+      whatsappurl:'whatsAppUrl',
+      whatsapp:'whatsAppUrl',
+      instagramurl:'instagramUrl',
+      instagram:'instagramUrl',
+      expresspostage:'expressPostage',
+      postage:'expressPostage',
+      shippingcost:'expressPostage',
+      defaultpostage:'expressPostage',
+      shippingline:'shippingLine',
+      shippingtext:'shippingLine',
+      newbadgedays:'newArrivalDays',
+      newarrivaldays:'newArrivalDays',
+      weeklydiscount:'weeklyDiscountPercent',
+      weeklydiscountpercent:'weeklyDiscountPercent',
+      weeklydiscountpct:'weeklyDiscountPercent',
+      weeklydiscountdays:'weeklyDiscountDays',
+      packdiscount:'packDiscountPercent',
+      packdiscountpercent:'packDiscountPercent',
+      packdiscountpct:'packDiscountPercent',
+      siteurl:'siteUrl',
+      websiteurl:'siteUrl',
+      googleanalyticsid:'googleAnalyticsId',
+      ga4measurementid:'googleAnalyticsId',
+      microsoftclarityid:'microsoftClarityId',
+      clarityid:'microsoftClarityId',
+      adminwriteendpoint:'adminWriteEndpoint',
+      cataloguecsvurl:'catalogueCsvUrl',
+      discoverypackscsvurl:'discoveryPacksCsvUrl',
+      packscsvurl:'discoveryPacksCsvUrl',
+      settingscsvurl:'settingsCsvUrl',
+      fallbackcataloguefile:'catalogueFallbackFile',
+      cataloguefallbackfile:'catalogueFallbackFile',
+      mastersheetid:'masterSheetId'
+    };
+    return map[k] || (/^[a-z][a-z0-9]*$/i.test(String(label || '').trim()) ? String(label).trim() : '');
+  }
+
+  function csvToSettings(csvText){
+    const rows = parseCsv(csvText); if(!rows.length) return {};
+    const headers = rows[0].map(cleanHeader);
+    const out = {};
+    rows.slice(1).forEach(cols => {
+      const row = {}; headers.forEach((h,i)=>row[h]=cols[i]||'');
+      const label = get(row, ['Setting','Key','Name','Field']);
+      const value = get(row, ['Value','Setting Value','Data']);
+      if(!label || value === '') return;
+      const key = settingKey(label);
+      if(key) out[key] = castSettingValue(key, value);
+    });
+    return out;
+  }
+
+  async function loadLiveSettings(baseSettings){
+    const url = baseSettings.settingsCsvUrl || baseSettings.sheetSettingsCsvUrl || sheetCsvUrl('Settings');
+    if(!url) return baseSettings;
+    try {
+      const csv = await getSheetCsvOnly(url);
+      const live = csvToSettings(csv);
+      if(Object.keys(live).length) return Object.assign({}, baseSettings, live);
+    } catch(error) {
+      console.warn('Settings sheet could not load, using settings.json fallback', error);
+    }
+    return baseSettings;
+  }
+
   async function init(){
     settings = await getJson('settings.json', {});
     settings = settings || {};
+    if(!settings.masterSheetId) settings.masterSheetId = MASTER_SHEET_ID;
+    settings = await loadLiveSettings(settings);
     if(!settings.masterSheetId) settings.masterSheetId = MASTER_SHEET_ID;
     try { data=csvToFragrances(await getCsv(settings.catalogueCsvUrl || sheetCsvUrl('Catalogue') || DEFAULT_CSV)); }
     catch(error){ console.error(error); if(grid) grid.innerHTML='<div class="empty">Catalogue could not load from Google Sheets or the local backup.<br><small>' + escapeHtml(error.message || error) + '</small></div>'; return; }
