@@ -16,3 +16,7 @@ Upload the full ZIP contents to the GitHub root.
 
 ## Keep
 Do not delete `settings.json`. It is still the backup/boot file.
+
+
+## V4.0A.6
+- Fixed Fragrance of the Week size buttons so the discount label uses the live Settings sheet percentage.
