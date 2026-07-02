@@ -456,6 +456,20 @@
   }
 
   async function loadLiveSettings(baseSettings){
+    const endpoint = baseSettings.adminWriteEndpoint || baseSettings.settingsJsonEndpoint || '';
+    if(endpoint){
+      try {
+        const url = endpoint + (endpoint.includes('?') ? '&' : '?') + 'action=settings&cacheBust=' + Date.now();
+        const res = await fetch(url, { cache:'no-store', redirect:'follow' });
+        if(res.ok){
+          const json = await res.json();
+          const live = json && json.settings ? json.settings : json;
+          if(live && typeof live === 'object' && Object.keys(live).length) return Object.assign({}, baseSettings, live);
+        }
+      } catch(error){
+        console.warn('Settings Apps Script read failed, trying Settings CSV', error);
+      }
+    }
     const url = baseSettings.settingsCsvUrl || baseSettings.sheetSettingsCsvUrl || sheetCsvUrl('Settings');
     if(!url) return baseSettings;
     try {
@@ -519,6 +533,14 @@
     const rounded = Math.round(Number(value || 0) * 100) / 100;
     return '$' + (Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(2));
   }
+  function weeklyDiscountPercent(){
+    const n = Number(settings.weeklyDiscountPercent || settings.weeklyDiscount || 20);
+    return Number.isFinite(n) && n > 0 ? n : 20;
+  }
+  function weeklyDiscountDays(){
+    const n = Number(settings.weeklyDiscountDays || settings.featuredDiscountDays || 7);
+    return Number.isFinite(n) && n > 0 ? n : 7;
+  }
   function featuredStart(f){
     const raw = f.featuredStart || f.featureStart || f.featuredDate || f.addedDate;
     const date = raw ? new Date(raw) : null;
@@ -530,12 +552,12 @@
     if (!start) return true;
     const now = new Date();
     const diff = now.getTime() - start.getTime();
-    return diff >= 0 && diff < 7 * 24 * 60 * 60 * 1000;
+    return diff >= 0 && diff < weeklyDiscountDays() * 24 * 60 * 60 * 1000;
   }
   function discountEndsText(f){
     const start = featuredStart(f);
-    if (!start) return '20% off this featured fragrance';
-    const end = new Date(start.getTime() + 7 * 24 * 60 * 60 * 1000);
+    if (!start) return weeklyDiscountPercent() + '% off this featured fragrance';
+    const end = new Date(start.getTime() + weeklyDiscountDays() * 24 * 60 * 60 * 1000);
     const left = end.getTime() - Date.now();
     if (left <= 0) return 'Weekly discount ended';
     const days = Math.floor(left / (24 * 60 * 60 * 1000));
@@ -545,7 +567,7 @@
   function discountedPriceText(price, f){
     const original = parseMoney(price);
     if (!original || !isFeaturedDiscountActive(f)) return String(price || '').trim();
-    return money(Math.floor(original * 0.8));
+    return money(Math.floor(original * (1 - (weeklyDiscountPercent() / 100))));
   }
   function firstAvailablePrice(f){ return [f.p3,f.p5,f.p10].map(parseMoney).find(n=>n>0)||0; }
   function newDateValue(f){ const date=f.addedDate?new Date(f.addedDate):null; return date&&!Number.isNaN(date.getTime())?date.getTime():0; }
@@ -560,10 +582,12 @@
     const f = data.find(x => x.featured) || data.find(x => x.staffPick) || data.find(isNewArrival) || data[0];
     if(!f){ featuredGrid.innerHTML = '<div class="empty">No featured fragrance available.</div>'; return; }
     const active = isFeaturedDiscountActive(f);
+    const discountPct = weeklyDiscountPercent();
     const inspirationLine = shouldShowInspiration(f) ? `<p class="featured-inspo">Inspired by <strong>${escapeHtml(f.inspiration)}</strong></p>` : `<p class="featured-inspo">${escapeHtml(f.collection || 'Featured fragrance')}</p>`;
     const note = f.featuredNote || f.notes || 'This week’s highlighted fragrance.';
     featuredGrid.innerHTML = `
       <article class="featured-card weekly-card ${active ? 'discount-active' : ''}">
+        ${active ? `<div class="weekly-ribbon">${escapeHtml(discountPct)}% OFF</div>` : ''}
         <div class="featured-main">
           <div class="featured-mark">${escapeHtml(f.emojis || '✨')}</div>
           <div>
@@ -576,7 +600,7 @@
           </div>
         </div>
         <div class="weekly-offer">
-          <div class="offer-kicker">${active ? '20% off this week' : 'Featured pick'}</div>
+          <div class="offer-kicker">${active ? `${escapeHtml(discountPct)}% off this week` : 'Featured pick'}</div>
           <div class="offer-main">${active ? 'Auto-discount applied' : 'Normal pricing'}</div>
           <div class="offer-ends">${escapeHtml(discountEndsText(f))}</div>
           <div class="featured-actions">

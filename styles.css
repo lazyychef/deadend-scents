@@ -154,3 +154,12 @@ body{background:radial-gradient(circle at 18% 0%,rgba(200,164,77,.12),transparen
 .seo-fallback{width:min(100% - 2rem,1100px);margin:1rem auto 2rem;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.04);padding:1rem;color:var(--muted)}
 .seo-fallback h2{margin:.2rem 0 .4rem;color:var(--text);font-size:1.4rem}
 .seo-fallback p{margin:.35rem 0}
+
+/* V4.0A.4 live settings + weekly ribbon */
+.featured-card.weekly-card{position:relative;overflow:hidden}
+.weekly-ribbon{position:absolute;top:18px;right:-46px;z-index:3;width:190px;padding:.42rem 0;text-align:center;background:linear-gradient(135deg,#f6dc77,#c69b32 55%,#fff0a6);color:#10261d;font-weight:1000;letter-spacing:.16em;text-transform:uppercase;font-size:.68rem;box-shadow:0 8px 22px rgba(0,0,0,.24);transform:rotate(35deg);border-top:1px solid rgba(255,255,255,.45);border-bottom:1px solid rgba(96,70,12,.28)}
+.weekly-ribbon:before{content:"✦";margin-right:.35rem;color:#fff5bc;text-shadow:0 0 9px rgba(255,255,255,.8)}
+.weekly-ribbon:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.36),transparent);transform:translateX(-120%);animation:ribbonShine 3.6s ease-in-out infinite}
+@keyframes ribbonShine{0%,45%{transform:translateX(-120%)}75%,100%{transform:translateX(120%)}}
+@media (max-width:760px){.weekly-ribbon{top:13px;right:-52px;width:185px;font-size:.56rem;padding:.34rem 0}}
+@media (prefers-reduced-motion:reduce){.weekly-ribbon:after{animation:none}}

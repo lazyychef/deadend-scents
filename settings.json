@@ -17,5 +17,5 @@
   "catalogueFallbackFile": "catalogue-fallback.json",
   "masterSheetId": "1GSW1Bytauoi53o4orbojoZl9K-ixL4Y4Mj6NyehzCrc",
   "discoveryPacksCsvUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQCyIBU5X2VVuXZakb_eub3-mCiXi7lYgnolDSqHsU8ECz_ey3aec1Z0ADFbfxbOnw6RAjWFT03YKJi/pub?gid=523175048&single=true&output=csv",
-  "settingsCsvUrl": "https://docs.google.com/spreadsheets/d/1GSW1Bytauoi53o4orbojoZl9K-ixL4Y4Mj6NyehzCrc/gviz/tq?tqx=out:csv&sheet=Settings"
+  "settingsCsvUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQCyIBU5X2VVuXZakb_eub3-mCiXi7lYgnolDSqHsU8ECz_ey3aec1Z0ADFbfxbOnw6RAjWFT03YKJi/pub?gid=1916243063&single=true&output=csv"
 }

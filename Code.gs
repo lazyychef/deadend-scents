@@ -154,3 +154,89 @@ function addBottle_(ss, payload) {
   catalogue.appendRow(values);
   return { ok:true, action:'addBottle', id:nextId, fragrance:r.fragrance };
 }
+
+/**
+ * V4.0A.4 read endpoint. Lets the website read the Settings tab live without relying on a separately published Settings CSV.
+ * URL example: <web-app-url>?action=settings
+ */
+function doGet(e) {
+  var action = e && e.parameter && e.parameter.action;
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (action === 'settings') return json({ ok:true, settings: getSettings_(ss) });
+  return json({ ok:false, error:'Unknown action' });
+}
+
+function normaliseSettingKey_(label) {
+  var k = String(label || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  var map = {
+    businessname:'businessName',
+    tagline:'tagline',
+    facebookmessengerurl:'facebookMessengerUrl',
+    messengerurl:'facebookMessengerUrl',
+    messenger:'facebookMessengerUrl',
+    whatsappurl:'whatsAppUrl',
+    whatsapp:'whatsAppUrl',
+    instagramurl:'instagramUrl',
+    instagram:'instagramUrl',
+    expresspostage:'expressPostage',
+    postage:'expressPostage',
+    shippingcost:'expressPostage',
+    defaultpostage:'expressPostage',
+    shippingline:'shippingLine',
+    shippingtext:'shippingLine',
+    newbadgedays:'newArrivalDays',
+    newarrivaldays:'newArrivalDays',
+    weeklydiscount:'weeklyDiscountPercent',
+    weeklydiscountpercent:'weeklyDiscountPercent',
+    weeklydiscountpct:'weeklyDiscountPercent',
+    weeklydiscountdays:'weeklyDiscountDays',
+    packdiscount:'packDiscountPercent',
+    packdiscountpercent:'packDiscountPercent',
+    packdiscountpct:'packDiscountPercent',
+    siteurl:'siteUrl',
+    websiteurl:'siteUrl',
+    googleanalyticsid:'googleAnalyticsId',
+    ga4measurementid:'googleAnalyticsId',
+    microsoftclarityid:'microsoftClarityId',
+    clarityid:'microsoftClarityId',
+    adminwriteendpoint:'adminWriteEndpoint',
+    cataloguecsvurl:'catalogueCsvUrl',
+    discoverypackscsvurl:'discoveryPacksCsvUrl',
+    packscsvurl:'discoveryPacksCsvUrl',
+    settingscsvurl:'settingsCsvUrl',
+    fallbackcataloguefile:'catalogueFallbackFile',
+    cataloguefallbackfile:'catalogueFallbackFile',
+    mastersheetid:'masterSheetId',
+    footertext:'footerText'
+  };
+  return map[k] || '';
+}
+
+function castSetting_(key, value) {
+  var numeric = {expressPostage:true,newArrivalDays:true,weeklyDiscountPercent:true,weeklyDiscountDays:true,packDiscountPercent:true};
+  if (numeric[key]) {
+    var n = Number(String(value || '').replace(/[^0-9.]/g, ''));
+    return isNaN(n) ? value : n;
+  }
+  return value;
+}
+
+function getSettings_(ss) {
+  var sheet = ss.getSheetByName('Settings');
+  if (!sheet) return {};
+  var values = sheet.getDataRange().getValues();
+  if (values.length < 2) return {};
+  var headers = values[0].map(function(h){ return String(h || '').toLowerCase().replace(/[^a-z0-9]/g, ''); });
+  var settingCol = headers.indexOf('setting');
+  var valueCol = headers.indexOf('value');
+  if (settingCol < 0 || valueCol < 0) return {};
+  var out = {};
+  for (var i = 1; i < values.length; i++) {
+    var label = values[i][settingCol];
+    var value = values[i][valueCol];
+    if (!label || value === '') continue;
+    var key = normaliseSettingKey_(label);
+    if (key) out[key] = castSetting_(key, value);
+  }
+  return out;
+}

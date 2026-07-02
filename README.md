@@ -1,20 +1,18 @@
-# DeadEnd Scents V4.0A.3 — Settings Sync
-
-This update keeps the public homepage unchanged and adds live Settings sheet support.
+# DeadEnd Scents V4.0A.5 — Settings CSV Wire-up
 
 ## What changed
-- `app.js` now loads `settings.json` first, then overlays values from the Master Database `Settings` tab.
-- `/packs/` also reads live settings before loading Catalogue and Discovery Packs.
-- `settings.json` now includes `settingsCsvUrl` as the fallback/start point.
-- `settings.json` remains the backup if the Settings sheet cannot load.
+- `settings.json` now points to the published Settings CSV tab.
+- The live site should load settings from the Settings tab first, then fall back to `settings.json` if Google Sheets is blocked.
+- No homepage design changes.
 
 ## Upload
-Upload the full ZIP contents to the GitHub repository root.
-Keep `/admin` if it is already working.
-
-## Database
-Copy the Settings tab from `deadend-scents-settings-sheet-v4.0A.3.xlsx` into the Master Database.
-Headers must remain: Setting, Value, Notes.
+Upload the full ZIP contents to the GitHub root.
 
 ## Test
-Change `Weekly Discount %` in the Settings tab, wait 30-60 seconds, then hard refresh the website.
+1. Change `Weekly Discount %` in the Settings tab.
+2. Wait 30–60 seconds.
+3. Hard refresh the website.
+4. Confirm the Fragrance of the Week ribbon/discount updates.
+
+## Keep
+Do not delete `settings.json`. It is still the backup/boot file.
