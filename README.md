@@ -5,25 +5,14 @@
 - The live site should load settings from the Settings tab first, then fall back to `settings.json` if Google Sheets is blocked.
 - No homepage design changes.
 
-## Upload
-Upload the full ZIP contents to the GitHub root.
 
-## Test
-1. Change `Weekly Discount %` in the Settings tab.
-2. Wait 30–60 seconds.
-3. Hard refresh the website.
-4. Confirm the Fragrance of the Week ribbon/discount updates.
+## V4.0A.8
 
-## Keep
-Do not delete `settings.json`. It is still the backup/boot file.
+- Mobile Fragrance of the Week bottle image increased to align with the detail text block.
+- Price/add-to-cart section remains full width underneath.
+- Desktop layout unchanged.
 
-
-## V4.0A.6
-- Fixed Fragrance of the Week size buttons so the discount label uses the live Settings sheet percentage.
-
-
-## V4.0A.7
-- Reads `Image`, `Image URL` or `Bottle Image URL` from Catalogue.
-- Uses bottle image only for Fragrance of the Week.
-- Catalogue tiles remain emoji-only.
-- Adds desktop glow/hover effect for the weekly bottle image.
+## V4.1 polish
+- Replaced top-left text brand with circular DeadEnd Scents logo.
+- Increased mobile Fragrance of the Week bottle image size.
+- Main page layout otherwise unchanged.
