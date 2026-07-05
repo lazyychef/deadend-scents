@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Settings | DeadEnd Scents Admin</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <header class="admin-shell admin-header compact">
+    <a class="admin-logo" href="index.html" aria-label="Back to admin dashboard">
+      <img src="../assets/deadend-logo.png" alt="DeadEnd Scents">
+    </a>
+    <div>
+      <p class="eyebrow">Admin V5.1.2</p>
+      <h1>Settings</h1>
+      <p class="muted">Edit live website settings stored in the master database.</p>
+    </div>
+  </header>
+
+  <main class="admin-shell">
+    <section class="admin-panel">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Live controls</p>
+          <h2>Website settings</h2>
+        </div>
+        <a class="button" href="index.html">Dashboard</a>
+      </div>
+      <p class="muted">These values write to the Settings tab. The public website should read the Settings CSV first, with <code>settings.json</code> only as a backup.</p>
+      <div id="settingsStatus" class="empty">Loading settings...</div>
+      <form id="settingsForm" class="settings-editor" hidden>
+        <div id="settingsFields" class="settings-fields"></div>
+        <div class="form-actions wide">
+          <button class="button primary" type="submit">Save Settings</button>
+          <button class="button" type="button" id="reloadSettings">Reload</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="admin-panel">
+      <p class="eyebrow">Settings tab format</p>
+      <h2>Required sheet columns</h2>
+      <p class="muted">The Settings tab should have at least two columns: <strong>Setting</strong> and <strong>Value</strong>. Extra columns like Notes or Category are fine.</p>
+    </section>
+  </main>
+
+  <script src="admin-write.js"></script>
+  <script src="settings.js"></script>
+</body>
+</html>

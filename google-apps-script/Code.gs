@@ -14,6 +14,7 @@ function doPost(e) {
     if (payload.action === 'updateBottle') return json_({ ok:true, result:updateBottle_(ss, payload) });
     if (payload.action === 'setFeatured') return json_({ ok:true, result:setFeatured_(ss, payload) });
     if (payload.action === 'setStaffPicks') return json_({ ok:true, result:setStaffPicks_(ss, payload) });
+    if (payload.action === 'updateSettings') return json_({ ok:true, result:updateSettings_(ss, payload) });
     if (payload.action === 'addPurchase') return json_(addPurchase_(ss, payload));
     if (payload.action === 'addBottle') return json_(addBottle_(ss, payload));
 
@@ -23,12 +24,176 @@ function doPost(e) {
   }
 }
 
-function doGet() {
-  return json_({ ok:true, app:'DeadEnd Scents Admin V5.1', status:'ready' });
+function doGet(e) {
+  var action = e && e.parameter && e.parameter.action;
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (action === 'settings') return json_({ ok:true, settings:getSettings_(ss) });
+  return json_({ ok:true, app:'DeadEnd Scents Admin V5.1.1', status:'ready' });
 }
 
 function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}
+
+
+function normaliseSettingKey_(label) {
+  var k = String(label || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  var map = {
+    businessname:'businessName',
+    tagline:'tagline',
+    facebookmessengerurl:'facebookMessengerUrl',
+    messengerurl:'facebookMessengerUrl',
+    messenger:'facebookMessengerUrl',
+    whatsappurl:'whatsAppUrl',
+    whatsapp:'whatsAppUrl',
+    instagramurl:'instagramUrl',
+    instagram:'instagramUrl',
+    expresspostage:'expressPostage',
+    postage:'expressPostage',
+    shippingcost:'expressPostage',
+    defaultpostage:'expressPostage',
+    shippingline:'shippingLine',
+    shippingtext:'shippingLine',
+    newbadgedays:'newArrivalDays',
+    newarrivaldays:'newArrivalDays',
+    weeklydiscount:'weeklyDiscountPercent',
+    weeklydiscountpercent:'weeklyDiscountPercent',
+    weeklydiscountpct:'weeklyDiscountPercent',
+    weeklydiscountdays:'weeklyDiscountDays',
+    packdiscount:'packDiscountPercent',
+    packdiscountpercent:'packDiscountPercent',
+    packdiscountpct:'packDiscountPercent',
+    siteurl:'siteUrl',
+    websiteurl:'websiteUrl',
+    googleanalyticsid:'googleAnalyticsId',
+    ga4measurementid:'googleAnalyticsId',
+    microsoftclarityid:'microsoftClarityId',
+    clarityid:'microsoftClarityId',
+    adminwriteendpoint:'adminWriteEndpoint',
+    cataloguecsvurl:'catalogueCsvUrl',
+    discoverypackscsvurl:'discoveryPacksCsvUrl',
+    packscsvurl:'discoveryPacksCsvUrl',
+    settingscsvurl:'settingsCsvUrl',
+    fallbackcataloguefile:'catalogueFallbackFile',
+    cataloguefallbackfile:'catalogueFallbackFile',
+    mastersheetid:'masterSheetId',
+    footertext:'footerText',
+    lowstockthreshold:'lowStockThreshold',
+    roitarget:'roiTarget',
+    defaultpricingprofile:'defaultPricingProfile',
+    designermarkup:'designerMarkup',
+    nichemarkup:'nicheMarkup',
+    premiummarkup:'nicheMarkup',
+    middleeasternmarkup:'middleEasternMarkup',
+    inspiredmarkup:'inspiredMarkup',
+    competitorundercut:'competitorUndercutPercent',
+    competitorundercutpercent:'competitorUndercutPercent',
+    roundtonearest:'roundToNearest'
+  };
+  return map[k] || '';
+}
+
+function castSetting_(key, value) {
+  var numeric = {expressPostage:true,newArrivalDays:true,weeklyDiscountPercent:true,weeklyDiscountDays:true,packDiscountPercent:true,lowStockThreshold:true,roiTarget:true,designerMarkup:true,nicheMarkup:true,middleEasternMarkup:true,inspiredMarkup:true,competitorUndercutPercent:true,roundToNearest:true};
+  if (numeric[key]) {
+    var n = Number(String(value || '').replace(/[^0-9.]/g, ''));
+    return isNaN(n) ? value : n;
+  }
+  return value;
+}
+
+function getSettings_(ss) {
+  var sheet = ss.getSheetByName('Settings');
+  if (!sheet) return {};
+  var values = sheet.getDataRange().getValues();
+  if (values.length < 2) return {};
+  var headers = values[0].map(function(h){ return String(h || '').toLowerCase().replace(/[^a-z0-9]/g, ''); });
+  var settingCol = headers.indexOf('setting');
+  var valueCol = headers.indexOf('value');
+  if (settingCol < 0 || valueCol < 0) return {};
+  var out = {};
+  for (var i = 1; i < values.length; i++) {
+    var label = values[i][settingCol];
+    var value = values[i][valueCol];
+    if (!label || value === '') continue;
+    var key = normaliseSettingKey_(label);
+    if (key) out[key] = castSetting_(key, value);
+  }
+  return out;
+}
+
+
+function settingLabelForKey_(key) {
+  var labels = {
+    businessName:'Business Name',
+    tagline:'Tagline',
+    siteUrl:'Site URL',
+    shippingLine:'Shipping Line',
+    facebookMessengerUrl:'Facebook Messenger URL',
+    whatsAppUrl:'WhatsApp URL',
+    instagramUrl:'Instagram URL',
+    expressPostage:'Express Postage',
+    newArrivalDays:'New Arrival Days',
+    weeklyDiscountPercent:'Weekly Discount Percent',
+    weeklyDiscountDays:'Weekly Discount Days',
+    lowStockThreshold:'Low Stock Threshold',
+    roiTarget:'ROI Target',
+    defaultPricingProfile:'Default Pricing Profile',
+    designerMarkup:'Designer Markup',
+    nicheMarkup:'Niche Markup',
+    middleEasternMarkup:'Middle Eastern Markup',
+    inspiredMarkup:'Inspired Markup',
+    competitorUndercutPercent:'Competitor Undercut Percent',
+    roundToNearest:'Round To Nearest',
+    catalogueCsvUrl:'Catalogue CSV URL',
+    discoveryPacksCsvUrl:'Discovery Packs CSV URL',
+    settingsCsvUrl:'Settings CSV URL',
+    adminWriteEndpoint:'Admin Write Endpoint',
+    masterSheetId:'Master Sheet ID',
+    catalogueFallbackFile:'Catalogue Fallback File',
+    googleAnalyticsId:'Google Analytics ID',
+    microsoftClarityId:'Microsoft Clarity ID',
+    footerText:'Footer Text'
+  };
+  return labels[key] || key;
+}
+
+function updateSettings_(ss, payload) {
+  var sheet = ss.getSheetByName('Settings');
+  if (!sheet) throw new Error('No Settings sheet found.');
+  var settings = payload.settings || {};
+  var values = sheet.getDataRange().getValues();
+  if (!values.length) throw new Error('Settings sheet is empty. Add headers: Setting, Value.');
+
+  var headers = values[0].map(function(h){ return String(h || '').toLowerCase().replace(/[^a-z0-9]/g, ''); });
+  var settingCol = headers.indexOf('setting') + 1;
+  var valueCol = headers.indexOf('value') + 1;
+  var updatedCol = headers.indexOf('lastupdated') + 1;
+  if (!settingCol || !valueCol) throw new Error('Settings sheet needs Setting and Value columns.');
+
+  var rowByKey = {};
+  for (var r = 2; r <= values.length; r++) {
+    var rawLabel = values[r - 1][settingCol - 1];
+    var key = normaliseSettingKey_(rawLabel);
+    if (key) rowByKey[key] = r;
+  }
+
+  var count = 0;
+  Object.keys(settings).forEach(function(inputKey){
+    var canonicalKey = normaliseSettingKey_(inputKey) || inputKey;
+    var value = settings[inputKey];
+    if (value === null || typeof value === 'undefined') return;
+    var row = rowByKey[canonicalKey];
+    if (!row) {
+      row = sheet.getLastRow() + 1;
+      sheet.getRange(row, settingCol).setValue(settingLabelForKey_(canonicalKey));
+      rowByKey[canonicalKey] = row;
+    }
+    sheet.getRange(row, valueCol).setValue(value);
+    if (updatedCol) sheet.getRange(row, updatedCol).setValue(new Date());
+    count++;
+  });
+  return { action:'updateSettings', count:count };
 }
 
 function catalogueSheet_(ss) {
@@ -80,7 +245,7 @@ function updateBottle_(ss, payload) {
   var fields = payload.fields || {};
 
   setByAnyHeader_(sheet, row, map, ['Current mL','Current Amount Left (mL)','Current Amount Left','Amount Left','Amount Left mL','Remaining mL'], fields['Current mL']);
-  setByAnyHeader_(sheet, row, map, ['Status'], fields['Status']);
+  setByAnyHeader_(sheet, row, map, ['Stock','Status'], fields['Stock'] || fields['Status']);
   setByAnyHeader_(sheet, row, map, ['3mL','3 mL','Price 3mL'], fields['3mL']);
   setByAnyHeader_(sheet, row, map, ['5mL','5 mL','Price 5mL'], fields['5mL']);
   setByAnyHeader_(sheet, row, map, ['10mL','10 mL','Price 10mL'], fields['10mL']);
@@ -214,6 +379,7 @@ function addCatalogueRowFromPurchase_(catalogue, item, purchase) {
       case 'Purchase Source': return purchase.source;
       case 'Seller': return purchase.seller;
       case 'Status': return 'In Stock';
+      case 'Stock': return 'In Stock';
       case 'Last Updated': return new Date();
       default: return '';
     }

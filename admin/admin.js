@@ -30,6 +30,14 @@
   async function loadSettings(){
     const res = await fetch('../settings.json', { cache:'no-store' });
     state.settings = await res.json();
+    try{
+      const endpoint = state.settings.adminWriteEndpoint;
+      if(endpoint){
+        const liveUrl = endpoint + (endpoint.includes('?') ? '&' : '?') + 'action=settings&t=' + Date.now();
+        const live = await fetch(liveUrl, { cache:'no-store' }).then(r=>r.json());
+        state.settings = Object.assign({}, state.settings, live.settings || {});
+      }
+    }catch(e){ console.warn('Live settings unavailable, using settings.json fallback', e); }
     renderSettings();
   }
 
@@ -48,7 +56,7 @@
         items = fallback.items || [];
       }catch(e){}
     }
-    state.items = items.filter(item => (item.Status || '').toLowerCase() !== 'hidden');
+    state.items = items.filter(item => ((item.Stock || item.Status) || '').toLowerCase() !== 'hidden');
     renderDashboard();
   }
 
@@ -90,7 +98,7 @@
       const p10 = price(item,'10mL');
       const possible = ml !== null ? Math.floor(ml / 10) : null;
       const value = possible !== null ? possible * p10 : 0;
-      return `<div class="mini-row"><div><strong>${escapeHtml(displayName(item))}</strong><span>${escapeHtml(item.Collection || 'Catalogue')} · ${escapeHtml(item.Status || 'Status unknown')}</span></div><em class="pill">${ml === null ? 'mL not set' : ml + 'mL · ' + money(value)}</em></div>`;
+      return `<div class="mini-row"><div><strong>${escapeHtml(displayName(item))}</strong><span>${escapeHtml(item.Collection || 'Catalogue')} · ${escapeHtml(item.Stock || item.Status || 'Status unknown')}</span></div><em class="pill">${ml === null ? 'mL not set' : ml + 'mL · ' + money(value)}</em></div>`;
     }).join('') || '<div class="empty">No catalogue rows found.</div>';
 
     $('lowStockList').innerHTML = low.slice(0,12).map(item => `<div class="mini-row"><div><strong>${escapeHtml(displayName(item))}</strong><span>${escapeHtml(item.Collection || '')}</span></div><em class="pill">${amountLeft(item)}mL left</em></div>`).join('') || '<div class="empty">No low stock rows found. This needs Current mL / Amount Left values in the sheet.</div>';
