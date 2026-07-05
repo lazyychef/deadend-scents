@@ -11,49 +11,127 @@
   <header class="admin-shell admin-header compact">
     <a class="admin-logo" href="index.html" aria-label="Admin dashboard"><img src="../assets/deadend-logo.png" alt="DeadEnd Scents"></a>
     <div>
-      <p class="eyebrow">Admin V5.1</p>
-      <h1>Inventory</h1>
-      <p class="muted">Edit remaining mL, sample prices and stock status. Changes write back to Google Sheets.</p>
+      <p class="eyebrow">Admin V5.2</p>
+      <h1>Inventory Manager</h1>
+      <p class="muted">Edit bottles, calculate prices and save changes directly to the master spreadsheet.</p>
     </div>
   </header>
 
-  <main class="admin-shell">
+  <main class="admin-shell inventory-v52">
+    <section class="quick-stats inventory-stats" aria-label="Inventory stats">
+      <article><span>Bottles</span><strong id="statTotal">—</strong></article>
+      <article><span>Inventory value</span><strong id="statValue">—</strong></article>
+      <article><span>Potential revenue</span><strong id="statRevenue">—</strong></article>
+      <article><span>Low stock</span><strong id="statLow">—</strong></article>
+    </section>
+
     <section class="admin-panel">
       <div class="section-head">
         <div>
-          <p class="eyebrow">Bottle search</p>
+          <p class="eyebrow">Catalogue database</p>
           <h2>Select bottle</h2>
         </div>
         <a class="button" href="index.html">Dashboard</a>
       </div>
-      <div class="admin-filter-row">
+
+      <div class="admin-filter-row v52-filters">
         <label><span>Search</span><input id="search" type="search" placeholder="House, fragrance or ID"></label>
         <label><span>Collection</span><select id="collectionFilter"><option value="">All</option></select></label>
+        <label><span>Stock</span><select id="stockFilter"><option value="">All</option><option>In Stock</option><option>Low Stock</option><option>Ordered</option><option>Out of Stock</option><option>Hidden</option></select></label>
       </div>
-      <div id="inventoryList" class="inventory-edit-list"><div class="empty">Loading catalogue...</div></div>
+
+      <div id="inventoryList" class="inventory-card-list"><div class="empty">Loading catalogue...</div></div>
     </section>
 
-    <section class="admin-panel">
-      <p class="eyebrow">Edit bottle</p>
-      <h2 id="editTitle">Choose a bottle</h2>
-      <p class="muted" id="editMeta">Pick a bottle above to edit its live spreadsheet values.</p>
-
-      <form id="editForm" class="edit-form">
-        <input type="hidden" id="editId">
-        <div class="form-grid">
-          <label><span>Current mL</span><input id="currentMl" type="number" min="0" step="0.1" inputmode="decimal"></label>
-          <label><span>Status</span><select id="status"><option>In Stock</option><option>Low Stock</option><option>Ordered</option><option>Out of Stock</option><option>Hidden</option></select></label>
-          <label><span>3mL price</span><input id="price3" type="text" placeholder="$8"></label>
-          <label><span>5mL price</span><input id="price5" type="text" placeholder="$13"></label>
-          <label><span>10mL price</span><input id="price10" type="text" placeholder="$22"></label>
-          <label><span>Bottle size mL</span><input id="bottleSize" type="number" min="0" step="1" inputmode="numeric"></label>
-          <label><span>Purchase price</span><input id="purchasePrice" type="number" min="0" step="0.01" inputmode="decimal"></label>
-          <label><span>Normal RRP</span><input id="normalRrp" type="number" min="0" step="0.01" inputmode="decimal"></label>
+    <section class="admin-panel bottle-editor-panel">
+      <div class="section-head small">
+        <div>
+          <p class="eyebrow">Bottle editor</p>
+          <h2 id="editTitle">Choose a bottle</h2>
+          <p class="muted" id="editMeta">Pick a bottle above to edit its live spreadsheet values.</p>
         </div>
-        <label><span>Admin notes / description</span><textarea id="description" placeholder="Optional description update"></textarea></label>
-        <div class="form-actions wide">
-          <button class="button primary" type="submit">Save to Google Sheet</button>
-          <button class="button" id="reloadBtn" type="button">Reload</button>
+        <div class="editor-flags">
+          <label><input id="featured" type="checkbox"> <span>Featured</span></label>
+          <label><input id="staffPick" type="checkbox"> <span>Staff Pick</span></label>
+        </div>
+      </div>
+
+      <form id="editForm" class="edit-form v52-editor">
+        <input type="hidden" id="editId">
+
+        <div class="editor-layout">
+          <aside class="image-preview-card">
+            <div id="imagePreview" class="image-preview empty-image">No image</div>
+            <label><span>Image URL</span><input id="imageUrl" type="url" placeholder="https://..."></label>
+            <p class="muted small-copy">Paste the bottle image URL. Preview updates before saving.</p>
+          </aside>
+
+          <div class="editor-main">
+            <section class="settings-group mini-editor-section">
+              <h3>General</h3>
+              <div class="form-grid">
+                <label><span>House</span><input id="house" type="text"></label>
+                <label><span>Fragrance</span><input id="fragrance" type="text"></label>
+                <label><span>Collection</span><select id="collection"><option>Designer</option><option>Niche</option><option>Middle Eastern</option><option>Inspired</option><option>Other</option></select></label>
+                <label><span>Scent style</span><input id="scentStyle" type="text"></label>
+                <label><span>Fragrantica</span><input id="fragrantica" type="url"></label>
+                <label><span>Stock</span><select id="stock"><option>In Stock</option><option>Low Stock</option><option>Ordered</option><option>Out of Stock</option><option>Hidden</option></select></label>
+              </div>
+              <label><span>Description</span><textarea id="description" placeholder="Website description"></textarea></label>
+            </section>
+
+            <section class="settings-group mini-editor-section">
+              <h3>Inventory</h3>
+              <div class="form-grid">
+                <label><span>Purchase date</span><input id="purchaseDate" type="date"></label>
+                <label><span>Purchase price</span><input id="purchasePrice" type="number" min="0" step="0.01" inputmode="decimal"></label>
+                <label><span>Bottle size mL</span><input id="bottleSize" type="number" min="0" step="0.1" inputmode="decimal"></label>
+                <label><span>Current mL</span><input id="currentMl" type="number" min="0" step="0.1" inputmode="decimal"></label>
+                <label><span>RRP</span><input id="rrp" type="number" min="0" step="0.01" inputmode="decimal"></label>
+                <label><span>Purchase source</span><input id="purchaseSource" type="text"></label>
+                <label><span>Seller</span><input id="seller" type="text"></label>
+                <label><span>Condition</span><input id="condition" type="text" placeholder="New / 90% full"></label>
+              </div>
+            </section>
+
+            <section class="settings-group mini-editor-section">
+              <h3>Pricing</h3>
+              <div class="form-grid price-grid">
+                <label><span>3mL price</span><input id="price3" type="text" placeholder="$8"></label>
+                <label><span>5mL price</span><input id="price5" type="text" placeholder="$13"></label>
+                <label><span>10mL price</span><input id="price10" type="text" placeholder="$22"></label>
+              </div>
+              <div class="inline-calc">
+                <div class="form-grid small-grid">
+                  <label><span>Competitor 3mL</span><input id="competitor3" type="number" min="0" step="0.01" inputmode="decimal"></label>
+                  <label><span>Competitor 5mL</span><input id="competitor5" type="number" min="0" step="0.01" inputmode="decimal"></label>
+                  <label><span>Competitor 10mL</span><input id="competitor10" type="number" min="0" step="0.01" inputmode="decimal"></label>
+                </div>
+                <div class="calc-suggestion-card" id="calcSuggestion">
+                  <div><span>Cost / mL</span><strong id="calcCostPerMl">—</strong></div>
+                  <div><span>Suggested 3mL</span><strong id="calcPrice3">—</strong></div>
+                  <div><span>Suggested 5mL</span><strong id="calcPrice5">—</strong></div>
+                  <div><span>Suggested 10mL</span><strong id="calcPrice10">—</strong></div>
+                  <div><span>Potential revenue</span><strong id="calcRevenue">—</strong></div>
+                  <div><span>Projected profit</span><strong id="calcProfit">—</strong></div>
+                </div>
+                <div class="form-actions wide no-sticky">
+                  <button class="button" id="calculatePrices" type="button">Calculate prices</button>
+                  <button class="button" id="acceptPrices" type="button">Accept suggested prices</button>
+                </div>
+              </div>
+            </section>
+
+            <section class="settings-group mini-editor-section">
+              <h3>Private notes</h3>
+              <textarea id="privateNotes" placeholder="Supplier, order notes, customer requests, pricing notes"></textarea>
+            </section>
+          </div>
+        </div>
+
+        <div class="form-actions wide save-bar">
+          <button class="button primary" type="submit">Save bottle</button>
+          <button class="button" id="reloadBtn" type="button">Reload catalogue</button>
         </div>
       </form>
       <p id="saveStatus" class="muted"></p>

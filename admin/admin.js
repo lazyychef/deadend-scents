@@ -62,7 +62,11 @@
 
   function isNew(item){
     const raw = item['New'] || item['New Arrival'] || item['Recently Added'] || '';
-    return String(raw).toLowerCase() === 'true' || String(raw).toLowerCase() === 'yes' || String(raw) === '1';
+    if(String(raw).toLowerCase() === 'true' || String(raw).toLowerCase() === 'yes' || String(raw) === '1') return true;
+    const days = Number(state.settings?.newArrivalDays || 45);
+    const d = new Date(item['Added Date'] || item['Purchase Date'] || '');
+    if(!Number.isFinite(d.getTime())) return false;
+    return ((Date.now() - d.getTime()) / 86400000) <= days;
   }
 
   function amountLeft(item){
@@ -84,7 +88,8 @@
 
   function renderDashboard(){
     const items = state.items;
-    const low = items.filter(i => { const ml = amountLeft(i); return ml !== null && ml > 0 && ml <= 20; });
+    const threshold = Number(state.settings?.lowStockThreshold || 20);
+    const low = items.filter(i => { const ml = amountLeft(i); return ml !== null && ml > 0 && ml <= threshold; });
     const out = items.filter(i => /out/i.test(i.Status || '') || amountLeft(i) === 0);
     const newest = items.filter(isNew).slice(0,8);
 

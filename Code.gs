@@ -1,5 +1,5 @@
 /**
- * DeadEnd Scents Admin V5.1 write-back endpoint.
+ * DeadEnd Scents Admin V5.2 write-back endpoint.
  * Copy this file into the Apps Script project attached to the master Google Sheet.
  * Deploy as Web App: Execute as Me, Access Anyone with the link.
  */
@@ -14,6 +14,7 @@ function doPost(e) {
     if (payload.action === 'updateBottle') return json_({ ok:true, result:updateBottle_(ss, payload) });
     if (payload.action === 'setFeatured') return json_({ ok:true, result:setFeatured_(ss, payload) });
     if (payload.action === 'setStaffPicks') return json_({ ok:true, result:setStaffPicks_(ss, payload) });
+    if (payload.action === 'updateSettings') return json_({ ok:true, result:updateSettings_(ss, payload) });
     if (payload.action === 'addPurchase') return json_(addPurchase_(ss, payload));
     if (payload.action === 'addBottle') return json_(addBottle_(ss, payload));
 
@@ -27,7 +28,7 @@ function doGet(e) {
   var action = e && e.parameter && e.parameter.action;
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   if (action === 'settings') return json_({ ok:true, settings:getSettings_(ss) });
-  return json_({ ok:true, app:'DeadEnd Scents Admin V5.1.1', status:'ready' });
+  return json_({ ok:true, app:'DeadEnd Scents Admin V5.2', status:'ready' });
 }
 
 function json_(obj) {
@@ -76,13 +77,24 @@ function normaliseSettingKey_(label) {
     fallbackcataloguefile:'catalogueFallbackFile',
     cataloguefallbackfile:'catalogueFallbackFile',
     mastersheetid:'masterSheetId',
-    footertext:'footerText'
+    footertext:'footerText',
+    lowstockthreshold:'lowStockThreshold',
+    roitarget:'roiTarget',
+    defaultpricingprofile:'defaultPricingProfile',
+    designermarkup:'designerMarkup',
+    nichemarkup:'nicheMarkup',
+    premiummarkup:'nicheMarkup',
+    middleeasternmarkup:'middleEasternMarkup',
+    inspiredmarkup:'inspiredMarkup',
+    competitorundercut:'competitorUndercutPercent',
+    competitorundercutpercent:'competitorUndercutPercent',
+    roundtonearest:'roundToNearest'
   };
   return map[k] || '';
 }
 
 function castSetting_(key, value) {
-  var numeric = {expressPostage:true,newArrivalDays:true,weeklyDiscountPercent:true,weeklyDiscountDays:true,packDiscountPercent:true};
+  var numeric = {expressPostage:true,newArrivalDays:true,weeklyDiscountPercent:true,weeklyDiscountDays:true,packDiscountPercent:true,lowStockThreshold:true,roiTarget:true,designerMarkup:true,nicheMarkup:true,middleEasternMarkup:true,inspiredMarkup:true,competitorUndercutPercent:true,roundToNearest:true};
   if (numeric[key]) {
     var n = Number(String(value || '').replace(/[^0-9.]/g, ''));
     return isNaN(n) ? value : n;
@@ -108,6 +120,80 @@ function getSettings_(ss) {
     if (key) out[key] = castSetting_(key, value);
   }
   return out;
+}
+
+
+function settingLabelForKey_(key) {
+  var labels = {
+    businessName:'Business Name',
+    tagline:'Tagline',
+    siteUrl:'Site URL',
+    shippingLine:'Shipping Line',
+    facebookMessengerUrl:'Facebook Messenger URL',
+    whatsAppUrl:'WhatsApp URL',
+    instagramUrl:'Instagram URL',
+    expressPostage:'Express Postage',
+    newArrivalDays:'New Arrival Days',
+    weeklyDiscountPercent:'Weekly Discount Percent',
+    weeklyDiscountDays:'Weekly Discount Days',
+    lowStockThreshold:'Low Stock Threshold',
+    roiTarget:'ROI Target',
+    defaultPricingProfile:'Default Pricing Profile',
+    designerMarkup:'Designer Markup',
+    nicheMarkup:'Niche Markup',
+    middleEasternMarkup:'Middle Eastern Markup',
+    inspiredMarkup:'Inspired Markup',
+    competitorUndercutPercent:'Competitor Undercut Percent',
+    roundToNearest:'Round To Nearest',
+    catalogueCsvUrl:'Catalogue CSV URL',
+    discoveryPacksCsvUrl:'Discovery Packs CSV URL',
+    settingsCsvUrl:'Settings CSV URL',
+    adminWriteEndpoint:'Admin Write Endpoint',
+    masterSheetId:'Master Sheet ID',
+    catalogueFallbackFile:'Catalogue Fallback File',
+    googleAnalyticsId:'Google Analytics ID',
+    microsoftClarityId:'Microsoft Clarity ID',
+    footerText:'Footer Text'
+  };
+  return labels[key] || key;
+}
+
+function updateSettings_(ss, payload) {
+  var sheet = ss.getSheetByName('Settings');
+  if (!sheet) throw new Error('No Settings sheet found.');
+  var settings = payload.settings || {};
+  var values = sheet.getDataRange().getValues();
+  if (!values.length) throw new Error('Settings sheet is empty. Add headers: Setting, Value.');
+
+  var headers = values[0].map(function(h){ return String(h || '').toLowerCase().replace(/[^a-z0-9]/g, ''); });
+  var settingCol = headers.indexOf('setting') + 1;
+  var valueCol = headers.indexOf('value') + 1;
+  var updatedCol = headers.indexOf('lastupdated') + 1;
+  if (!settingCol || !valueCol) throw new Error('Settings sheet needs Setting and Value columns.');
+
+  var rowByKey = {};
+  for (var r = 2; r <= values.length; r++) {
+    var rawLabel = values[r - 1][settingCol - 1];
+    var key = normaliseSettingKey_(rawLabel);
+    if (key) rowByKey[key] = r;
+  }
+
+  var count = 0;
+  Object.keys(settings).forEach(function(inputKey){
+    var canonicalKey = normaliseSettingKey_(inputKey) || inputKey;
+    var value = settings[inputKey];
+    if (value === null || typeof value === 'undefined') return;
+    var row = rowByKey[canonicalKey];
+    if (!row) {
+      row = sheet.getLastRow() + 1;
+      sheet.getRange(row, settingCol).setValue(settingLabelForKey_(canonicalKey));
+      rowByKey[canonicalKey] = row;
+    }
+    sheet.getRange(row, valueCol).setValue(value);
+    if (updatedCol) sheet.getRange(row, updatedCol).setValue(new Date());
+    count++;
+  });
+  return { action:'updateSettings', count:count };
 }
 
 function catalogueSheet_(ss) {
@@ -158,15 +244,31 @@ function updateBottle_(ss, payload) {
   var map = headerMap_(sheet);
   var fields = payload.fields || {};
 
+  // V5.2 writes by column name / aliases so the admin survives column moves.
+  setByAnyHeader_(sheet, row, map, ['House'], fields['House']);
+  setByAnyHeader_(sheet, row, map, ['Fragrance'], fields['Fragrance']);
+  setByAnyHeader_(sheet, row, map, ['Collection'], fields['Collection']);
+  setByAnyHeader_(sheet, row, map, ['Scent Style'], fields['Scent Style']);
+  setByAnyHeader_(sheet, row, map, ['Fragrantica'], fields['Fragrantica']);
+  setByAnyHeader_(sheet, row, map, ['Description','Short Description'], fields['Description']);
+  setByAnyHeader_(sheet, row, map, ['Stock','Status'], fields['Stock'] || fields['Status']);
+
+  setByAnyHeader_(sheet, row, map, ['Purchase Date'], fields['Purchase Date']);
+  setByAnyHeader_(sheet, row, map, ['Purchase Price','Purchase Cost','Cost'], fields['Purchase Price']);
+  setByAnyHeader_(sheet, row, map, ['Bottle Size (mL)','Bottle Size','Size mL'], fields['Bottle Size (mL)']);
   setByAnyHeader_(sheet, row, map, ['Current mL','Current Amount Left (mL)','Current Amount Left','Amount Left','Amount Left mL','Remaining mL'], fields['Current mL']);
-  setByAnyHeader_(sheet, row, map, ['Status'], fields['Status']);
+  setByAnyHeader_(sheet, row, map, ['Normal RRP','RRP','Retail Price'], fields['RRP'] || fields['Normal RRP']);
+  setByAnyHeader_(sheet, row, map, ['Purchase Source'], fields['Purchase Source']);
+  setByAnyHeader_(sheet, row, map, ['Seller'], fields['Seller']);
+  setByAnyHeader_(sheet, row, map, ['Condition'], fields['Condition']);
+
   setByAnyHeader_(sheet, row, map, ['3mL','3 mL','Price 3mL'], fields['3mL']);
   setByAnyHeader_(sheet, row, map, ['5mL','5 mL','Price 5mL'], fields['5mL']);
   setByAnyHeader_(sheet, row, map, ['10mL','10 mL','Price 10mL'], fields['10mL']);
-  setByAnyHeader_(sheet, row, map, ['Bottle Size (mL)','Bottle Size','Size mL'], fields['Bottle Size (mL)']);
-  setByAnyHeader_(sheet, row, map, ['Purchase Price','Purchase Cost','Cost'], fields['Purchase Price']);
-  setByAnyHeader_(sheet, row, map, ['Normal RRP','RRP','Retail Price'], fields['Normal RRP']);
-  setByAnyHeader_(sheet, row, map, ['Description','Short Description'], fields['Description']);
+  setByAnyHeader_(sheet, row, map, ['Featured','Fragrance of the Week','FOTW'], fields['Featured']);
+  setByAnyHeader_(sheet, row, map, ['Staff Pick','Staff Picks','StaffPick'], fields['Staff Pick']);
+  setByAnyHeader_(sheet, row, map, ['Image','Image URL','Bottle Image'], fields['Image']);
+  setByAnyHeader_(sheet, row, map, ['Private Notes','Internal Notes','Admin Notes'], fields['Private Notes']);
   setByAnyHeader_(sheet, row, map, ['Last Updated','Updated'], new Date());
 
   return { action:'updateBottle', id:payload.id, row:row };
@@ -293,6 +395,7 @@ function addCatalogueRowFromPurchase_(catalogue, item, purchase) {
       case 'Purchase Source': return purchase.source;
       case 'Seller': return purchase.seller;
       case 'Status': return 'In Stock';
+      case 'Stock': return 'In Stock';
       case 'Last Updated': return new Date();
       default: return '';
     }

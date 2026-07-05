@@ -1,5 +1,5 @@
 /**
- * DeadEnd Scents Admin V5.1 write-back endpoint.
+ * DeadEnd Scents Admin V5.2 write-back endpoint.
  * Copy this file into the Apps Script project attached to the master Google Sheet.
  * Deploy as Web App: Execute as Me, Access Anyone with the link.
  */
@@ -28,7 +28,7 @@ function doGet(e) {
   var action = e && e.parameter && e.parameter.action;
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   if (action === 'settings') return json_({ ok:true, settings:getSettings_(ss) });
-  return json_({ ok:true, app:'DeadEnd Scents Admin V5.1.1', status:'ready' });
+  return json_({ ok:true, app:'DeadEnd Scents Admin V5.2', status:'ready' });
 }
 
 function json_(obj) {
@@ -244,15 +244,31 @@ function updateBottle_(ss, payload) {
   var map = headerMap_(sheet);
   var fields = payload.fields || {};
 
-  setByAnyHeader_(sheet, row, map, ['Current mL','Current Amount Left (mL)','Current Amount Left','Amount Left','Amount Left mL','Remaining mL'], fields['Current mL']);
+  // V5.2 writes by column name / aliases so the admin survives column moves.
+  setByAnyHeader_(sheet, row, map, ['House'], fields['House']);
+  setByAnyHeader_(sheet, row, map, ['Fragrance'], fields['Fragrance']);
+  setByAnyHeader_(sheet, row, map, ['Collection'], fields['Collection']);
+  setByAnyHeader_(sheet, row, map, ['Scent Style'], fields['Scent Style']);
+  setByAnyHeader_(sheet, row, map, ['Fragrantica'], fields['Fragrantica']);
+  setByAnyHeader_(sheet, row, map, ['Description','Short Description'], fields['Description']);
   setByAnyHeader_(sheet, row, map, ['Stock','Status'], fields['Stock'] || fields['Status']);
+
+  setByAnyHeader_(sheet, row, map, ['Purchase Date'], fields['Purchase Date']);
+  setByAnyHeader_(sheet, row, map, ['Purchase Price','Purchase Cost','Cost'], fields['Purchase Price']);
+  setByAnyHeader_(sheet, row, map, ['Bottle Size (mL)','Bottle Size','Size mL'], fields['Bottle Size (mL)']);
+  setByAnyHeader_(sheet, row, map, ['Current mL','Current Amount Left (mL)','Current Amount Left','Amount Left','Amount Left mL','Remaining mL'], fields['Current mL']);
+  setByAnyHeader_(sheet, row, map, ['Normal RRP','RRP','Retail Price'], fields['RRP'] || fields['Normal RRP']);
+  setByAnyHeader_(sheet, row, map, ['Purchase Source'], fields['Purchase Source']);
+  setByAnyHeader_(sheet, row, map, ['Seller'], fields['Seller']);
+  setByAnyHeader_(sheet, row, map, ['Condition'], fields['Condition']);
+
   setByAnyHeader_(sheet, row, map, ['3mL','3 mL','Price 3mL'], fields['3mL']);
   setByAnyHeader_(sheet, row, map, ['5mL','5 mL','Price 5mL'], fields['5mL']);
   setByAnyHeader_(sheet, row, map, ['10mL','10 mL','Price 10mL'], fields['10mL']);
-  setByAnyHeader_(sheet, row, map, ['Bottle Size (mL)','Bottle Size','Size mL'], fields['Bottle Size (mL)']);
-  setByAnyHeader_(sheet, row, map, ['Purchase Price','Purchase Cost','Cost'], fields['Purchase Price']);
-  setByAnyHeader_(sheet, row, map, ['Normal RRP','RRP','Retail Price'], fields['Normal RRP']);
-  setByAnyHeader_(sheet, row, map, ['Description','Short Description'], fields['Description']);
+  setByAnyHeader_(sheet, row, map, ['Featured','Fragrance of the Week','FOTW'], fields['Featured']);
+  setByAnyHeader_(sheet, row, map, ['Staff Pick','Staff Picks','StaffPick'], fields['Staff Pick']);
+  setByAnyHeader_(sheet, row, map, ['Image','Image URL','Bottle Image'], fields['Image']);
+  setByAnyHeader_(sheet, row, map, ['Private Notes','Internal Notes','Admin Notes'], fields['Private Notes']);
   setByAnyHeader_(sheet, row, map, ['Last Updated','Updated'], new Date());
 
   return { action:'updateBottle', id:payload.id, row:row };
