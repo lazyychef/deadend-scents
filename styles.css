@@ -197,3 +197,61 @@ body{background:radial-gradient(circle at 18% 0%,rgba(200,164,77,.12),transparen
   .brand-mark{width:54px!important;height:54px!important;min-width:54px!important}
   .brand-logo{width:54px!important;height:54px!important}
 }
+
+/* V4.3 Stability: locked logo sizing + replay/in-app browser hardening
+   Keeps public design the same but prevents the logo from stretching during delayed CSS, Clarity replay, or in-app browser rendering. */
+.top-nav{
+  align-items:center!important;
+  contain:layout paint;
+}
+.brand-mark{
+  display:inline-grid!important;
+  place-items:center!important;
+  box-sizing:border-box!important;
+  flex:0 0 auto!important;
+  width:72px!important;
+  height:72px!important;
+  min-width:72px!important;
+  max-width:72px!important;
+  min-height:72px!important;
+  max-height:72px!important;
+  aspect-ratio:1/1!important;
+  overflow:visible!important;
+  line-height:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  padding:0!important;
+  color:transparent!important;
+}
+.brand-logo{
+  display:block!important;
+  box-sizing:border-box!important;
+  width:72px!important;
+  height:72px!important;
+  min-width:72px!important;
+  max-width:72px!important;
+  min-height:72px!important;
+  max-height:72px!important;
+  aspect-ratio:1/1!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  border-radius:50%!important;
+  transform-origin:center!important;
+}
+.nav-links,.social-links{min-width:0}
+@media(max-width:760px){
+  .top-nav{min-height:66px!important;grid-template-columns:auto 1fr auto!important;align-items:center!important;gap:.45rem!important;overflow-x:auto;overscroll-behavior-x:contain}
+  .brand-mark{width:60px!important;height:60px!important;min-width:60px!important;max-width:60px!important;min-height:60px!important;max-height:60px!important}
+  .brand-logo{width:60px!important;height:60px!important;min-width:60px!important;max-width:60px!important;min-height:60px!important;max-height:60px!important}
+}
+@media(max-width:390px){
+  .top-nav{min-height:60px!important}
+  .brand-mark{width:54px!important;height:54px!important;min-width:54px!important;max-width:54px!important;min-height:54px!important;max-height:54px!important}
+  .brand-logo{width:54px!important;height:54px!important;min-width:54px!important;max-width:54px!important;min-height:54px!important;max-height:54px!important}
+}
+@supports not (aspect-ratio:1/1){
+  .brand-mark,.brand-logo{width:72px!important;height:72px!important}
+  @media(max-width:760px){.brand-mark,.brand-logo{width:60px!important;height:60px!important}}
+  @media(max-width:390px){.brand-mark,.brand-logo{width:54px!important;height:54px!important}}
+}
