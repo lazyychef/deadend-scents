@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Sample Pricing Calculator | DeadEnd Scents Admin</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <header class="admin-shell admin-header compact">
+    <a class="admin-logo" href="index.html" aria-label="Back to admin dashboard"><img src="../assets/deadend-logo.png" alt="DeadEnd Scents"></a>
+    <div>
+      <p class="eyebrow">Admin V2</p>
+      <h1>Sample Pricing Calculator</h1>
+      <p class="muted">Mobile-first pricing for new bottles and remaining juice.</p>
+    </div>
+  </header>
+
+  <main class="admin-shell calc-layout">
+    <section class="admin-panel calc-form-card">
+      <form id="pricingForm" class="calc-form">
+        <label><span>Purchase Cost</span><input id="purchaseCost" type="number" min="0" step="0.01" inputmode="decimal" placeholder="180"></label>
+        <label><span>Normal RRP</span><input id="normalRrp" type="number" min="0" step="0.01" inputmode="decimal" placeholder="290"></label>
+        <label><span>Bottle Size (mL)</span><input id="bottleSize" type="number" min="0" step="1" inputmode="decimal" placeholder="100"></label>
+        <label><span>Current Amount Left (mL)</span><input id="amountLeft" type="number" min="0" step="1" inputmode="decimal" placeholder="68"></label>
+        <label><span>Pricing Type</span>
+          <select id="pricingType">
+            <option value="auto">Auto / standard</option>
+            <option value="budget">Budget / inspired</option>
+            <option value="premium">Premium / niche</option>
+          </select>
+        </label>
+        <label><span>Revenue scenario</span>
+          <select id="scenarioMl">
+            <option value="3">Sell remaining as 3mL</option>
+            <option value="5">Sell remaining as 5mL</option>
+            <option value="10">Sell remaining as 10mL</option>
+          </select>
+        </label>
+        <div class="form-actions">
+          <button class="button primary" type="submit">Calculate</button>
+          <button id="resetBtn" class="button" type="button">Reset</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="results-stack">
+      <article class="result-hero">
+        <span>Cost per mL</span>
+        <strong id="costPerMl">$0.00</strong>
+      </article>
+
+      <section class="result-grid prices-output" aria-label="Recommended prices">
+        <article><span>3mL</span><strong id="price3">$0</strong></article>
+        <article><span>5mL</span><strong id="price5">$0</strong></article>
+        <article><span>10mL</span><strong id="price10">$0</strong></article>
+      </section>
+
+      <section class="admin-panel output-panel">
+        <p class="eyebrow">Remaining samples</p>
+        <div class="result-grid">
+          <article><span>3mL</span><strong id="remaining3">0</strong></article>
+          <article><span>5mL</span><strong id="remaining5">0</strong></article>
+          <article><span>10mL</span><strong id="remaining10">0</strong></article>
+        </div>
+      </section>
+
+      <section class="admin-panel output-panel">
+        <p class="eyebrow">Revenue</p>
+        <div class="metrics-list">
+          <div><span>Expected revenue</span><strong id="expectedRevenue">$0</strong></div>
+          <div><span>Expected profit</span><strong id="expectedProfit">$0</strong></div>
+          <div><span>ROI</span><strong id="roi">0%</strong></div>
+          <div><span>Break-even</span><strong id="breakEven">—</strong></div>
+        </div>
+      </section>
+
+      <section class="admin-panel output-panel">
+        <div class="section-head small">
+          <div><p class="eyebrow">Copy</p><h2>Result summary</h2></div>
+          <button id="copyBtn" class="button" type="button">Copy</button>
+        </div>
+        <textarea id="copyText" readonly></textarea>
+      </section>
+    </section>
+  </main>
+
+  <script src="calculator.js"></script>
+</body>
+</html>
