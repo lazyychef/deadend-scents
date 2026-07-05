@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Features | DeadEnd Scents Admin</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <header class="admin-shell admin-header compact">
+    <a class="admin-logo" href="index.html" aria-label="Admin dashboard"><img src="../assets/deadend-logo.png" alt="DeadEnd Scents"></a>
+    <div>
+      <p class="eyebrow">Admin V5.1</p>
+      <h1>Feature Controls</h1>
+      <p class="muted">Set Fragrance of the Week and Staff Picks from your phone.</p>
+    </div>
+  </header>
+
+  <main class="admin-shell">
+    <section class="admin-panel">
+      <div class="section-head">
+        <div><p class="eyebrow">Fragrance of the Week</p><h2>Pick one bottle</h2></div>
+        <a class="button" href="index.html">Dashboard</a>
+      </div>
+      <label class="wide-label"><span>Featured bottle</span><select id="featuredSelect"></select></label>
+      <div class="form-grid small-grid">
+        <label><span>Discount %</span><input id="featuredDiscount" type="number" min="0" max="80" step="1" value="20"></label>
+        <label><span>Start date</span><input id="featuredStart" type="date"></label>
+        <label><span>End date</span><input id="featuredEnd" type="date"></label>
+      </div>
+      <button id="saveFeatured" class="button primary" type="button">Set Fragrance of the Week</button>
+      <p id="featuredStatus" class="muted"></p>
+    </section>
+
+    <section class="admin-panel">
+      <p class="eyebrow">Staff Picks</p>
+      <h2>Choose bottles</h2>
+      <p class="muted">Tick the bottles you want marked as Staff Pick in the spreadsheet.</p>
+      <div class="admin-filter-row">
+        <label><span>Search</span><input id="staffSearch" type="search" placeholder="Search bottles"></label>
+      </div>
+      <div id="staffList" class="check-list"><div class="empty">Loading catalogue...</div></div>
+      <button id="saveStaff" class="button primary" type="button">Save Staff Picks</button>
+      <p id="staffStatus" class="muted"></p>
+    </section>
+  </main>
+
+  <script src="admin-write.js"></script>
+  <script src="features.js"></script>
+</body>
+</html>

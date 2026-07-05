@@ -1,42 +1,141 @@
 /**
- * DeadEnd Scents Command Centre write-back endpoint.
- * Deploy as a Google Apps Script Web App attached to the master Google Sheet.
- * Access: Anyone with the link.
+ * DeadEnd Scents Admin V5.1 write-back endpoint.
+ * Copy this file into the Apps Script project attached to the master Google Sheet.
+ * Deploy as Web App: Execute as Me, Access Anyone with the link.
  */
 function doPost(e) {
-  var payload = JSON.parse(e.postData.contents || '{}');
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  if (payload.action === 'addPurchase') return json(addPurchase_(ss, payload));
-  if (payload.action === 'addBottle') return json(addBottle_(ss, payload));
-  return json({ ok:false, error:'Unknown action' });
+  try {
+    var payloadText = '';
+    if (e && e.postData && e.postData.contents) payloadText = e.postData.contents;
+    if (e && e.parameter && e.parameter.payload) payloadText = e.parameter.payload;
+    var payload = JSON.parse(payloadText || '{}');
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+    if (payload.action === 'updateBottle') return json_({ ok:true, result:updateBottle_(ss, payload) });
+    if (payload.action === 'setFeatured') return json_({ ok:true, result:setFeatured_(ss, payload) });
+    if (payload.action === 'setStaffPicks') return json_({ ok:true, result:setStaffPicks_(ss, payload) });
+    if (payload.action === 'addPurchase') return json_(addPurchase_(ss, payload));
+    if (payload.action === 'addBottle') return json_(addBottle_(ss, payload));
+
+    return json_({ ok:false, error:'Unknown action: ' + payload.action });
+  } catch (err) {
+    return json_({ ok:false, error:String(err && err.message ? err.message : err) });
+  }
 }
-function json(obj) {
+
+function doGet() {
+  return json_({ ok:true, app:'DeadEnd Scents Admin V5.1', status:'ready' });
+}
+
+function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
 }
+
+function catalogueSheet_(ss) {
+  return ss.getSheetByName('Catalogue') || ss.getSheets()[0];
+}
+
+function norm_(value) {
+  return String(value || '').toLowerCase().replace(/[^a-z0-9]/g,'');
+}
+
 function headerMap_(sheet) {
   var headers = sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0];
   var map = {};
-  headers.forEach(function(h,i){ if (h) map[String(h).toLowerCase().replace(/[^a-z0-9]/g,'')] = i+1; });
+  headers.forEach(function(h,i){ if (h) map[norm_(h)] = i + 1; });
   return map;
 }
-function setByHeader_(sheet, rowNumber, map, header, value) {
-  var key = String(header).toLowerCase().replace(/[^a-z0-9]/g,'');
-  if (map[key]) sheet.getRange(rowNumber, map[key]).setValue(value);
-}
-function findRowById_(sheet, id) {
-  var map = headerMap_(sheet);
-  var idCol = map['id'];
-  if (!idCol) return 0;
-  var values = sheet.getRange(2, idCol, Math.max(sheet.getLastRow()-1,1), 1).getValues();
-  for (var i=0;i<values.length;i++) if (String(values[i][0]) === String(id)) return i+2;
+
+function getColumn_(map, names) {
+  for (var i = 0; i < names.length; i++) {
+    var key = norm_(names[i]);
+    if (map[key]) return map[key];
+  }
   return 0;
 }
+
+function setByAnyHeader_(sheet, rowNumber, map, names, value) {
+  var col = getColumn_(map, names);
+  if (col) sheet.getRange(rowNumber, col).setValue(value);
+}
+
+function findRowById_(sheet, id) {
+  var map = headerMap_(sheet);
+  var idCol = getColumn_(map, ['ID','Fragrance ID']);
+  if (!idCol) throw new Error('No ID column found in Catalogue sheet.');
+  var last = sheet.getLastRow();
+  if (last < 2) return 0;
+  var values = sheet.getRange(2, idCol, last - 1, 1).getValues();
+  for (var i = 0; i < values.length; i++) {
+    if (String(values[i][0]) === String(id)) return i + 2;
+  }
+  return 0;
+}
+
+function updateBottle_(ss, payload) {
+  var sheet = catalogueSheet_(ss);
+  var row = findRowById_(sheet, payload.id);
+  if (!row) throw new Error('Bottle ID not found: ' + payload.id);
+  var map = headerMap_(sheet);
+  var fields = payload.fields || {};
+
+  setByAnyHeader_(sheet, row, map, ['Current mL','Current Amount Left (mL)','Current Amount Left','Amount Left','Amount Left mL','Remaining mL'], fields['Current mL']);
+  setByAnyHeader_(sheet, row, map, ['Status'], fields['Status']);
+  setByAnyHeader_(sheet, row, map, ['3mL','3 mL','Price 3mL'], fields['3mL']);
+  setByAnyHeader_(sheet, row, map, ['5mL','5 mL','Price 5mL'], fields['5mL']);
+  setByAnyHeader_(sheet, row, map, ['10mL','10 mL','Price 10mL'], fields['10mL']);
+  setByAnyHeader_(sheet, row, map, ['Bottle Size (mL)','Bottle Size','Size mL'], fields['Bottle Size (mL)']);
+  setByAnyHeader_(sheet, row, map, ['Purchase Price','Purchase Cost','Cost'], fields['Purchase Price']);
+  setByAnyHeader_(sheet, row, map, ['Normal RRP','RRP','Retail Price'], fields['Normal RRP']);
+  setByAnyHeader_(sheet, row, map, ['Description','Short Description'], fields['Description']);
+  setByAnyHeader_(sheet, row, map, ['Last Updated','Updated'], new Date());
+
+  return { action:'updateBottle', id:payload.id, row:row };
+}
+
+function setFeatured_(ss, payload) {
+  var sheet = catalogueSheet_(ss);
+  var map = headerMap_(sheet);
+  var featuredCol = getColumn_(map, ['Featured','Fragrance of the Week','FOTW']);
+  if (!featuredCol) throw new Error('No Featured column found in Catalogue sheet.');
+  var last = sheet.getLastRow();
+  if (last > 1) sheet.getRange(2, featuredCol, last - 1, 1).setValue('FALSE');
+  var row = findRowById_(sheet, payload.id);
+  if (!row) throw new Error('Bottle ID not found: ' + payload.id);
+  sheet.getRange(row, featuredCol).setValue('TRUE');
+  setByAnyHeader_(sheet, row, map, ['Featured Start','Feature Start','FOTW Start'], payload.startDate || '');
+  setByAnyHeader_(sheet, row, map, ['Featured End','Feature End','FOTW End'], payload.endDate || '');
+  setByAnyHeader_(sheet, row, map, ['Featured Discount','Discount %','Weekly Discount'], payload.discount || '');
+  setByAnyHeader_(sheet, row, map, ['Last Updated','Updated'], new Date());
+  return { action:'setFeatured', id:payload.id, row:row };
+}
+
+function setStaffPicks_(ss, payload) {
+  var ids = payload.ids || [];
+  var lookup = {};
+  ids.forEach(function(id){ lookup[String(id)] = true; });
+  var sheet = catalogueSheet_(ss);
+  var map = headerMap_(sheet);
+  var idCol = getColumn_(map, ['ID','Fragrance ID']);
+  var staffCol = getColumn_(map, ['Staff Pick','Staff Picks','StaffPick']);
+  if (!idCol) throw new Error('No ID column found in Catalogue sheet.');
+  if (!staffCol) throw new Error('No Staff Pick column found in Catalogue sheet.');
+  var last = sheet.getLastRow();
+  if (last < 2) return { action:'setStaffPicks', count:0 };
+  var idValues = sheet.getRange(2, idCol, last - 1, 1).getValues();
+  var out = idValues.map(function(row){ return [lookup[String(row[0])] ? 'TRUE' : 'FALSE']; });
+  sheet.getRange(2, staffCol, out.length, 1).setValues(out);
+  return { action:'setStaffPicks', count:ids.length };
+}
+
+// Existing Command Centre helpers kept for compatibility.
 function addPurchase_(ss, payload) {
   var p = payload.purchase || {};
   var items = payload.items || [];
   var purchases = ss.getSheetByName('Purchases');
   var itemSheet = ss.getSheetByName('Purchase Items');
-  var catalogue = ss.getSheetByName('Catalogue');
+  var catalogue = catalogueSheet_(ss);
+  if (!purchases || !itemSheet) return { ok:false, error:'Purchases or Purchase Items sheet missing.' };
   purchases.appendRow([p.purchaseId, p.purchaseDate, p.seller, p.source, p.totalPaid, p.bottlesCount, '', p.notes]);
   items.forEach(function(item){
     var fragranceId = item.fragranceId || '';
@@ -44,22 +143,23 @@ function addPurchase_(ss, payload) {
       fragranceId = addCatalogueRowFromPurchase_(catalogue, item, p);
       item.fragranceId = fragranceId;
     }
-    itemSheet.appendRow([p.purchaseId, fragranceId, item.fragrance, item.bottleSize, item.fullness + '% full', item.allocatedCost, item.currentMl, item.mode === 'new' ? 'New bottle from Command Centre' : 'Restock from Command Centre']);
+    itemSheet.appendRow([p.purchaseId, fragranceId, item.fragrance, item.bottleSize, item.fullness + '% full', item.allocatedCost, item.currentMl, item.mode === 'new' ? 'New bottle from Admin' : 'Restock from Admin']);
     var row = findRowById_(catalogue, fragranceId);
     if (row) {
       var map = headerMap_(catalogue);
-      setByHeader_(catalogue, row, map, 'Purchase Date', p.purchaseDate);
-      setByHeader_(catalogue, row, map, 'Purchase Price', item.allocatedCost);
-      setByHeader_(catalogue, row, map, 'Bottle Size (mL)', item.bottleSize);
-      setByHeader_(catalogue, row, map, 'Current mL', item.currentMl);
-      setByHeader_(catalogue, row, map, 'Condition', item.fullness + '% full');
-      setByHeader_(catalogue, row, map, 'Purchase Source', p.source);
-      setByHeader_(catalogue, row, map, 'Seller', p.seller);
-      setByHeader_(catalogue, row, map, 'Last Updated', new Date());
+      setByAnyHeader_(catalogue, row, map, ['Purchase Date'], p.purchaseDate);
+      setByAnyHeader_(catalogue, row, map, ['Purchase Price','Purchase Cost'], item.allocatedCost);
+      setByAnyHeader_(catalogue, row, map, ['Bottle Size (mL)','Bottle Size'], item.bottleSize);
+      setByAnyHeader_(catalogue, row, map, ['Current mL','Current Amount Left (mL)'], item.currentMl);
+      setByAnyHeader_(catalogue, row, map, ['Condition'], item.fullness + '% full');
+      setByAnyHeader_(catalogue, row, map, ['Purchase Source'], p.source);
+      setByAnyHeader_(catalogue, row, map, ['Seller'], p.seller);
+      setByAnyHeader_(catalogue, row, map, ['Last Updated','Updated'], new Date());
     }
   });
   return { ok:true, action:'addPurchase', purchaseId:p.purchaseId, itemCount:items.length };
 }
+
 function nextCatalogueId_(catalogue, collection) {
   var prefix = 'FRG';
   var c = String(collection || '').toLowerCase();
@@ -68,10 +168,10 @@ function nextCatalogueId_(catalogue, collection) {
   else if (c.indexOf('middle') >= 0) prefix = 'ME';
   else if (c.indexOf('inspired') >= 0) prefix = 'INS';
   var map = headerMap_(catalogue);
-  var idCol = map['id'];
+  var idCol = getColumn_(map, ['ID','Fragrance ID']);
   var max = 0;
   if (idCol && catalogue.getLastRow() > 1) {
-    var values = catalogue.getRange(2, idCol, catalogue.getLastRow()-1, 1).getValues();
+    var values = catalogue.getRange(2, idCol, catalogue.getLastRow() - 1, 1).getValues();
     values.forEach(function(row){
       var id = String(row[0] || '');
       if (id.indexOf(prefix) === 0) {
@@ -82,6 +182,7 @@ function nextCatalogueId_(catalogue, collection) {
   }
   return prefix + Utilities.formatString('%03d', max + 1);
 }
+
 function addCatalogueRowFromPurchase_(catalogue, item, purchase) {
   var headers = catalogue.getRange(1,1,1,catalogue.getLastColumn()).getValues()[0];
   var nextId = nextCatalogueId_(catalogue, item.collection);
@@ -92,6 +193,7 @@ function addCatalogueRowFromPurchase_(catalogue, item, purchase) {
       case 'House': return item.house;
       case 'Fragrance': return item.fragrance;
       case 'Inspiration House': return item.inspirationHouse;
+      case 'Inspired By': return item.inspiration;
       case 'Inspiration': return item.inspiration;
       case 'Scent Style': return item.scentStyle;
       case 'Gender': return item.gender || 'Men / Unisex';
@@ -102,7 +204,6 @@ function addCatalogueRowFromPurchase_(catalogue, item, purchase) {
       case '10mL': return item.p10;
       case 'Added Date': return item.addedDate || purchase.purchaseDate;
       case 'Featured': return 'FALSE';
-      case 'Featured Start': return '';
       case 'Staff Pick': return 'FALSE';
       case 'Fragrantica': return item.fragrantica;
       case 'Purchase Date': return purchase.purchaseDate;
@@ -123,9 +224,9 @@ function addCatalogueRowFromPurchase_(catalogue, item, purchase) {
 
 function addBottle_(ss, payload) {
   var r = payload.row || {};
-  var catalogue = ss.getSheetByName('Catalogue');
+  var catalogue = catalogueSheet_(ss);
+  var nextId = nextCatalogueId_(catalogue, r.collection);
   var headers = catalogue.getRange(1,1,1,catalogue.getLastColumn()).getValues()[0];
-  var nextId = 'FRG' + Utilities.formatString('%03d', catalogue.getLastRow());
   var values = headers.map(function(h){
     switch(String(h)) {
       case 'ID': return nextId;
@@ -153,90 +254,4 @@ function addBottle_(ss, payload) {
   });
   catalogue.appendRow(values);
   return { ok:true, action:'addBottle', id:nextId, fragrance:r.fragrance };
-}
-
-/**
- * V4.0A.4 read endpoint. Lets the website read the Settings tab live without relying on a separately published Settings CSV.
- * URL example: <web-app-url>?action=settings
- */
-function doGet(e) {
-  var action = e && e.parameter && e.parameter.action;
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  if (action === 'settings') return json({ ok:true, settings: getSettings_(ss) });
-  return json({ ok:false, error:'Unknown action' });
-}
-
-function normaliseSettingKey_(label) {
-  var k = String(label || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-  var map = {
-    businessname:'businessName',
-    tagline:'tagline',
-    facebookmessengerurl:'facebookMessengerUrl',
-    messengerurl:'facebookMessengerUrl',
-    messenger:'facebookMessengerUrl',
-    whatsappurl:'whatsAppUrl',
-    whatsapp:'whatsAppUrl',
-    instagramurl:'instagramUrl',
-    instagram:'instagramUrl',
-    expresspostage:'expressPostage',
-    postage:'expressPostage',
-    shippingcost:'expressPostage',
-    defaultpostage:'expressPostage',
-    shippingline:'shippingLine',
-    shippingtext:'shippingLine',
-    newbadgedays:'newArrivalDays',
-    newarrivaldays:'newArrivalDays',
-    weeklydiscount:'weeklyDiscountPercent',
-    weeklydiscountpercent:'weeklyDiscountPercent',
-    weeklydiscountpct:'weeklyDiscountPercent',
-    weeklydiscountdays:'weeklyDiscountDays',
-    packdiscount:'packDiscountPercent',
-    packdiscountpercent:'packDiscountPercent',
-    packdiscountpct:'packDiscountPercent',
-    siteurl:'siteUrl',
-    websiteurl:'siteUrl',
-    googleanalyticsid:'googleAnalyticsId',
-    ga4measurementid:'googleAnalyticsId',
-    microsoftclarityid:'microsoftClarityId',
-    clarityid:'microsoftClarityId',
-    adminwriteendpoint:'adminWriteEndpoint',
-    cataloguecsvurl:'catalogueCsvUrl',
-    discoverypackscsvurl:'discoveryPacksCsvUrl',
-    packscsvurl:'discoveryPacksCsvUrl',
-    settingscsvurl:'settingsCsvUrl',
-    fallbackcataloguefile:'catalogueFallbackFile',
-    cataloguefallbackfile:'catalogueFallbackFile',
-    mastersheetid:'masterSheetId',
-    footertext:'footerText'
-  };
-  return map[k] || '';
-}
-
-function castSetting_(key, value) {
-  var numeric = {expressPostage:true,newArrivalDays:true,weeklyDiscountPercent:true,weeklyDiscountDays:true,packDiscountPercent:true};
-  if (numeric[key]) {
-    var n = Number(String(value || '').replace(/[^0-9.]/g, ''));
-    return isNaN(n) ? value : n;
-  }
-  return value;
-}
-
-function getSettings_(ss) {
-  var sheet = ss.getSheetByName('Settings');
-  if (!sheet) return {};
-  var values = sheet.getDataRange().getValues();
-  if (values.length < 2) return {};
-  var headers = values[0].map(function(h){ return String(h || '').toLowerCase().replace(/[^a-z0-9]/g, ''); });
-  var settingCol = headers.indexOf('setting');
-  var valueCol = headers.indexOf('value');
-  if (settingCol < 0 || valueCol < 0) return {};
-  var out = {};
-  for (var i = 1; i < values.length; i++) {
-    var label = values[i][settingCol];
-    var value = values[i][valueCol];
-    if (!label || value === '') continue;
-    var key = normaliseSettingKey_(label);
-    if (key) out[key] = castSetting_(key, value);
-  }
-  return out;
 }

@@ -11,9 +11,9 @@
   <header class="admin-shell admin-header compact">
     <a class="admin-logo" href="index.html" aria-label="Back to admin dashboard"><img src="../assets/deadend-logo.png" alt="DeadEnd Scents"></a>
     <div>
-      <p class="eyebrow">Admin V5.0</p>
+      <p class="eyebrow">Admin V5.1</p>
       <h1>Sample Pricing Calculator</h1>
-      <p class="muted">Mobile-first pricing with cost, RRP and competitor checks.</p>
+      <p class="muted">Mobile-first pricing with competitor price checks and safer market caps.</p>
     </div>
   </header>
 
@@ -24,6 +24,9 @@
         <label><span>Normal RRP</span><input id="normalRrp" type="number" min="0" step="0.01" inputmode="decimal" placeholder="290"></label>
         <label><span>Bottle Size (mL)</span><input id="bottleSize" type="number" min="0" step="1" inputmode="decimal" placeholder="100"></label>
         <label><span>Current Amount Left (mL)</span><input id="amountLeft" type="number" min="0" step="1" inputmode="decimal" placeholder="68"></label>
+        <label><span>Competitor 3mL price</span><input id="competitor3" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Optional"></label>
+        <label><span>Competitor 5mL price</span><input id="competitor5" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Optional"></label>
+        <label><span>Competitor 10mL price</span><input id="competitor10" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Optional"></label>
         <label><span>Pricing Type</span>
           <select id="pricingType">
             <option value="auto">Auto / standard</option>
@@ -31,11 +34,6 @@
             <option value="premium">Premium / niche</option>
           </select>
         </label>
-        <div class="form-divider"><span>Competitor prices</span></div>
-        <label><span>Competitor 3mL price (optional)</span><input id="competitor3" type="number" min="0" step="0.01" inputmode="decimal" placeholder="22"></label>
-        <label><span>Competitor 5mL price (optional)</span><input id="competitor5" type="number" min="0" step="0.01" inputmode="decimal" placeholder="35"></label>
-        <label><span>Competitor 10mL price (optional)</span><input id="competitor10" type="number" min="0" step="0.01" inputmode="decimal" placeholder="60"></label>
-
         <label><span>Revenue scenario</span>
           <select id="scenarioMl">
             <option value="3">Sell remaining as 3mL</option>
@@ -57,19 +55,9 @@
       </article>
 
       <section class="result-grid prices-output" aria-label="Recommended prices">
-        <article><span>3mL recommended</span><strong id="price3">$0</strong></article>
-        <article><span>5mL recommended</span><strong id="price5">$0</strong></article>
-        <article><span>10mL recommended</span><strong id="price10">$0</strong></article>
-      </section>
-
-      <section class="admin-panel output-panel">
-        <p class="eyebrow">Market check</p>
-        <div class="metrics-list">
-          <div><span>3mL competitor cap</span><strong id="market3">—</strong></div>
-          <div><span>5mL competitor cap</span><strong id="market5">—</strong></div>
-          <div><span>10mL competitor cap</span><strong id="market10">—</strong></div>
-          <div><span>Pricing note</span><strong id="pricingNote">—</strong></div>
-        </div>
+        <article><span>3mL</span><strong id="price3">$0</strong></article>
+        <article><span>5mL</span><strong id="price5">$0</strong></article>
+        <article><span>10mL</span><strong id="price10">$0</strong></article>
       </section>
 
       <section class="admin-panel output-panel">
@@ -85,7 +73,6 @@
         <p class="eyebrow">Revenue</p>
         <div class="metrics-list">
           <div><span>Expected revenue</span><strong id="expectedRevenue">$0</strong></div>
-          <div><span>Remaining juice value</span><strong id="remainingValue">$0</strong></div>
           <div><span>Expected profit</span><strong id="expectedProfit">$0</strong></div>
           <div><span>ROI</span><strong id="roi">0%</strong></div>
           <div><span>Break-even</span><strong id="breakEven">—</strong></div>
