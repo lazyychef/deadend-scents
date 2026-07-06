@@ -15,3 +15,10 @@
 
 /* V5.2.1 add bottle workflow */
 .add-bottle-cta{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1rem;align-items:center;border-color:rgba(200,164,77,.35);background:radial-gradient(circle at top left,rgba(200,164,77,.14),transparent 38%),linear-gradient(180deg,var(--card),var(--card2))}.add-bottle-cta h2{margin:.1rem 0 .2rem}.section-actions{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:flex-end}.mobile-priority-panel .button.primary{font-size:1rem;padding:.82rem 1rem}@media(max-width:680px){.add-bottle-cta{grid-template-columns:1fr;gap:.75rem}.add-bottle-cta .button{width:100%;justify-content:center}.section-actions{width:100%;display:grid;grid-template-columns:1fr}.mobile-priority-panel{position:sticky;top:.4rem;z-index:8;box-shadow:0 16px 44px rgba(0,0,0,.22)}}
+
+/* V5.2.3 admin polish */
+.button.danger{border-color:rgba(242,182,168,.38);color:var(--danger);background:rgba(242,182,168,.05)}
+.button.danger:hover{border-color:rgba(242,182,168,.7);background:rgba(242,182,168,.1)}
+.calculated-grid input[readonly], #displayId[readonly]{opacity:.8;background:rgba(0,0,0,.18);color:var(--muted)}
+.image-preview-card .button{width:100%;text-align:center}
+@media(max-width:560px){.save-bar{border-radius:18px}.save-bar .button{width:100%}}
