@@ -13,7 +13,7 @@
     <div>
       <p class="eyebrow">Admin V5.2.3</p>
       <h1>Inventory Manager</h1>
-      <p class="muted">Edit bottles, manage stock status, duplicate bottles and save changes directly to the master spreadsheet.</p>
+      <p class="muted">Edit bottles, calculate prices and save changes directly to the master spreadsheet.</p>
     </div>
   </header>
 
@@ -72,7 +72,7 @@
           <aside class="image-preview-card">
             <div id="imagePreview" class="image-preview empty-image">No image</div>
             <label><span>Image URL</span><input id="imageUrl" type="url" placeholder="https://..."></label>
-            <button class="button" id="previewPublicPage" type="button">Preview public page</button>
+            <a class="button" id="previewPublic" href="#" target="_blank" rel="noopener">Preview public page</a>
             <p class="muted small-copy">Paste the bottle image URL. Preview updates before saving.</p>
           </aside>
 
@@ -80,14 +80,14 @@
             <section class="settings-group mini-editor-section">
               <h3>Basic details</h3>
               <div class="form-grid">
-                <label><span>ID</span><input id="displayId" type="text" readonly></label>
-                <label><span>Collection</span><select id="collection"><option>Original Designer</option><option>Original Niche</option><option>Middle Eastern</option><option>Inspired By</option><option>Other</option></select></label>
+                <label><span>ID</span><input id="idDisplay" type="text" readonly></label>
+                <label><span>Collection</span><select id="collection"><option value="">Select collection</option><option>Original Designer</option><option>Original Niche</option><option>Middle Eastern</option><option>Inspired By</option><option>Other</option></select></label>
                 <label><span>House</span><input id="house" type="text"></label>
                 <label><span>Fragrance</span><input id="fragrance" type="text"></label>
                 <label><span>Inspiration House</span><input id="inspirationHouse" type="text"></label>
                 <label><span>Inspiration</span><input id="inspiration" type="text"></label>
-                <label><span>Scent style</span><select id="scentStyle"><option value="">Loading scent styles...</option></select></label>
-                <label><span>Gender</span><select id="gender"><option>Men / Unisex</option><option>Women / Unisex</option><option>Men</option><option>Women</option><option>Unisex</option></select></label>
+                <label><span>Scent Style</span><select id="scentStyle"><option value="">Loading scent styles...</option></select></label>
+                <label><span>Gender</span><select id="gender"><option value="">Select gender</option><option>Men / Unisex</option><option>Women / Unisex</option><option>Men</option><option>Women</option><option>Unisex</option></select></label>
                 <label><span>Emojis</span><input id="emojis" type="text" placeholder="🍋🌊🌿"></label>
                 <label><span>Concentration</span><input id="concentration" type="text" placeholder="EDP / Extrait"></label>
               </div>
@@ -97,10 +97,12 @@
             <section class="settings-group mini-editor-section">
               <h3>Fragrance profile</h3>
               <div class="form-grid">
-                <label><span>Performance</span><input id="performance" type="text" placeholder="Moderate / Strong"></label>
-                <label><span>Projection</span><input id="projection" type="text" placeholder="Soft / Moderate / Loud"></label>
-                <label><span>Season</span><input id="season" type="text" placeholder="Spring / Summer / Autumn / Winter"></label>
-                <label><span>Occasion</span><input id="occasion" type="text" placeholder="Office / Date night / Daily"></label>
+                <label><span>Performance</span><input id="performance" type="text"></label>
+                <label><span>Projection</span><input id="projection" type="text"></label>
+                <label><span>Season</span><input id="season" type="text"></label>
+                <label><span>Occasion</span><input id="occasion" type="text"></label>
+                <label><span>Fragrantica</span><input id="fragrantica" type="url"></label>
+                <label><span>Stock</span><select id="stock"><option>In Stock</option><option>Low Stock</option><option>Ordered</option><option>Out of Stock</option><option>Archived</option><option>Hidden</option></select></label>
               </div>
             </section>
 
@@ -112,12 +114,11 @@
                 <label><span>Purchase price</span><input id="purchasePrice" type="number" min="0" step="0.01" inputmode="decimal"></label>
                 <label><span>Bottle size mL</span><input id="bottleSize" type="number" min="0" step="0.1" inputmode="decimal"></label>
                 <label><span>Current mL</span><input id="currentMl" type="number" min="0" step="0.1" inputmode="decimal"></label>
-                <label><span>RRP</span><input id="rrp" type="number" min="0" step="0.01" inputmode="decimal"></label>
-                <label><span>Replacement cost</span><input id="replacementCost" type="number" min="0" step="0.01" inputmode="decimal"></label>
+                <label><span>Condition</span><input id="condition" type="text" placeholder="New / 90% full"></label>
                 <label><span>Purchase source</span><input id="purchaseSource" type="text"></label>
                 <label><span>Seller</span><input id="seller" type="text"></label>
-                <label><span>Condition</span><input id="condition" type="text" placeholder="New / 90% full"></label>
-                <label><span>Stock</span><select id="stock"><option>In Stock</option><option>Ordered</option><option>Out of Stock</option><option>Archived</option><option>Hidden</option></select></label>
+                <label><span>RRP</span><input id="rrp" type="number" min="0" step="0.01" inputmode="decimal"></label>
+                <label><span>Replacement Cost</span><input id="replacementCost" type="number" min="0" step="0.01" inputmode="decimal"></label>
               </div>
             </section>
 
@@ -150,31 +151,21 @@
             </section>
 
             <section class="settings-group mini-editor-section">
-              <h3>Website</h3>
-              <div class="form-grid">
-                <label><span>Fragrantica</span><input id="fragrantica" type="url"></label>
+              <h3>Calculated fields</h3>
+              <div class="calc-suggestion-card">
+                <div><span>Cost per mL</span><strong id="readCostPerMl">—</strong></div>
+                <div><span>Revenue as 3mL</span><strong id="readRevenue3">—</strong></div>
+                <div><span>Revenue as 5mL</span><strong id="readRevenue5">—</strong></div>
+                <div><span>Revenue as 10mL</span><strong id="readRevenue10">—</strong></div>
+                <div><span>Best potential revenue</span><strong id="readBestRevenue">—</strong></div>
+                <div><span>Projected profit</span><strong id="readProfit">—</strong></div>
               </div>
-            </section>
-
-            <section class="settings-group mini-editor-section">
-              <h3>Calculated sheet fields</h3>
-              <div class="form-grid calculated-grid">
-                <label><span>Cost per mL</span><input id="costPerMl" type="text" readonly></label>
-                <label><span>Revenue as 3mL</span><input id="revenue3" type="text" readonly></label>
-                <label><span>Revenue as 5mL</span><input id="revenue5" type="text" readonly></label>
-                <label><span>Revenue as 10mL</span><input id="revenue10" type="text" readonly></label>
-                <label><span>Best potential revenue</span><input id="bestRevenue" type="text" readonly></label>
-                <label><span>Projected profit</span><input id="projectedProfit" type="text" readonly></label>
-                <label><span>Low stock flag</span><input id="lowStockFlag" type="text" readonly></label>
-                <label><span>Last updated</span><input id="lastUpdated" type="text" readonly></label>
-              </div>
-              <p class="muted small-copy">These are read-only here. They are copied from your spreadsheet formulas when a new bottle is added.</p>
             </section>
 
             <section class="settings-group mini-editor-section">
               <h3>Notes</h3>
-              <label><span>Internal notes</span><textarea id="internalNotes" placeholder="Website/admin notes"></textarea></label>
-              <label><span>Private notes</span><textarea id="privateNotes" placeholder="Supplier, order notes, customer requests, pricing notes"></textarea></label>
+              <label><span>Internal Notes</span><textarea id="internalNotes"></textarea></label>
+              <label><span>Private Notes</span><textarea id="privateNotes" placeholder="Supplier, order notes, customer requests, pricing notes"></textarea></label>
             </section>
           </div>
         </div>

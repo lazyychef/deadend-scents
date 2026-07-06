@@ -1,5 +1,5 @@
 /**
- * DeadEnd Scents Admin V5.2.1 write-back endpoint.
+ * DeadEnd Scents Admin V5.2.3 data-integrity endpoint.
  * Copy this file into the Apps Script project attached to the master Google Sheet.
  * Deploy as Web App: Execute as Me, Access Anyone with the link.
  */
@@ -17,8 +17,8 @@ function doPost(e) {
     if (payload.action === 'updateSettings') return json_({ ok:true, result:updateSettings_(ss, payload) });
     if (payload.action === 'addPurchase') return json_(addPurchase_(ss, payload));
     if (payload.action === 'addBottle') return json_(addBottle_(ss, payload));
-    if (payload.action === 'duplicateBottle') return json_({ ok:true, result:duplicateBottle_(ss, payload) });
-    if (payload.action === 'deleteBottle') return json_({ ok:true, result:deleteBottle_(ss, payload) });
+    if (payload.action === 'duplicateBottle') return json_(duplicateBottle_(ss, payload));
+    if (payload.action === 'deleteBottle') return json_(deleteBottle_(ss, payload));
 
     return json_({ ok:false, error:'Unknown action: ' + payload.action });
   } catch (err) {
@@ -30,6 +30,7 @@ function doGet(e) {
   var action = e && e.parameter && e.parameter.action;
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   if (action === 'settings') return json_({ ok:true, settings:getSettings_(ss) });
+  if (action === 'catalogue') return json_(getCatalogue_(ss));
   return json_({ ok:true, app:'DeadEnd Scents Admin V5.2.3', status:'ready' });
 }
 
@@ -246,45 +247,19 @@ function updateBottle_(ss, payload) {
   var map = headerMap_(sheet);
   var fields = payload.fields || {};
 
-  // V5.2.3 writes by column name / aliases so the admin survives column moves.
-  setByAnyHeader_(sheet, row, map, ['Collection'], fields['Collection']);
-  setByAnyHeader_(sheet, row, map, ['House'], fields['House']);
-  setByAnyHeader_(sheet, row, map, ['Fragrance'], fields['Fragrance']);
-  setByAnyHeader_(sheet, row, map, ['Inspiration House'], fields['Inspiration House']);
-  setByAnyHeader_(sheet, row, map, ['Inspiration','Inspired By'], fields['Inspiration'] || fields['Inspired By']);
-  setByAnyHeader_(sheet, row, map, ['Scent Style'], fields['Scent Style']);
-  setByAnyHeader_(sheet, row, map, ['Gender'], fields['Gender']);
-  setByAnyHeader_(sheet, row, map, ['Description','Short Description'], fields['Description']);
-  setByAnyHeader_(sheet, row, map, ['Emojis'], fields['Emojis']);
-  setByAnyHeader_(sheet, row, map, ['Performance'], fields['Performance']);
-  setByAnyHeader_(sheet, row, map, ['Projection'], fields['Projection']);
-  setByAnyHeader_(sheet, row, map, ['Season'], fields['Season']);
-  setByAnyHeader_(sheet, row, map, ['Occasion'], fields['Occasion']);
+  // V5.2.3 writes by actual spreadsheet column name first, with aliases for older fields.
+  Object.keys(fields).forEach(function(name){
+    if (['Cost per mL','Revenue as 3mL','Revenue as 5mL','Revenue as 10mL','Best Potential Revenue','Projected Profit','Low Stock Flag'].indexOf(name) >= 0) return;
+    setByAnyHeader_(sheet, row, map, [name], fields[name]);
+  });
+
+  setByAnyHeader_(sheet, row, map, ['Inspired By','Inspiration'], fields['Inspiration']);
   setByAnyHeader_(sheet, row, map, ['Stock','Status'], fields['Stock'] || fields['Status']);
-  setByAnyHeader_(sheet, row, map, ['Concentration'], fields['Concentration']);
-  setByAnyHeader_(sheet, row, map, ['Internal Notes'], fields['Internal Notes']);
-  setByAnyHeader_(sheet, row, map, ['Fragrantica'], fields['Fragrantica']);
-
-  setByAnyHeader_(sheet, row, map, ['Added Date'], fields['Added Date']);
-  setByAnyHeader_(sheet, row, map, ['Purchase Date'], fields['Purchase Date']);
-  setByAnyHeader_(sheet, row, map, ['Purchase Price','Purchase Cost','Cost'], fields['Purchase Price']);
-  setByAnyHeader_(sheet, row, map, ['Bottle Size (mL)','Bottle Size','Size mL'], fields['Bottle Size (mL)']);
-  setByAnyHeader_(sheet, row, map, ['Current mL','Current Amount Left (mL)','Current Amount Left','Amount Left','Amount Left mL','Remaining mL'], fields['Current mL']);
-  setByAnyHeader_(sheet, row, map, ['Normal RRP','RRP','Retail Price'], fields['RRP'] || fields['Normal RRP']);
-  setByAnyHeader_(sheet, row, map, ['Replacement Cost','Replacement Price'], fields['Replacement Cost']);
-  setByAnyHeader_(sheet, row, map, ['Purchase Source'], fields['Purchase Source']);
-  setByAnyHeader_(sheet, row, map, ['Seller'], fields['Seller']);
-  setByAnyHeader_(sheet, row, map, ['Condition'], fields['Condition']);
-
-  setByAnyHeader_(sheet, row, map, ['3mL','3 mL','Price 3mL'], fields['3mL']);
-  setByAnyHeader_(sheet, row, map, ['5mL','5 mL','Price 5mL'], fields['5mL']);
-  setByAnyHeader_(sheet, row, map, ['10mL','10 mL','Price 10mL'], fields['10mL']);
-  setByAnyHeader_(sheet, row, map, ['Featured','Fragrance of the Week','FOTW'], fields['Featured']);
-  setByAnyHeader_(sheet, row, map, ['Staff Pick','Staff Picks','StaffPick'], fields['Staff Pick']);
+  setByAnyHeader_(sheet, row, map, ['RRP','Normal RRP','Retail Price'], fields['RRP'] || fields['Normal RRP']);
   setByAnyHeader_(sheet, row, map, ['Image','Image URL','Bottle Image'], fields['Image']);
-  setByAnyHeader_(sheet, row, map, ['Private Notes','Admin Notes'], fields['Private Notes']);
   setByAnyHeader_(sheet, row, map, ['Last Updated','Updated'], new Date());
 
+  applyCatalogueFormulaColumns_(sheet, row, sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0]);
   return { action:'updateBottle', id:payload.id, row:row };
 }
 
@@ -421,6 +396,7 @@ function addCatalogueRowFromPurchase_(catalogue, item, purchase) {
 
 function copyFormulaColumnsFromPreviousRow_(sheet, targetRow, headers, columnNames) {
   if (targetRow <= 2) return;
+  var sourceRow = targetRow - 1;
   columnNames.forEach(function(name) {
     var col = 0;
     for (var i = 0; i < headers.length; i++) {
@@ -430,12 +406,10 @@ function copyFormulaColumnsFromPreviousRow_(sheet, targetRow, headers, columnNam
       }
     }
     if (!col) return;
-    var formula = '';
-    for (var sourceRow = targetRow - 1; sourceRow >= 2 && sourceRow >= targetRow - 20; sourceRow--) {
-      formula = sheet.getRange(sourceRow, col).getFormulaR1C1();
-      if (formula) break;
+    var formula = sheet.getRange(sourceRow, col).getFormulaR1C1();
+    if (formula) {
+      sheet.getRange(targetRow, col).setFormulaR1C1(formula);
     }
-    if (formula) sheet.getRange(targetRow, col).setFormulaR1C1(formula);
   });
 }
 
@@ -447,21 +421,9 @@ function applyCatalogueFormulaColumns_(sheet, targetRow, headers) {
     'Revenue as 10mL',
     'Best Potential Revenue',
     'Projected Profit',
-    'Low Stock Flag'
+    'Low Stock Flag',
+    'Last Updated'
   ]);
-}
-
-function blankFormulaColumns_(headers, h) {
-  var formulaColumns = {
-    'costperml': true,
-    'revenueas3ml': true,
-    'revenueas5ml': true,
-    'revenueas10ml': true,
-    'bestpotentialrevenue': true,
-    'projectedprofit': true,
-    'lowstockflag': true
-  };
-  return formulaColumns[norm_(h)] ? true : false;
 }
 
 function addBottle_(ss, payload) {
@@ -527,48 +489,43 @@ function addBottle_(ss, payload) {
 }
 
 
+function getCatalogue_(ss) {
+  var sheet = catalogueSheet_(ss);
+  var values = sheet.getDataRange().getDisplayValues();
+  if (!values.length) return { ok:true, items:[] };
+  var headers = values.shift();
+  var items = values.filter(function(row){ return row.some(function(v){ return String(v || '').trim() !== ''; }); }).map(function(row){
+    var obj = {};
+    headers.forEach(function(h,i){ if (h) obj[String(h)] = row[i] || ''; });
+    return obj;
+  });
+  return { ok:true, items:items };
+}
+
 function duplicateBottle_(ss, payload) {
   var sheet = catalogueSheet_(ss);
   var sourceRow = findRowById_(sheet, payload.id);
   if (!sourceRow) throw new Error('Bottle ID not found: ' + payload.id);
   var headers = sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0];
-  var sourceValues = sheet.getRange(sourceRow, 1, 1, sheet.getLastColumn()).getValues()[0];
-  var map = headerMap_(sheet);
-  var collectionCol = getColumn_(map, ['Collection']);
-  var collection = collectionCol ? sourceValues[collectionCol - 1] : '';
-  var nextId = nextCatalogueId_(sheet, collection);
-
-  var blanks = {
-    'purchasedate': true,
-    'purchaseprice': true,
-    'bottlesizeml': true,
-    'currentml': true,
-    'condition': true,
-    'purchasesource': true,
-    'seller': true,
-    'replacementcost': true,
-    'privatenotes': true,
-    'lastupdated': true,
-    'featurestart': true,
-    'featuredstart': true
-  };
-
-  var newValues = headers.map(function(h, i) {
-    var key = norm_(h);
-    if (key === 'id') return nextId;
-    if (key === 'featured' || key === 'staffpick') return 'FALSE';
-    if (key === 'stock' || key === 'status') return 'Ordered';
-    if (key === 'addeddate') return new Date();
-    if (key === 'lastupdated') return new Date();
-    if (blankFormulaColumns_(headers, h)) return '';
-    if (blanks[key]) return '';
+  var sourceValues = sheet.getRange(sourceRow,1,1,sheet.getLastColumn()).getValues()[0];
+  var rowObj = {};
+  headers.forEach(function(h,i){ rowObj[String(h)] = sourceValues[i]; });
+  var nextId = nextCatalogueId_(sheet, rowObj['Collection']);
+  var newValues = headers.map(function(h, i){
+    h = String(h);
+    if (h === 'ID') return nextId;
+    if (h === 'Featured') return 'FALSE';
+    if (h === 'Staff Pick') return 'FALSE';
+    if (h === 'Featured Start') return '';
+    if (h === 'Stock' || h === 'Status') return 'Ordered';
+    if (h === 'Purchase Date' || h === 'Purchase Price' || h === 'Current mL' || h === 'Condition' || h === 'Purchase Source' || h === 'Seller') return '';
+    if (h === 'Last Updated') return new Date();
     return sourceValues[i];
   });
-
   sheet.appendRow(newValues);
   var newRow = sheet.getLastRow();
   applyCatalogueFormulaColumns_(sheet, newRow, headers);
-  return { action:'duplicateBottle', sourceId:payload.id, id:nextId, row:newRow };
+  return { ok:true, action:'duplicateBottle', id:nextId, sourceId:payload.id };
 }
 
 function deleteBottle_(ss, payload) {
@@ -576,5 +533,5 @@ function deleteBottle_(ss, payload) {
   var row = findRowById_(sheet, payload.id);
   if (!row) throw new Error('Bottle ID not found: ' + payload.id);
   sheet.deleteRow(row);
-  return { action:'deleteBottle', id:payload.id, row:row };
+  return { ok:true, action:'deleteBottle', id:payload.id };
 }
