@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Add New Bottle | DeadEnd Scents Admin</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <header class="admin-shell admin-header compact">
+    <a class="admin-logo" href="index.html" aria-label="Admin dashboard"><img src="../assets/deadend-logo.png" alt="DeadEnd Scents"></a>
+    <div>
+      <p class="eyebrow">Admin V5.2.1</p>
+      <h1>Add New Bottle</h1>
+      <p class="muted">Add a bottle to the master Catalogue sheet, calculate sample pricing and publish it to the live database.</p>
+    </div>
+  </header>
+
+  <main class="admin-shell inventory-v52">
+    <section class="admin-panel mobile-priority-panel">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">New bottle workflow</p>
+          <h2>Quick add</h2>
+          <p class="muted">Fill the core details first. You can edit the bottle later from Inventory Manager.</p>
+        </div>
+        <a class="button" href="inventory.html">Back to Inventory</a>
+      </div>
+    </section>
+
+    <section class="admin-panel bottle-editor-panel">
+      <form id="addBottleForm" class="edit-form v52-editor">
+        <div class="editor-layout">
+          <aside class="image-preview-card">
+            <div id="imagePreview" class="image-preview empty-image">No image</div>
+            <label><span>Image URL</span><input id="imageUrl" type="url" placeholder="https://..."></label>
+            <p class="muted small-copy">Paste a bottle image URL. The public site can use this later where supported.</p>
+          </aside>
+
+          <div class="editor-main">
+            <section class="settings-group mini-editor-section">
+              <h3>Core details</h3>
+              <div class="form-grid">
+                <label><span>Collection</span><select id="collection" required><option>Designer</option><option>Niche</option><option>Middle Eastern</option><option>Inspired</option><option>Other</option></select></label>
+                <label><span>House</span><input id="house" type="text" required placeholder="Dior"></label>
+                <label><span>Fragrance</span><input id="fragrance" type="text" required placeholder="Vanilla Diorama"></label>
+                <label><span>Stock</span><select id="stock"><option>In Stock</option><option>Low Stock</option><option>Ordered</option><option>Out of Stock</option><option>Hidden</option></select></label>
+                <label><span>Scent style</span><input id="scentStyle" type="text" placeholder="Vanilla / Amber"></label>
+                <label><span>Gender</span><select id="gender"><option>Men / Unisex</option><option>Women / Unisex</option><option>Men</option><option>Women</option><option>Unisex</option></select></label>
+                <label><span>Inspiration House</span><input id="inspirationHouse" type="text" placeholder="Optional"></label>
+                <label><span>Inspiration</span><input id="inspiration" type="text" placeholder="Optional"></label>
+                <label><span>Emojis</span><input id="emojis" type="text" placeholder="🍦🌰✨"></label>
+                <label><span>Fragrantica</span><input id="fragrantica" type="url"></label>
+              </div>
+              <label><span>Description</span><textarea id="description" placeholder="Short website description"></textarea></label>
+            </section>
+
+            <section class="settings-group mini-editor-section">
+              <h3>Purchase and inventory</h3>
+              <div class="form-grid">
+                <label><span>Added date</span><input id="addedDate" type="date"></label>
+                <label><span>Purchase date</span><input id="purchaseDate" type="date"></label>
+                <label><span>Purchase price</span><input id="purchasePrice" type="number" min="0" step="0.01" inputmode="decimal" placeholder="105"></label>
+                <label><span>RRP</span><input id="rrp" type="number" min="0" step="0.01" inputmode="decimal" placeholder="360"></label>
+                <label><span>Bottle size mL</span><input id="bottleSize" type="number" min="0" step="0.1" inputmode="decimal" placeholder="40"></label>
+                <label><span>Current mL</span><input id="currentMl" type="number" min="0" step="0.1" inputmode="decimal" placeholder="40"></label>
+                <label><span>Condition</span><input id="condition" type="text" placeholder="New / 95% full"></label>
+                <label><span>Purchase source</span><input id="purchaseSource" type="text" placeholder="Oz Fragrances"></label>
+                <label><span>Seller</span><input id="seller" type="text"></label>
+              </div>
+            </section>
+
+            <section class="settings-group mini-editor-section">
+              <h3>Pricing</h3>
+              <div class="form-grid price-grid">
+                <label><span>3mL price</span><input id="price3" type="text" placeholder="$22"></label>
+                <label><span>5mL price</span><input id="price5" type="text" placeholder="$32"></label>
+                <label><span>10mL price</span><input id="price10" type="text" placeholder="$60"></label>
+              </div>
+              <div class="inline-calc">
+                <div class="form-grid small-grid">
+                  <label><span>Competitor 3mL</span><input id="competitor3" type="number" min="0" step="0.01" inputmode="decimal"></label>
+                  <label><span>Competitor 5mL</span><input id="competitor5" type="number" min="0" step="0.01" inputmode="decimal"></label>
+                  <label><span>Competitor 10mL</span><input id="competitor10" type="number" min="0" step="0.01" inputmode="decimal"></label>
+                </div>
+                <div class="calc-suggestion-card" id="calcSuggestion">
+                  <div><span>Cost / mL</span><strong id="calcCostPerMl">—</strong></div>
+                  <div><span>Suggested 3mL</span><strong id="calcPrice3">—</strong></div>
+                  <div><span>Suggested 5mL</span><strong id="calcPrice5">—</strong></div>
+                  <div><span>Suggested 10mL</span><strong id="calcPrice10">—</strong></div>
+                  <div><span>Potential revenue</span><strong id="calcRevenue">—</strong></div>
+                  <div><span>Projected profit</span><strong id="calcProfit">—</strong></div>
+                </div>
+                <div class="form-actions wide no-sticky">
+                  <button class="button" id="calculatePrices" type="button">Calculate prices</button>
+                  <button class="button" id="acceptPrices" type="button">Accept suggested prices</button>
+                </div>
+              </div>
+            </section>
+
+            <section class="settings-group mini-editor-section">
+              <h3>Private notes</h3>
+              <textarea id="privateNotes" placeholder="Supplier, market price link, pricing notes"></textarea>
+            </section>
+          </div>
+        </div>
+
+        <div class="form-actions wide save-bar">
+          <button class="button primary" type="submit">Add bottle to database</button>
+          <a class="button" href="inventory.html">Cancel</a>
+        </div>
+      </form>
+      <p id="saveStatus" class="muted"></p>
+    </section>
+  </main>
+
+  <script src="admin-write.js"></script>
+  <script src="add-bottle.js"></script>
+</body>
+</html>

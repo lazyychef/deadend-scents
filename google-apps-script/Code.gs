@@ -1,5 +1,5 @@
 /**
- * DeadEnd Scents Admin V5.2 write-back endpoint.
+ * DeadEnd Scents Admin V5.2.1 write-back endpoint.
  * Copy this file into the Apps Script project attached to the master Google Sheet.
  * Deploy as Web App: Execute as Me, Access Anyone with the link.
  */
@@ -28,7 +28,7 @@ function doGet(e) {
   var action = e && e.parameter && e.parameter.action;
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   if (action === 'settings') return json_({ ok:true, settings:getSettings_(ss) });
-  return json_({ ok:true, app:'DeadEnd Scents Admin V5.2', status:'ready' });
+  return json_({ ok:true, app:'DeadEnd Scents Admin V5.2.1', status:'ready' });
 }
 
 function json_(obj) {
@@ -412,25 +412,51 @@ function addBottle_(ss, payload) {
   var values = headers.map(function(h){
     switch(String(h)) {
       case 'ID': return nextId;
-      case 'House': return r.house;
       case 'Collection': return r.collection;
+      case 'House': return r.house;
       case 'Fragrance': return r.fragrance;
+      case 'Inspiration House': return r.inspirationHouse;
+      case 'Inspired By': return r.inspiration;
+      case 'Inspiration': return r.inspiration;
       case 'Scent Style': return r.scentStyle;
-      case 'Gender': return 'Men / Unisex';
+      case 'Gender': return r.gender || 'Men / Unisex';
       case 'Description': return r.description;
+      case 'Emojis': return r.emojis;
       case '3mL': return r.p3;
       case '5mL': return r.p5;
       case '10mL': return r.p10;
-      case 'Added Date': return r.addedDate;
-      case 'Featured': return 'FALSE';
-      case 'Staff Pick': return 'FALSE';
+      case 'Added Date': return r.addedDate || r.purchaseDate;
+      case 'Featured Start': return '';
+      case 'Featured': return r.featured || 'FALSE';
+      case 'Staff Pick': return r.staffPick || 'FALSE';
+      case 'Performance': return r.performance || '';
+      case 'Projection': return r.projection || '';
+      case 'Season': return r.season || '';
+      case 'Occasion': return r.occasion || '';
+      case 'Stock': return r.stock || 'In Stock';
+      case 'Status': return r.stock || 'In Stock';
+      case 'Concentration': return r.concentration || '';
+      case 'Internal Notes': return r.privateNotes;
       case 'Fragrantica': return r.fragrantica;
       case 'Purchase Date': return r.purchaseDate;
       case 'Purchase Price': return r.purchasePrice;
       case 'Bottle Size (mL)': return r.bottleSize;
       case 'Current mL': return r.currentMl;
-      case 'Condition': return 'New';
+      case 'Condition': return r.condition || 'New';
+      case 'Purchase Source': return r.purchaseSource;
+      case 'Seller': return r.seller;
+      case 'RRP': return r.rrp;
+      case 'Replacement Cost': return r.replacementCost || '';
+      case 'Cost per mL': return (Number(r.purchasePrice) && Number(r.bottleSize)) ? Number(r.purchasePrice) / Number(r.bottleSize) : '';
+      case 'Revenue as 3mL': return '';
+      case 'Revenue as 5mL': return '';
+      case 'Revenue as 10mL': return '';
+      case 'Best Potential Revenue': return '';
+      case 'Projected Profit': return '';
+      case 'Low Stock Flag': return '';
       case 'Last Updated': return new Date();
+      case 'Private Notes': return r.privateNotes;
+      case 'Image': return r.image;
       default: return '';
     }
   });

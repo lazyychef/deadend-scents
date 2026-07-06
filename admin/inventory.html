@@ -11,13 +11,22 @@
   <header class="admin-shell admin-header compact">
     <a class="admin-logo" href="index.html" aria-label="Admin dashboard"><img src="../assets/deadend-logo.png" alt="DeadEnd Scents"></a>
     <div>
-      <p class="eyebrow">Admin V5.2</p>
+      <p class="eyebrow">Admin V5.2.1</p>
       <h1>Inventory Manager</h1>
       <p class="muted">Edit bottles, calculate prices and save changes directly to the master spreadsheet.</p>
     </div>
   </header>
 
   <main class="admin-shell inventory-v52">
+    <section class="admin-panel mobile-priority-panel add-bottle-cta">
+      <div>
+        <p class="eyebrow">Quick action</p>
+        <h2>Add a new bottle</h2>
+        <p class="muted">Add new purchases to the master database from your phone without opening Google Sheets.</p>
+      </div>
+      <a class="button primary" href="add-bottle.html">+ Add New Bottle</a>
+    </section>
+
     <section class="quick-stats inventory-stats" aria-label="Inventory stats">
       <article><span>Bottles</span><strong id="statTotal">—</strong></article>
       <article><span>Inventory value</span><strong id="statValue">—</strong></article>
@@ -31,7 +40,7 @@
           <p class="eyebrow">Catalogue database</p>
           <h2>Select bottle</h2>
         </div>
-        <a class="button" href="index.html">Dashboard</a>
+        <div class="section-actions"><a class="button primary" href="add-bottle.html">+ Add Bottle</a><a class="button" href="index.html">Dashboard</a></div>
       </div>
 
       <div class="admin-filter-row v52-filters">
