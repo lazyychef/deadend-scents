@@ -17,6 +17,8 @@ function doPost(e) {
     if (payload.action === 'updateSettings') return json_({ ok:true, result:updateSettings_(ss, payload) });
     if (payload.action === 'addPurchase') return json_(addPurchase_(ss, payload));
     if (payload.action === 'addBottle') return json_(addBottle_(ss, payload));
+    if (payload.action === 'duplicateBottle') return json_({ ok:true, result:duplicateBottle_(ss, payload) });
+    if (payload.action === 'deleteBottle') return json_({ ok:true, result:deleteBottle_(ss, payload) });
 
     return json_({ ok:false, error:'Unknown action: ' + payload.action });
   } catch (err) {
@@ -28,7 +30,7 @@ function doGet(e) {
   var action = e && e.parameter && e.parameter.action;
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   if (action === 'settings') return json_({ ok:true, settings:getSettings_(ss) });
-  return json_({ ok:true, app:'DeadEnd Scents Admin V5.2.1', status:'ready' });
+  return json_({ ok:true, app:'DeadEnd Scents Admin V5.2.3', status:'ready' });
 }
 
 function json_(obj) {
@@ -244,20 +246,32 @@ function updateBottle_(ss, payload) {
   var map = headerMap_(sheet);
   var fields = payload.fields || {};
 
-  // V5.2 writes by column name / aliases so the admin survives column moves.
+  // V5.2.3 writes by column name / aliases so the admin survives column moves.
+  setByAnyHeader_(sheet, row, map, ['Collection'], fields['Collection']);
   setByAnyHeader_(sheet, row, map, ['House'], fields['House']);
   setByAnyHeader_(sheet, row, map, ['Fragrance'], fields['Fragrance']);
-  setByAnyHeader_(sheet, row, map, ['Collection'], fields['Collection']);
+  setByAnyHeader_(sheet, row, map, ['Inspiration House'], fields['Inspiration House']);
+  setByAnyHeader_(sheet, row, map, ['Inspiration','Inspired By'], fields['Inspiration'] || fields['Inspired By']);
   setByAnyHeader_(sheet, row, map, ['Scent Style'], fields['Scent Style']);
-  setByAnyHeader_(sheet, row, map, ['Fragrantica'], fields['Fragrantica']);
+  setByAnyHeader_(sheet, row, map, ['Gender'], fields['Gender']);
   setByAnyHeader_(sheet, row, map, ['Description','Short Description'], fields['Description']);
+  setByAnyHeader_(sheet, row, map, ['Emojis'], fields['Emojis']);
+  setByAnyHeader_(sheet, row, map, ['Performance'], fields['Performance']);
+  setByAnyHeader_(sheet, row, map, ['Projection'], fields['Projection']);
+  setByAnyHeader_(sheet, row, map, ['Season'], fields['Season']);
+  setByAnyHeader_(sheet, row, map, ['Occasion'], fields['Occasion']);
   setByAnyHeader_(sheet, row, map, ['Stock','Status'], fields['Stock'] || fields['Status']);
+  setByAnyHeader_(sheet, row, map, ['Concentration'], fields['Concentration']);
+  setByAnyHeader_(sheet, row, map, ['Internal Notes'], fields['Internal Notes']);
+  setByAnyHeader_(sheet, row, map, ['Fragrantica'], fields['Fragrantica']);
 
+  setByAnyHeader_(sheet, row, map, ['Added Date'], fields['Added Date']);
   setByAnyHeader_(sheet, row, map, ['Purchase Date'], fields['Purchase Date']);
   setByAnyHeader_(sheet, row, map, ['Purchase Price','Purchase Cost','Cost'], fields['Purchase Price']);
   setByAnyHeader_(sheet, row, map, ['Bottle Size (mL)','Bottle Size','Size mL'], fields['Bottle Size (mL)']);
   setByAnyHeader_(sheet, row, map, ['Current mL','Current Amount Left (mL)','Current Amount Left','Amount Left','Amount Left mL','Remaining mL'], fields['Current mL']);
   setByAnyHeader_(sheet, row, map, ['Normal RRP','RRP','Retail Price'], fields['RRP'] || fields['Normal RRP']);
+  setByAnyHeader_(sheet, row, map, ['Replacement Cost','Replacement Price'], fields['Replacement Cost']);
   setByAnyHeader_(sheet, row, map, ['Purchase Source'], fields['Purchase Source']);
   setByAnyHeader_(sheet, row, map, ['Seller'], fields['Seller']);
   setByAnyHeader_(sheet, row, map, ['Condition'], fields['Condition']);
@@ -268,7 +282,7 @@ function updateBottle_(ss, payload) {
   setByAnyHeader_(sheet, row, map, ['Featured','Fragrance of the Week','FOTW'], fields['Featured']);
   setByAnyHeader_(sheet, row, map, ['Staff Pick','Staff Picks','StaffPick'], fields['Staff Pick']);
   setByAnyHeader_(sheet, row, map, ['Image','Image URL','Bottle Image'], fields['Image']);
-  setByAnyHeader_(sheet, row, map, ['Private Notes','Internal Notes','Admin Notes'], fields['Private Notes']);
+  setByAnyHeader_(sheet, row, map, ['Private Notes','Admin Notes'], fields['Private Notes']);
   setByAnyHeader_(sheet, row, map, ['Last Updated','Updated'], new Date());
 
   return { action:'updateBottle', id:payload.id, row:row };
@@ -407,7 +421,6 @@ function addCatalogueRowFromPurchase_(catalogue, item, purchase) {
 
 function copyFormulaColumnsFromPreviousRow_(sheet, targetRow, headers, columnNames) {
   if (targetRow <= 2) return;
-  var sourceRow = targetRow - 1;
   columnNames.forEach(function(name) {
     var col = 0;
     for (var i = 0; i < headers.length; i++) {
@@ -417,10 +430,12 @@ function copyFormulaColumnsFromPreviousRow_(sheet, targetRow, headers, columnNam
       }
     }
     if (!col) return;
-    var formula = sheet.getRange(sourceRow, col).getFormulaR1C1();
-    if (formula) {
-      sheet.getRange(targetRow, col).setFormulaR1C1(formula);
+    var formula = '';
+    for (var sourceRow = targetRow - 1; sourceRow >= 2 && sourceRow >= targetRow - 20; sourceRow--) {
+      formula = sheet.getRange(sourceRow, col).getFormulaR1C1();
+      if (formula) break;
     }
+    if (formula) sheet.getRange(targetRow, col).setFormulaR1C1(formula);
   });
 }
 
@@ -432,9 +447,21 @@ function applyCatalogueFormulaColumns_(sheet, targetRow, headers) {
     'Revenue as 10mL',
     'Best Potential Revenue',
     'Projected Profit',
-    'Low Stock Flag',
-    'Last Updated'
+    'Low Stock Flag'
   ]);
+}
+
+function blankFormulaColumns_(headers, h) {
+  var formulaColumns = {
+    'costperml': true,
+    'revenueas3ml': true,
+    'revenueas5ml': true,
+    'revenueas10ml': true,
+    'bestpotentialrevenue': true,
+    'projectedprofit': true,
+    'lowstockflag': true
+  };
+  return formulaColumns[norm_(h)] ? true : false;
 }
 
 function addBottle_(ss, payload) {
@@ -497,4 +524,57 @@ function addBottle_(ss, payload) {
   var newRow = catalogue.getLastRow();
   applyCatalogueFormulaColumns_(catalogue, newRow, headers);
   return { ok:true, action:'addBottle', id:nextId, fragrance:r.fragrance };
+}
+
+
+function duplicateBottle_(ss, payload) {
+  var sheet = catalogueSheet_(ss);
+  var sourceRow = findRowById_(sheet, payload.id);
+  if (!sourceRow) throw new Error('Bottle ID not found: ' + payload.id);
+  var headers = sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0];
+  var sourceValues = sheet.getRange(sourceRow, 1, 1, sheet.getLastColumn()).getValues()[0];
+  var map = headerMap_(sheet);
+  var collectionCol = getColumn_(map, ['Collection']);
+  var collection = collectionCol ? sourceValues[collectionCol - 1] : '';
+  var nextId = nextCatalogueId_(sheet, collection);
+
+  var blanks = {
+    'purchasedate': true,
+    'purchaseprice': true,
+    'bottlesizeml': true,
+    'currentml': true,
+    'condition': true,
+    'purchasesource': true,
+    'seller': true,
+    'replacementcost': true,
+    'privatenotes': true,
+    'lastupdated': true,
+    'featurestart': true,
+    'featuredstart': true
+  };
+
+  var newValues = headers.map(function(h, i) {
+    var key = norm_(h);
+    if (key === 'id') return nextId;
+    if (key === 'featured' || key === 'staffpick') return 'FALSE';
+    if (key === 'stock' || key === 'status') return 'Ordered';
+    if (key === 'addeddate') return new Date();
+    if (key === 'lastupdated') return new Date();
+    if (blankFormulaColumns_(headers, h)) return '';
+    if (blanks[key]) return '';
+    return sourceValues[i];
+  });
+
+  sheet.appendRow(newValues);
+  var newRow = sheet.getLastRow();
+  applyCatalogueFormulaColumns_(sheet, newRow, headers);
+  return { action:'duplicateBottle', sourceId:payload.id, id:nextId, row:newRow };
+}
+
+function deleteBottle_(ss, payload) {
+  var sheet = catalogueSheet_(ss);
+  var row = findRowById_(sheet, payload.id);
+  if (!row) throw new Error('Bottle ID not found: ' + payload.id);
+  sheet.deleteRow(row);
+  return { action:'deleteBottle', id:payload.id, row:row };
 }
