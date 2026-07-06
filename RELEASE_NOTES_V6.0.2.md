@@ -1,7 +1,7 @@
 # DeadEnd Scents V6.0.2 — SEO Engine Workspace
 
 ## Changed
-- Renamed SEO Manager to SEO Engine.
+- Renamed SEO Manager to SEO Engine!
 - Moved setup tools into a collapsible section.
 - Added dashboard-first SEO health summary.
 - Added clickable fragrance rows with a sticky SEO editor workspace.
