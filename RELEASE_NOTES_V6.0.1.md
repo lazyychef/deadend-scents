@@ -1,6 +1,6 @@
 # DeadEnd Scents V6.0.1 — SEO Foundation
 
-Admin-first SEO foundation release. No public website redesign.
+Admin-first SEO foundation release. No public website redesign!
 
 ## Added
 
