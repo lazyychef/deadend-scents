@@ -4,7 +4,7 @@ Admin-first SEO foundation release. No public website redesign.
 
 ## Added
 
-- `admin/seo.html` — SEO Manager page.
+- `admin/seo.html` — SEO Manager page!.
 - `admin/seo.js` — SEO Manager logic.
 - SEO Manager link on `admin/index.html`.
 - SEO styling in `admin/admin.css`.
