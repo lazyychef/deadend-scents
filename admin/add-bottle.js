@@ -32,23 +32,41 @@
     return rows;
   }
 
-  async function loadScentStyles(){
-    const select=$('scentStyle');
-    const fallback=['Fresh Aquatic','Fresh Citrus','Fresh Spicy','Woody','Amber','Vanilla','Gourmand','Sweet','Spicy','Tobacco','Boozy','Dark / Night','Office / Clean','Floral','Fruity','Leather','Musky','Green','Other'];
+  function setOptions(select, values, placeholder){
+    const current = select.value;
+    const clean = [...new Set(values.map(v=>String(v||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+    select.innerHTML = `<option value="">${placeholder}</option>` + clean.map(v=>`<option>${String(v).replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]))}</option>`).join('');
+    if(current && clean.includes(current)) select.value = current;
+  }
+
+  async function loadCatalogueOptions(){
+    const collectionSelect=$('collection');
+    const scentSelect=$('scentStyle');
+    const collectionFallback=['Original Designer','Original Niche','Middle Eastern','Inspired By'];
+    const scentFallback=['Fresh Aquatic','Fresh Citrus','Fresh Spicy','Woody','Amber','Vanilla','Gourmand','Sweet','Spicy','Tobacco','Boozy','Dark / Night','Office / Clean','Floral','Fruity','Leather','Musky','Green','Other'];
+    let items=[];
     try{
-      const url=state.settings.catalogueCsvUrl;
-      if(!url) throw new Error('No catalogueCsvUrl');
-      const text=await fetch(url + (url.includes('?') ? '&' : '?') + 't=' + Date.now(),{cache:'no-store'}).then(r=>r.text());
-      const rows=parseCsv(text);
-      const headers=rows.shift()||[];
-      const idx=headers.findIndex(h=>String(h).trim().toLowerCase()==='scent style');
-      if(idx < 0) throw new Error('No Scent Style column');
-      const unique=[...new Set(rows.map(r=>String(r[idx]||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
-      const options=unique.length ? unique.concat(['Other']) : fallback;
-      select.innerHTML='<option value="">Select scent style</option>'+options.map(v=>`<option>${String(v).replace(/[<>&"]/g,s=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[s]))}</option>`).join('');
-    }catch(e){
-      select.innerHTML='<option value="">Select scent style</option>'+fallback.map(v=>`<option>${v}</option>`).join('');
+      const endpoint=state.settings.adminWriteEndpoint;
+      const liveUrl=endpoint + (endpoint.includes('?') ? '&' : '?') + 'action=catalogue&t=' + Date.now();
+      const live=await fetch(liveUrl,{cache:'no-store'}).then(r=>r.json());
+      if(live.ok && Array.isArray(live.items)) items=live.items;
+    }catch(e){ console.warn('Live catalogue options unavailable', e); }
+    if(!items.length){
+      try{
+        const url=state.settings.catalogueCsvUrl;
+        if(url){
+          const text=await fetch(url + (url.includes('?') ? '&' : '?') + 't=' + Date.now(),{cache:'no-store'}).then(r=>r.text());
+          const rows=parseCsv(text);
+          const headers=rows.shift()||[];
+          items=rows.map(r=>Object.fromEntries(headers.map((h,i)=>[String(h||'').trim(), String(r[i]||'').trim()])));
+        }
+      }catch(e){ console.warn('CSV catalogue options unavailable', e); }
     }
+    const collections=items.map(i=>i.Collection);
+    const scentStyles=items.map(i=>i['Scent Style']);
+    setOptions(collectionSelect, collections.length ? collections : collectionFallback, 'Select collection');
+    setOptions(scentSelect, scentStyles.length ? scentStyles : scentFallback, 'Select scent style');
+    if(!collectionSelect.value) collectionSelect.value = collectionFallback[0];
   }
 
   async function loadSettings(){
@@ -128,6 +146,7 @@
       featured:'FALSE',
       staffPick:'FALSE',
       stock:$('stock').value,
+      concentration:$('concentration').value.trim(),
       fragrantica:$('fragrantica').value.trim(),
       purchaseDate:$('purchaseDate').value,
       purchasePrice:$('purchasePrice').value,
@@ -137,6 +156,7 @@
       purchaseSource:$('purchaseSource').value.trim(),
       seller:$('seller').value.trim(),
       rrp:$('rrp').value,
+      replacementCost:$('replacementCost').value,
       image:$('imageUrl').value.trim(),
       privateNotes:$('privateNotes').value.trim(),
       lastUpdated:new Date().toISOString()
@@ -159,7 +179,7 @@
 
   async function init(){
     await loadSettings();
-    await loadScentStyles();
+    await loadCatalogueOptions();
     const d=today();
     setInput('addedDate', d); setInput('purchaseDate', d); setInput('stock','In Stock'); setInput('condition','New');
     ['purchasePrice','bottleSize','currentMl','rrp','collection','competitor3','competitor5','competitor10'].forEach(id=>$(id).addEventListener('input',()=>calculatePrices(false)));

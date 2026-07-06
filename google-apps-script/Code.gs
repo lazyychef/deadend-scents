@@ -1,5 +1,5 @@
 /**
- * DeadEnd Scents Admin V5.2.3 data-integrity endpoint.
+ * DeadEnd Scents Admin V5.2.4 admin sync hotfix endpoint.
  * Copy this file into the Apps Script project attached to the master Google Sheet.
  * Deploy as Web App: Execute as Me, Access Anyone with the link.
  */
@@ -31,7 +31,7 @@ function doGet(e) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   if (action === 'settings') return json_({ ok:true, settings:getSettings_(ss) });
   if (action === 'catalogue') return json_(getCatalogue_(ss));
-  return json_({ ok:true, app:'DeadEnd Scents Admin V5.2.3', status:'ready' });
+  return json_({ ok:true, app:'DeadEnd Scents Admin V5.2.4', status:'ready' });
 }
 
 function json_(obj) {

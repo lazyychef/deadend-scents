@@ -11,7 +11,7 @@
   <header class="admin-shell admin-header compact">
     <a class="admin-logo" href="index.html" aria-label="Admin dashboard"><img src="../assets/deadend-logo.png" alt="DeadEnd Scents"></a>
     <div>
-      <p class="eyebrow">Admin V5.2.2</p>
+      <p class="eyebrow">Admin V5.2.4</p>
       <h1>Add New Bottle</h1>
       <p class="muted">Add a bottle to the master Catalogue sheet, calculate sample pricing and publish it to the live database.</p>
     </div>
@@ -42,12 +42,13 @@
             <section class="settings-group mini-editor-section">
               <h3>Core details</h3>
               <div class="form-grid">
-                <label><span>Collection</span><select id="collection" required><option>Original Designer</option><option>Original Niche</option><option>Middle Eastern</option><option>Inspired By</option><option>Other</option></select></label>
+                <label><span>Collection</span><select id="collection" required><option value="">Loading collections...</option></select></label>
                 <label><span>House</span><input id="house" type="text" required placeholder="Dior"></label>
                 <label><span>Fragrance</span><input id="fragrance" type="text" required placeholder="Vanilla Diorama"></label>
-                <label><span>Stock</span><select id="stock"><option>In Stock</option><option>Low Stock</option><option>Ordered</option><option>Out of Stock</option><option>Hidden</option></select></label>
+                <label><span>Stock</span><select id="stock"><option>In Stock</option><option>Low Stock</option><option>Ordered</option><option>Out of Stock</option><option>Archived</option><option>Hidden</option></select></label>
                 <label><span>Scent style</span><select id="scentStyle"><option value="">Loading scent styles...</option></select></label>
                 <label><span>Gender</span><select id="gender"><option>Men / Unisex</option><option>Women / Unisex</option><option>Men</option><option>Women</option><option>Unisex</option></select></label>
+                <label><span>Concentration</span><input id="concentration" type="text" placeholder="EDP / Extrait"></label>
                 <label><span>Inspiration House</span><input id="inspirationHouse" type="text" placeholder="Optional"></label>
                 <label><span>Inspiration</span><input id="inspiration" type="text" placeholder="Optional"></label>
                 <label><span>Emojis</span><input id="emojis" type="text" placeholder="🍦🌰✨"></label>
@@ -68,6 +69,7 @@
                 <label><span>Condition</span><input id="condition" type="text" placeholder="New / 95% full"></label>
                 <label><span>Purchase source</span><input id="purchaseSource" type="text" placeholder="Oz Fragrances"></label>
                 <label><span>Seller</span><input id="seller" type="text"></label>
+                <label><span>Replacement cost</span><input id="replacementCost" type="number" min="0" step="0.01" inputmode="decimal"></label>
               </div>
             </section>
 
