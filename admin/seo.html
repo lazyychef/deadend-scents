@@ -4,97 +4,118 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <title>SEO Manager · DeadEnd Scents Admin</title>
+  <title>SEO Engine · DeadEnd Scents Admin</title>
   <link rel="stylesheet" href="admin.css">
 </head>
 <body>
   <header class="admin-shell admin-header compact">
     <a class="admin-logo" href="index.html" aria-label="DeadEnd Scents admin home"><img src="../assets/deadend-logo.png" alt="DeadEnd Scents"></a>
     <div>
-      <p class="eyebrow">Admin V6.0.1</p>
-      <h1>SEO Manager</h1>
-      <p class="muted">Generate and check fragrance SEO data without changing the public site design.</p>
+      <p class="eyebrow">Admin V6.0.2</p>
+      <h1>SEO Engine</h1>
+      <p class="muted">Generate, score and publish fragrance SEO data from the admin dashboard.</p>
     </div>
   </header>
 
-  <main class="admin-shell seo-manager">
-    <section class="admin-panel seo-action-panel">
+  <main class="admin-shell seo-manager seo-engine">
+    <section class="admin-panel seo-dashboard-panel">
       <div class="section-head">
         <div>
-          <p class="eyebrow">Setup</p>
-          <h2>SEO database fields</h2>
-          <p class="muted">Adds missing SEO columns to the Catalogue sheet. Safe to run more than once.</p>
+          <p class="eyebrow">SEO Dashboard</p>
+          <h2>Catalogue health</h2>
+          <p class="muted">Prioritise bottles that need SEO work first.</p>
         </div>
-        <button id="setupSeo" class="button primary" type="button">Set up SEO columns</button>
+        <div class="section-actions">
+          <button id="refreshSeoData" class="button" type="button">Refresh</button>
+          <button id="generateMissingSeo" class="button primary" type="button">Generate Missing</button>
+        </div>
       </div>
-      <p id="setupStatus" class="muted">Ready.</p>
+      <section class="quick-stats seo-stats" aria-label="SEO stats">
+        <article><span>Total bottles</span><strong id="statTotal">—</strong></article>
+        <article><span>Average SEO</span><strong id="statAverage">—</strong></article>
+        <article><span>Missing image</span><strong id="statImage">—</strong></article>
+        <article><span>Missing SEO</span><strong id="statMissing">—</strong></article>
+      </section>
+      <details class="seo-setup-details">
+        <summary>Setup tools</summary>
+        <div class="setup-line">
+          <div>
+            <strong>SEO database fields</strong>
+            <p class="muted">Adds missing SEO columns to the Catalogue sheet. Safe to run more than once.</p>
+            <p id="setupStatus" class="muted">Ready.</p>
+          </div>
+          <button id="setupSeo" class="button" type="button">Set up SEO columns</button>
+        </div>
+      </details>
     </section>
 
-    <section class="quick-stats seo-stats" aria-label="SEO stats">
-      <article><span>Total bottles</span><strong id="statTotal">—</strong></article>
-      <article><span>Average SEO</span><strong id="statAverage">—</strong></article>
-      <article><span>Missing image</span><strong id="statImage">—</strong></article>
-      <article><span>Missing SEO</span><strong id="statMissing">—</strong></article>
-    </section>
-
-    <section class="admin-panel">
+    <section class="admin-panel seo-workspace-panel">
       <div class="section-head">
         <div>
           <p class="eyebrow">Fragrance SEO</p>
-          <h2>Generate fragrance SEO</h2>
+          <h2>SEO workspace</h2>
         </div>
-        <button id="refreshSeoData" class="button" type="button">Refresh</button>
+        <div class="bulk-actions">
+          <button id="generateSelectedSeo" class="button" type="button">Generate Selected</button>
+          <button id="generateAllVisibleSeo" class="button" type="button">Generate Visible</button>
+        </div>
       </div>
       <div class="admin-filter-row v52-filters">
         <label><span>Search</span><input id="search" type="search" placeholder="Search house, fragrance or ID"></label>
         <label><span>Collection</span><select id="collectionFilter"><option value="">All</option></select></label>
-        <label><span>SEO Health</span><select id="healthFilter"><option value="">All</option><option value="poor">Under 70</option><option value="good">70+</option><option value="missing">Missing SEO title</option></select></label>
+        <label><span>SEO Health</span><select id="healthFilter"><option value="">All</option><option value="poor">Under 70</option><option value="good">70+</option><option value="excellent">90+</option><option value="missing">Missing SEO title</option></select></label>
       </div>
-      <div id="seoList" class="inventory-card-list"><div class="empty">Loading catalogue...</div></div>
-    </section>
-
-    <section id="editorPanel" class="admin-panel bottle-editor-panel" hidden>
-      <div class="section-head">
+      <div class="seo-workspace-grid">
         <div>
-          <p class="eyebrow">Selected Bottle</p>
-          <h2 id="editTitle">SEO editor</h2>
-          <p id="editMeta" class="muted">—</p>
+          <div class="select-row"><label><input id="selectVisible" type="checkbox"> Select visible bottles</label><span id="visibleCount" class="muted">—</span></div>
+          <div id="seoList" class="inventory-card-list"><div class="empty">Loading catalogue...</div></div>
         </div>
-        <div class="seo-score-ring"><span>SEO</span><strong id="seoScore">—</strong></div>
-      </div>
 
-      <div class="seo-preview-grid">
-        <article class="seo-preview-card">
-          <span>Google preview</span>
-          <strong id="googleTitle">—</strong>
-          <em id="googleUrl">deadendscents.com/fragrances/</em>
-          <p id="googleDescription">—</p>
-        </article>
-        <article class="seo-preview-card">
-          <span>Page targets</span>
-          <p id="targetKeywords">—</p>
-        </article>
-      </div>
+        <aside id="editorPanel" class="admin-panel bottle-editor-panel seo-editor-card" hidden>
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Selected Bottle</p>
+              <h2 id="editTitle">SEO editor</h2>
+              <p id="editMeta" class="muted">—</p>
+            </div>
+            <div id="seoScoreBadge" class="seo-score-badge"><span>SEO</span><strong id="seoScore">—</strong></div>
+          </div>
 
-      <form id="seoForm" class="edit-form">
-        <input id="editId" type="hidden">
-        <div class="form-grid">
-          <label><span>SEO Slug</span><input id="seoSlug" type="text"></label>
-          <label><span>SEO Title</span><input id="seoTitle" type="text" maxlength="70"></label>
-          <label><span>SEO Description</span><input id="seoDescription" type="text" maxlength="170"></label>
-          <label><span>SEO Keywords</span><input id="seoKeywords" type="text"></label>
-        </div>
-        <label><span>SEO Introduction</span><textarea id="seoIntro" rows="4"></textarea></label>
-        <label><span>FAQ</span><textarea id="seoFaq" rows="6" placeholder="Question||Answer"></textarea></label>
-        <label><span>Similar Fragrances</span><textarea id="seoSimilar" rows="3"></textarea></label>
-        <label><span>Internal Links</span><textarea id="seoLinks" rows="3"></textarea></label>
-        <div id="healthCheck" class="seo-health-list"></div>
-        <div class="form-actions wide save-bar">
-          <button id="generateSeo" class="button primary" type="button">Generate fragrance SEO</button>
-          <button class="button" type="submit">Save SEO fields</button>
-        </div>
-      </form>
-      <p id="saveStatus" class="muted">Select a bottle to start.</p>
+          <div class="seo-preview-grid">
+            <article class="seo-preview-card">
+              <span>Google preview</span>
+              <strong id="googleTitle">—</strong>
+              <em id="googleUrl">deadendscents.com/fragrances/</em>
+              <p id="googleDescription">—</p>
+            </article>
+            <article class="seo-preview-card">
+              <span>Page targets</span>
+              <p id="targetKeywords">—</p>
+            </article>
+          </div>
+
+          <form id="seoForm" class="edit-form">
+            <input id="editId" type="hidden">
+            <div class="form-grid seo-form-grid">
+              <label><span>SEO Slug</span><input id="seoSlug" type="text"></label>
+              <label><span>SEO Title</span><input id="seoTitle" type="text" maxlength="70"></label>
+              <label><span>SEO Description</span><input id="seoDescription" type="text" maxlength="170"></label>
+              <label><span>SEO Keywords</span><input id="seoKeywords" type="text"></label>
+            </div>
+            <label><span>SEO Introduction</span><textarea id="seoIntro" rows="4"></textarea></label>
+            <label><span>FAQ</span><textarea id="seoFaq" rows="6" placeholder="Question||Answer"></textarea></label>
+            <label><span>Similar Fragrances</span><textarea id="seoSimilar" rows="3"></textarea></label>
+            <label><span>Internal Links</span><textarea id="seoLinks" rows="3"></textarea></label>
+            <div id="healthCheck" class="seo-health-list"></div>
+            <div class="form-actions wide save-bar">
+              <button id="generateSeo" class="button primary" type="button">Generate SEO</button>
+              <button class="button" type="submit">Save SEO fields</button>
+              <a id="previewPublicPage" class="button" href="../" target="_blank" rel="noopener">Preview Page</a>
+            </div>
+          </form>
+          <p id="saveStatus" class="muted">Select a bottle to start.</p>
+        </aside>
+      </div>
     </section>
   </main>
 

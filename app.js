@@ -289,7 +289,16 @@
         season:get(row,['Season']),
         occasion,
         stock:get(row,['Stock']),
-        status:get(row,['Status']) || 'In stock'
+        status:get(row,['Status']) || 'In stock',
+        seoSlug:get(row,['SEO Slug','Slug']),
+        seoTitle:get(row,['SEO Title','Meta Title']),
+        seoDescription:get(row,['SEO Description','Meta Description']),
+        seoIntro:get(row,['SEO Intro','SEO Introduction']),
+        seoKeywords:get(row,['SEO Keywords']),
+        seoFaq:get(row,['SEO FAQ','FAQ']),
+        seoSimilar:get(row,['SEO Similar Fragrances','Similar Fragrances']),
+        seoInternalLinks:get(row,['SEO Internal Links','Internal Links']),
+        seoScore:get(row,['SEO Score'])
       };
     }).filter(f => f.name);
   }
@@ -383,7 +392,12 @@
     return values.filter(v=>{ const key=String(v).trim().toLowerCase(); if(!key || seen.has(key)) return false; seen.add(key); return true; });
   }
 
-  function slugify(value){ return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+  function slugify(value){ return String(value || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+  function fragranceUrl(f){
+    const siteUrl = String(settings.siteUrl || 'https://deadendscents.com').replace(/\/$/, '');
+    const slug = f.seoSlug || slugify(`${f.house || ''} ${f.name || ''}`);
+    return siteUrl + '/fragrances/' + slug + '/';
+  }
 
 
 
@@ -744,12 +758,12 @@
       const itemList = data.slice(0, 100).map((f, index) => ({
         '@type': 'ListItem',
         position: index + 1,
-        url: siteUrl + '/#catalogue',
+        url: fragranceUrl(f),
         name: `${f.house ? f.house + ' ' : ''}${f.name}`.trim()
       }));
       const products = data.slice(0, 80).map((f) => {
         const offers = [];
-        [['3mL', f.price3], ['5mL', f.price5], ['10mL', f.price10]].forEach(([size, price]) => {
+        [['3mL', f.p3 || f.price3], ['5mL', f.p5 || f.price5], ['10mL', f.p10 || f.price10]].forEach(([size, price]) => {
           const value = parseMoney(price);
           if(value){
             offers.push({
@@ -758,23 +772,26 @@
               price: String(value),
               availability: String(f.status || '').toLowerCase().includes('sold') ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
               itemCondition: 'https://schema.org/NewCondition',
-              url: siteUrl + '/#catalogue',
+              url: fragranceUrl(f),
               eligibleQuantity: { '@type': 'QuantitativeValue', value: Number(size.replace(/[^0-9.]/g,'')), unitCode: 'MLT' }
             });
           }
         });
         const descriptionParts = [];
-        if(f.notes) descriptionParts.push(f.notes);
+        if(f.seoDescription) descriptionParts.push(f.seoDescription);
+        else if(f.notes) descriptionParts.push(f.notes);
         if(f.inspiration && f.showInspiration) descriptionParts.push(`Inspired by ${f.inspiration}.`);
         if(f.category) descriptionParts.push(`${f.category} fragrance sample.`);
         if(f.season) descriptionParts.push(`Best for ${f.season}.`);
         return {
           '@type': 'Product',
           name: `${f.house ? f.house + ' ' : ''}${f.name}`.trim(),
+          alternateName: f.seoTitle || undefined,
           brand: f.house ? { '@type': 'Brand', name: f.house } : undefined,
           category: f.collection || f.category || 'Fragrance samples',
-          description: descriptionParts.join(' '),
-          url: siteUrl + '/#catalogue',
+          description: f.seoDescription || descriptionParts.join(' '),
+          image: f.imageUrl || undefined,
+          url: fragranceUrl(f),
           offers: offers.length ? offers : undefined
         };
       }).map(obj => Object.fromEntries(Object.entries(obj).filter(([,v]) => v !== undefined && !(Array.isArray(v) && !v.length))));

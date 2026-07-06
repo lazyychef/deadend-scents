@@ -22,6 +22,7 @@ function doPost(e) {
     if (payload.action === 'setupSEOColumns') return json_(setupSEOColumns_(ss));
     if (payload.action === 'generateFragranceSEO') return json_(generateFragranceSEO_(ss, payload));
     if (payload.action === 'saveFragranceSEO') return json_(saveFragranceSEO_(ss, payload));
+    if (payload.action === 'generateBulkFragranceSEO') return json_(generateBulkFragranceSEO_(ss, payload));
 
     return json_({ ok:false, error:'Unknown action: ' + payload.action });
   } catch (err) {
@@ -541,7 +542,7 @@ function deleteBottle_(ss, payload) {
 
 
 /**
- * V6.0.1 SEO Engine foundation.
+ * V6.0.2 SEO Engine foundation.
  * Backwards compatible: these functions only add/read/update SEO columns.
  * Existing Add Bottle, Inventory Manager and Bottle Editor actions are unchanged.
  */
@@ -555,7 +556,9 @@ var SEO_COLUMNS_V601 = [
   'SEO Similar Fragrances',
   'SEO Internal Links',
   'SEO Score',
-  'SEO Last Updated'
+  'SEO Last Updated',
+  'SEO Schema Status',
+  'SEO Open Graph Status'
 ];
 
 function setupSEOColumns_(ss) {
@@ -644,23 +647,26 @@ function generateSEODataForRow_(item, allItems) {
     'SEO Similar Fragrances': similar,
     'SEO Internal Links': internalLinks,
     'SEO Score': score,
-    'SEO Last Updated': new Date()
+    'SEO Last Updated': new Date(),
+    'SEO Schema Status': 'Ready',
+    'SEO Open Graph Status': 'Ready'
   };
 }
 
 function calculateSEOScoreFromItem_(item, seo) {
   var score = 0;
-  if (getCellByNames_(item, ['Image','Image URL','Bottle Image'])) score += 10;
+  if (getCellByNames_(item, ['Image','Image URL','Bottle Image'])) score += 15;
   if (getCellByNames_(item, ['Description']).length >= 50) score += 10;
-  if (getCellByNames_(item, ['Emojis'])) score += 5;
   if (getCellByNames_(item, ['Performance'])) score += 10;
   if (getCellByNames_(item, ['Projection'])) score += 10;
   if (getCellByNames_(item, ['Season'])) score += 10;
   if (getCellByNames_(item, ['Occasion'])) score += 10;
-  if (seo.faq || getCellByNames_(item, ['SEO FAQ'])) score += 10;
+  if (seo.slug || getCellByNames_(item, ['SEO Slug'])) score += 10;
   if (seo.title || getCellByNames_(item, ['SEO Title'])) score += 10;
-  if (seo.description || getCellByNames_(item, ['SEO Description'])) score += 10;
+  if (seo.description || getCellByNames_(item, ['SEO Description'])) score += 15;
+  if (seo.faq || getCellByNames_(item, ['SEO FAQ'])) score += 10;
   if (seo.internalLinks || getCellByNames_(item, ['SEO Internal Links'])) score += 5;
+  if ((seo.slug || getCellByNames_(item, ['SEO Slug'])) && (getCellByNames_(item, ['3mL']) || getCellByNames_(item, ['5mL']) || getCellByNames_(item, ['10mL']))) score += 5;
   return Math.min(100, score);
 }
 
@@ -687,4 +693,23 @@ function saveFragranceSEO_(ss, payload) {
   var map = headerMap_(sheet);
   Object.keys(fields).forEach(function(name){ setByAnyHeader_(sheet, row, map, [name], fields[name]); });
   return { ok:true, action:'saveFragranceSEO', id:payload.id };
+}
+
+function generateBulkFragranceSEO_(ss, payload) {
+  setupSEOColumns_(ss);
+  var ids = payload.ids || [];
+  if (!ids.length) return { ok:true, action:'generateBulkFragranceSEO', count:0 };
+  var sheet = catalogueSheet_(ss);
+  var all = getCatalogue_(ss).items || [];
+  var map = headerMap_(sheet);
+  var count = 0;
+  ids.forEach(function(id){
+    var row = findRowById_(sheet, id);
+    if (!row) return;
+    var bundle = rowObjectFromSheet_(sheet, row);
+    var seo = generateSEODataForRow_(bundle.obj, all);
+    Object.keys(seo).forEach(function(name){ setByAnyHeader_(sheet, row, map, [name], seo[name]); });
+    count++;
+  });
+  return { ok:true, action:'generateBulkFragranceSEO', count:count };
 }
