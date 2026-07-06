@@ -404,6 +404,39 @@ function addCatalogueRowFromPurchase_(catalogue, item, purchase) {
   return nextId;
 }
 
+
+function copyFormulaColumnsFromPreviousRow_(sheet, targetRow, headers, columnNames) {
+  if (targetRow <= 2) return;
+  var sourceRow = targetRow - 1;
+  columnNames.forEach(function(name) {
+    var col = 0;
+    for (var i = 0; i < headers.length; i++) {
+      if (norm_(headers[i]) === norm_(name)) {
+        col = i + 1;
+        break;
+      }
+    }
+    if (!col) return;
+    var formula = sheet.getRange(sourceRow, col).getFormulaR1C1();
+    if (formula) {
+      sheet.getRange(targetRow, col).setFormulaR1C1(formula);
+    }
+  });
+}
+
+function applyCatalogueFormulaColumns_(sheet, targetRow, headers) {
+  copyFormulaColumnsFromPreviousRow_(sheet, targetRow, headers, [
+    'Cost per mL',
+    'Revenue as 3mL',
+    'Revenue as 5mL',
+    'Revenue as 10mL',
+    'Best Potential Revenue',
+    'Projected Profit',
+    'Low Stock Flag',
+    'Last Updated'
+  ]);
+}
+
 function addBottle_(ss, payload) {
   var r = payload.row || {};
   var catalogue = catalogueSheet_(ss);
@@ -447,7 +480,7 @@ function addBottle_(ss, payload) {
       case 'Seller': return r.seller;
       case 'RRP': return r.rrp;
       case 'Replacement Cost': return r.replacementCost || '';
-      case 'Cost per mL': return (Number(r.purchasePrice) && Number(r.bottleSize)) ? Number(r.purchasePrice) / Number(r.bottleSize) : '';
+      case 'Cost per mL': return '';
       case 'Revenue as 3mL': return '';
       case 'Revenue as 5mL': return '';
       case 'Revenue as 10mL': return '';
@@ -461,5 +494,7 @@ function addBottle_(ss, payload) {
     }
   });
   catalogue.appendRow(values);
+  var newRow = catalogue.getLastRow();
+  applyCatalogueFormulaColumns_(catalogue, newRow, headers);
   return { ok:true, action:'addBottle', id:nextId, fragrance:r.fragrance };
 }

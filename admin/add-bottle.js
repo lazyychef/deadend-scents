@@ -11,6 +11,46 @@
   function collectionProfile(collection){ const c=String(collection||'').toLowerCase(); if(c.includes('niche')||c.includes('premium')) return 'niche'; if(c.includes('middle')) return 'middleEastern'; if(c.includes('inspired')||c.includes('dupe')) return 'inspired'; return 'designer'; }
   function profileMarkup(collection){ const p=collectionProfile(collection); const defaults={designer:2.25,niche:2.55,middleEastern:2.05,inspired:1.9}; return num(state.settings?.[p+'Markup']) || defaults[p]; }
 
+
+  function parseCsv(text){
+    const rows=[]; let row=[], field='', q=false;
+    for(let i=0;i<text.length;i++){
+      const c=text[i], n=text[i+1];
+      if(q && c==='"' && n==='"'){ field+='"'; i++; continue; }
+      if(c==='"'){ q=!q; continue; }
+      if(!q && c===','){ row.push(field); field=''; continue; }
+      if(!q && (c==='\n' || c==='\r')){
+        if(c==='\r' && n==='\n') i++;
+        row.push(field); field='';
+        if(row.some(v=>String(v).trim()!=='')) rows.push(row);
+        row=[]; continue;
+      }
+      field+=c;
+    }
+    row.push(field);
+    if(row.some(v=>String(v).trim()!=='')) rows.push(row);
+    return rows;
+  }
+
+  async function loadScentStyles(){
+    const select=$('scentStyle');
+    const fallback=['Fresh Aquatic','Fresh Citrus','Fresh Spicy','Woody','Amber','Vanilla','Gourmand','Sweet','Spicy','Tobacco','Boozy','Dark / Night','Office / Clean','Floral','Fruity','Leather','Musky','Green','Other'];
+    try{
+      const url=state.settings.catalogueCsvUrl;
+      if(!url) throw new Error('No catalogueCsvUrl');
+      const text=await fetch(url + (url.includes('?') ? '&' : '?') + 't=' + Date.now(),{cache:'no-store'}).then(r=>r.text());
+      const rows=parseCsv(text);
+      const headers=rows.shift()||[];
+      const idx=headers.findIndex(h=>String(h).trim().toLowerCase()==='scent style');
+      if(idx < 0) throw new Error('No Scent Style column');
+      const unique=[...new Set(rows.map(r=>String(r[idx]||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+      const options=unique.length ? unique.concat(['Other']) : fallback;
+      select.innerHTML='<option value="">Select scent style</option>'+options.map(v=>`<option>${String(v).replace(/[<>&"]/g,s=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[s]))}</option>`).join('');
+    }catch(e){
+      select.innerHTML='<option value="">Select scent style</option>'+fallback.map(v=>`<option>${v}</option>`).join('');
+    }
+  }
+
   async function loadSettings(){
     state.settings = await fetch('../settings.json',{cache:'no-store'}).then(r=>r.json());
     try{
@@ -119,6 +159,7 @@
 
   async function init(){
     await loadSettings();
+    await loadScentStyles();
     const d=today();
     setInput('addedDate', d); setInput('purchaseDate', d); setInput('stock','In Stock'); setInput('condition','New');
     ['purchasePrice','bottleSize','currentMl','rrp','collection','competitor3','competitor5','competitor10'].forEach(id=>$(id).addEventListener('input',()=>calculatePrices(false)));
