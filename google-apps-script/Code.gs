@@ -19,6 +19,9 @@ function doPost(e) {
     if (payload.action === 'addBottle') return json_(addBottle_(ss, payload));
     if (payload.action === 'duplicateBottle') return json_(duplicateBottle_(ss, payload));
     if (payload.action === 'deleteBottle') return json_(deleteBottle_(ss, payload));
+    if (payload.action === 'setupSEOColumns') return json_(setupSEOColumns_(ss));
+    if (payload.action === 'generateFragranceSEO') return json_(generateFragranceSEO_(ss, payload));
+    if (payload.action === 'saveFragranceSEO') return json_(saveFragranceSEO_(ss, payload));
 
     return json_({ ok:false, error:'Unknown action: ' + payload.action });
   } catch (err) {
@@ -534,4 +537,154 @@ function deleteBottle_(ss, payload) {
   if (!row) throw new Error('Bottle ID not found: ' + payload.id);
   sheet.deleteRow(row);
   return { ok:true, action:'deleteBottle', id:payload.id };
+}
+
+
+/**
+ * V6.0.1 SEO Engine foundation.
+ * Backwards compatible: these functions only add/read/update SEO columns.
+ * Existing Add Bottle, Inventory Manager and Bottle Editor actions are unchanged.
+ */
+var SEO_COLUMNS_V601 = [
+  'SEO Slug',
+  'SEO Title',
+  'SEO Description',
+  'SEO Intro',
+  'SEO Keywords',
+  'SEO FAQ',
+  'SEO Similar Fragrances',
+  'SEO Internal Links',
+  'SEO Score',
+  'SEO Last Updated'
+];
+
+function setupSEOColumns_(ss) {
+  var sheet = catalogueSheet_(ss);
+  var headers = sheet.getRange(1, 1, 1, Math.max(1, sheet.getLastColumn())).getValues()[0];
+  var existing = {};
+  headers.forEach(function(h){ existing[norm_(h)] = true; });
+  var added = [];
+  SEO_COLUMNS_V601.forEach(function(name){
+    if (!existing[norm_(name)]) {
+      sheet.getRange(1, sheet.getLastColumn() + 1).setValue(name);
+      added.push(name);
+      existing[norm_(name)] = true;
+    }
+  });
+  return { ok:true, action:'setupSEOColumns', added:added, message: added.length ? 'SEO columns added.' : 'SEO columns already exist.' };
+}
+
+function getCellByNames_(rowObj, names) {
+  for (var i = 0; i < names.length; i++) {
+    var n = names[i];
+    if (rowObj[n] !== null && typeof rowObj[n] !== 'undefined' && String(rowObj[n]).trim() !== '') return String(rowObj[n]).trim();
+  }
+  return '';
+}
+
+function slugifySEO_(value) {
+  return String(value || '').toLowerCase()
+    .replace(/[àáâãäå]/g,'a').replace(/[èéêë]/g,'e').replace(/[ìíîï]/g,'i')
+    .replace(/[òóôõö]/g,'o').replace(/[ùúûü]/g,'u').replace(/[ç]/g,'c')
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').substring(0,80);
+}
+
+function sentenceTrim_(text, max) {
+  text = String(text || '').replace(/\s+/g, ' ').trim();
+  if (text.length <= max) return text;
+  return text.substring(0, max - 1).replace(/\s+\S*$/, '') + '…';
+}
+
+function rowObjectFromSheet_(sheet, row) {
+  var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  var values = sheet.getRange(row, 1, 1, sheet.getLastColumn()).getDisplayValues()[0];
+  var obj = {};
+  headers.forEach(function(h, i){ if (h) obj[String(h)] = values[i] || ''; });
+  return { headers:headers, obj:obj };
+}
+
+function generateSEODataForRow_(item, allItems) {
+  var house = getCellByNames_(item, ['House']);
+  var fragrance = getCellByNames_(item, ['Fragrance']);
+  var collection = getCellByNames_(item, ['Collection']);
+  var style = getCellByNames_(item, ['Scent Style']);
+  var gender = getCellByNames_(item, ['Gender']);
+  var season = getCellByNames_(item, ['Season']);
+  var occasion = getCellByNames_(item, ['Occasion']);
+  var performance = getCellByNames_(item, ['Performance']);
+  var projection = getCellByNames_(item, ['Projection']);
+  var desc = getCellByNames_(item, ['Description']);
+  var inspiration = getCellByNames_(item, ['Inspiration', 'Inspired By']);
+  var slug = getCellByNames_(item, ['SEO Slug']) || slugifySEO_([house, fragrance, 'sample', 'australia'].filter(Boolean).join(' '));
+  var name = [house, fragrance].filter(Boolean).join(' ');
+  var title = sentenceTrim_((name || fragrance || 'Fragrance') + ' Sample Australia | DeadEnd Scents', 60);
+  var description = sentenceTrim_('Buy a ' + (name || fragrance || 'fragrance') + ' sample or decant in Australia. ' + [style, season, occasion].filter(Boolean).join(' · ') + (desc ? '. ' + desc : ''), 155);
+  var intro = desc || ('Try ' + (name || fragrance || 'this fragrance') + ' as a sample before buying a full bottle. Available from DeadEnd Scents in Australia.');
+  var similar = allItems.filter(function(x){
+    if (String(x.ID) === String(item.ID)) return false;
+    var sameStyle = style && String(x['Scent Style'] || '').toLowerCase() === style.toLowerCase();
+    var sameCollection = collection && String(x.Collection || '').toLowerCase() === collection.toLowerCase();
+    return sameStyle || sameCollection;
+  }).slice(0, 6).map(function(x){ return [x.House, x.Fragrance].filter(Boolean).join(' '); }).join(' | ');
+  var faq = [
+    'Is ' + (name || fragrance || 'this fragrance') + ' available as a sample in Australia?||Yes. DeadEnd Scents offers fragrance samples and decants in Australia, subject to current stock.',
+    'What does ' + (name || fragrance || 'this fragrance') + ' smell like?||' + sentenceTrim_([style, desc].filter(Boolean).join('. ') || 'Check the description, scent style, season and occasion notes on this page.', 240),
+    'When should I wear ' + (name || fragrance || 'this fragrance') + '?||' + sentenceTrim_([season ? 'Best suited to ' + season : '', occasion ? 'Works well for ' + occasion : '', performance ? 'Performance: ' + performance : '', projection ? 'Projection: ' + projection : ''].filter(Boolean).join('. ') || 'Use the season, occasion, performance and projection notes as a guide.', 240)
+  ].join('\n');
+  var keywords = [name, fragrance + ' sample', fragrance + ' decant', house + ' samples Australia', collection, style, inspiration].filter(Boolean).join(', ');
+  var internalLinks = ['/fragrances/' + slug + '/', '/houses/' + slugifySEO_(house) + '/', '/#collection-' + slugifySEO_(collection)].filter(function(v){return v.indexOf('undefined')<0 && v.indexOf('//')<0;}).join(' | ');
+  var score = calculateSEOScoreFromItem_(item, {title:title, description:description, intro:intro, faq:faq, similar:similar, slug:slug, internalLinks:internalLinks});
+  return {
+    'SEO Slug': slug,
+    'SEO Title': title,
+    'SEO Description': description,
+    'SEO Intro': intro,
+    'SEO Keywords': keywords,
+    'SEO FAQ': faq,
+    'SEO Similar Fragrances': similar,
+    'SEO Internal Links': internalLinks,
+    'SEO Score': score,
+    'SEO Last Updated': new Date()
+  };
+}
+
+function calculateSEOScoreFromItem_(item, seo) {
+  var score = 0;
+  if (getCellByNames_(item, ['Image','Image URL','Bottle Image'])) score += 10;
+  if (getCellByNames_(item, ['Description']).length >= 50) score += 10;
+  if (getCellByNames_(item, ['Emojis'])) score += 5;
+  if (getCellByNames_(item, ['Performance'])) score += 10;
+  if (getCellByNames_(item, ['Projection'])) score += 10;
+  if (getCellByNames_(item, ['Season'])) score += 10;
+  if (getCellByNames_(item, ['Occasion'])) score += 10;
+  if (seo.faq || getCellByNames_(item, ['SEO FAQ'])) score += 10;
+  if (seo.title || getCellByNames_(item, ['SEO Title'])) score += 10;
+  if (seo.description || getCellByNames_(item, ['SEO Description'])) score += 10;
+  if (seo.internalLinks || getCellByNames_(item, ['SEO Internal Links'])) score += 5;
+  return Math.min(100, score);
+}
+
+function generateFragranceSEO_(ss, payload) {
+  setupSEOColumns_(ss);
+  var sheet = catalogueSheet_(ss);
+  var row = findRowById_(sheet, payload.id);
+  if (!row) throw new Error('Bottle ID not found: ' + payload.id);
+  var bundle = rowObjectFromSheet_(sheet, row);
+  var all = getCatalogue_(ss).items || [];
+  var seo = generateSEODataForRow_(bundle.obj, all);
+  var map = headerMap_(sheet);
+  Object.keys(seo).forEach(function(name){ setByAnyHeader_(sheet, row, map, [name], seo[name]); });
+  return { ok:true, action:'generateFragranceSEO', id:payload.id, seo:seo };
+}
+
+function saveFragranceSEO_(ss, payload) {
+  setupSEOColumns_(ss);
+  var sheet = catalogueSheet_(ss);
+  var row = findRowById_(sheet, payload.id);
+  if (!row) throw new Error('Bottle ID not found: ' + payload.id);
+  var fields = payload.fields || {};
+  fields['SEO Last Updated'] = new Date();
+  var map = headerMap_(sheet);
+  Object.keys(fields).forEach(function(name){ setByAnyHeader_(sheet, row, map, [name], fields[name]); });
+  return { ok:true, action:'saveFragranceSEO', id:payload.id };
 }
