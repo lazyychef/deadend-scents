@@ -752,10 +752,12 @@
       const items = resolvePackItems(pack);
       if(!items.length) return;
       const pricing = packPrice(pack, items);
-      const div=document.createElement('article'); div.className='pack-card';
+      const div=document.createElement('details'); div.className='pack-card pack-tile';
       const title = pack.title || pack.name || 'Discovery Pack';
-      const itemLines=items.map(i=>`<li><strong>${escapeHtml(i.name)}</strong><span>${escapeHtml(i.house || '')}${i.category ? ' · ' + escapeHtml(i.category) : ''}</span></li>`).join('');
-      div.innerHTML=`<div class="pack-tag">${escapeHtml(pack.tagline || 'Curated discovery pack')}</div><h3>${escapeHtml(title)}</h3><p>${escapeHtml(pack.description || pack.desc || '')}</p><ul>${itemLines}</ul><div class="pack-price"><strong>${money(pricing.final)}</strong><span>Normally ${money(pricing.value)} · Save ${money(pricing.save)}<br>${items.length} x ${escapeHtml(pricing.size)}</span></div><button class="button primary pack-add" type="button" data-pack="${escapeAttr(title)}" data-price="${escapeAttr(money(pricing.final))}">Add pack</button>`;
+      const tagline = pack.tagline || 'Curated discovery pack';
+      const desc = pack.description || pack.desc || '';
+      const itemLines = items.map(i=>`<li><span>${escapeHtml(i.house || '')}${i.category ? ' · ' + escapeHtml(i.category) : ''}</span>${escapeHtml(i.name)}</li>`).join('') || '<li><span>Catalogue</span>Pack items loading</li>';
+      div.innerHTML=`<summary><span class="pack-tag">${escapeHtml(tagline)}</span><h3>${escapeHtml(title)}</h3>${desc ? `<p>${escapeHtml(desc)}</p>` : ''}<div class="pack-price"><strong>${money(pricing.final)}</strong><span>${items.length} x ${escapeHtml(pricing.size)} · Save ${money(pricing.save)}</span></div><span class="pack-open-label">View scents</span></summary><div class="pack-details"><ul>${itemLines}</ul><button class="button primary pack-add" type="button" data-pack="${escapeAttr(title)}" data-price="${escapeAttr(money(pricing.final))}">Add pack</button></div>`;
       packsGrid.appendChild(div);
     });
     document.querySelectorAll('.pack-add').forEach(btn=>{ if(btn.dataset.bound) return; btn.dataset.bound='1'; btn.addEventListener('click',()=>{ addToCart({type:'pack',name:btn.dataset.pack,size:'Pack',price:btn.dataset.price,house:'Curated discovery pack'}); trackEvent('discovery_pack_add', { pack_name: btn.dataset.pack, value: parseMoney(btn.dataset.price), currency: 'AUD' }); btn.textContent='Added to cart'; setTimeout(()=>btn.textContent='Add pack',1000); }); });
