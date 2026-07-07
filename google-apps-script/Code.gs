@@ -1,5 +1,5 @@
 /**
- * DeadEnd Scents Admin V5.2.4 admin sync hotfix endpoint.
+ * DeadEnd Scents Admin V6.0.3 consolidation endpoint.
  * Copy this file into the Apps Script project attached to the master Google Sheet.
  * Deploy as Web App: Execute as Me, Access Anyone with the link.
  */
@@ -35,7 +35,7 @@ function doGet(e) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   if (action === 'settings') return json_({ ok:true, settings:getSettings_(ss) });
   if (action === 'catalogue') return json_(getCatalogue_(ss));
-  return json_({ ok:true, app:'DeadEnd Scents Admin V5.2.4', status:'ready' });
+  return json_({ ok:true, app:'DeadEnd Scents Admin V6.0.3', status:'ready' });
 }
 
 function json_(obj) {
@@ -495,15 +495,32 @@ function addBottle_(ss, payload) {
 
 function getCatalogue_(ss) {
   var sheet = catalogueSheet_(ss);
-  var values = sheet.getDataRange().getDisplayValues();
-  if (!values.length) return { ok:true, items:[] };
-  var headers = values.shift();
-  var items = values.filter(function(row){ return row.some(function(v){ return String(v || '').trim() !== ''; }); }).map(function(row){
+  var range = sheet.getDataRange();
+  var display = range.getDisplayValues();
+  var raw = range.getValues();
+  if (!display.length) return { ok:true, items:[] };
+  var headers = display[0];
+  var items = [];
+  for (var r = 1; r < display.length; r++) {
+    var rowDisplay = display[r];
+    var rowRaw = raw[r];
+    if (!rowDisplay.some(function(v){ return String(v || '').trim() !== ''; })) continue;
     var obj = {};
-    headers.forEach(function(h,i){ if (h) obj[String(h)] = row[i] || ''; });
-    return obj;
-  });
-  return { ok:true, items:items };
+    headers.forEach(function(h, i){
+      if (!h) return;
+      var key = String(h);
+      var val = rowRaw[i];
+      if (val instanceof Date) {
+        obj[key] = Utilities.formatDate(val, Session.getScriptTimeZone(), 'yyyy-MM-dd');
+      } else if (typeof val === 'number') {
+        obj[key] = val;
+      } else {
+        obj[key] = rowDisplay[i] || '';
+      }
+    });
+    items.push(obj);
+  }
+  return { ok:true, items:items, source:'live-spreadsheet', generated:new Date().toISOString() };
 }
 
 function duplicateBottle_(ss, payload) {

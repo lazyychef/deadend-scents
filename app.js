@@ -23,6 +23,7 @@
   let packs = [];
   let settings = {};
   let catalogueSource = 'live';
+  let quickSpecialFilter = 'all';
 
   async function getJson(file, fallback){
     try { const res = await fetch(file, { cache: 'no-store' }); if(!res.ok) throw new Error(res.status); return await res.json(); }
@@ -535,7 +536,11 @@
   function match(f){
     const q=search.value.trim().toLowerCase();
     const combined=[f.name,f.house,f.inspiration,f.collection,f.category,f.occasion,f.season,f.notes,f.emojis,f.gender].join(' ').toLowerCase();
-    return fieldContains(f.category,categoryFilter.value) && fieldContains(f.collection,collectionFilter.value) && fieldContains(f.occasion,occasionFilter.value) && (!q || combined.includes(q));
+    const specialOk = quickSpecialFilter === 'all'
+      || (quickSpecialFilter === 'women' && String(f.gender || '').toLowerCase().includes('women'))
+      || (quickSpecialFilter === 'new' && isNewArrival(f))
+      || (quickSpecialFilter === 'staff' && !!f.staffPick);
+    return specialOk && fieldContains(f.category,categoryFilter.value) && fieldContains(f.collection,collectionFilter.value) && fieldContains(f.occasion,occasionFilter.value) && (!q || combined.includes(q));
   }
   function isNewArrival(f){
     const raw=f.addedDate; if(!raw) return false; const added=new Date(raw); if(Number.isNaN(added.getTime())) return false;
@@ -649,12 +654,21 @@
   }
   function setCollectionFilter(target){
     if(!collectionFilter) return;
+    quickSpecialFilter = 'all';
     const options=[...collectionFilter.options];
     const found=options.find(opt=>collectionMatches(opt.value,target));
     collectionFilter.value = found ? found.value : 'all';
-    document.querySelectorAll('.collection-buttons button').forEach(btn=>btn.classList.toggle('active', String(btn.dataset.collection||'all').toLowerCase()===String(target||'all').toLowerCase()));
+    document.querySelectorAll('.collection-buttons button').forEach(btn=>btn.classList.toggle('active', !!btn.dataset.collection && String(btn.dataset.collection||'all').toLowerCase()===String(target||'all').toLowerCase()));
     render();
     trackEvent('quick_collection_filter', { filter_value: target });
+  }
+
+  function setSpecialFilter(target){
+    quickSpecialFilter = target || 'all';
+    if(collectionFilter) collectionFilter.value = 'all';
+    document.querySelectorAll('.collection-buttons button').forEach(btn=>btn.classList.toggle('active', !!btn.dataset.special && String(btn.dataset.special).toLowerCase()===String(quickSpecialFilter).toLowerCase()));
+    render();
+    trackEvent('quick_special_filter', { filter_value: quickSpecialFilter });
   }
 
   function render(){
@@ -866,10 +880,13 @@
   const trackedSearch = debounce(()=>{ const q=search ? search.value.trim() : ''; if(q) trackEvent('site_search', { search_term: q }); }, 900);
   if(search) search.addEventListener('input',()=>{ render(); trackedSearch(); });
   if(categoryFilter) categoryFilter.addEventListener('input',()=>{ render(); trackEvent('filter_scent_style', { filter_value: categoryFilter.value }); });
-  if(collectionFilter) collectionFilter.addEventListener('input',()=>{ render(); trackEvent('filter_type', { filter_value: collectionFilter.value }); });
+  if(collectionFilter) collectionFilter.addEventListener('input',()=>{ quickSpecialFilter='all'; document.querySelectorAll('.collection-buttons button').forEach(btn=>btn.classList.remove('active')); render(); trackEvent('filter_type', { filter_value: collectionFilter.value }); });
   if(occasionFilter) occasionFilter.addEventListener('input',()=>{ render(); trackEvent('filter_occasion', { filter_value: occasionFilter.value }); });
   if(sortBy) sortBy.addEventListener('input',()=>{ render(); trackEvent('sort_catalogue', { sort_value: sortBy.value }); });
-  document.querySelectorAll('.collection-buttons button').forEach(btn=>btn.addEventListener('click',()=>setCollectionFilter(btn.dataset.collection || 'all')));
+  document.querySelectorAll('.collection-buttons button').forEach(btn=>btn.addEventListener('click',()=>{
+    if(btn.dataset.special) setSpecialFilter(btn.dataset.special);
+    else setCollectionFilter(btn.dataset.collection || 'all');
+  }));
   $('copyOrder').addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText($('orderText').value); $('copyOrder').textContent='Copied'; trackEvent('copy_order_message', { cart_items: cart.length }); setTimeout(()=>$('copyOrder').textContent='Copy order message',1400); }catch(e){ $('orderText').select(); document.execCommand('copy'); } });
   const clearCart=$('clearCart'); if(clearCart) clearCart.addEventListener('click',()=>{ trackEvent('clear_cart', { cart_items: cart.length }); cart.length=0; updateCart(); });
   if(floatingCart) floatingCart.addEventListener('click',()=>{ trackEvent('floating_cart_click', { cart_items: cart.length }); const order=$('order'); if(order) order.scrollIntoView({behavior:'smooth',block:'start'}); });

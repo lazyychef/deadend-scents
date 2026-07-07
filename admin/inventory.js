@@ -18,6 +18,23 @@
   const money = (n, cents=false) => Number.isFinite(n) ? '$' + n.toFixed(cents ? 2 : 0) : '—';
   const num = (v) => Number(String(v ?? '').replace(/[^0-9.\-]/g,'')) || 0;
   const truthy = (v) => /^(true|yes|y|1)$/i.test(String(v || '').trim());
+  function normaliseDateInput(value){
+    const raw=String(value ?? '').trim();
+    if(!raw) return '';
+    if(/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+    const iso=raw.match(/^(\d{4}-\d{2}-\d{2})T/);
+    if(iso) return iso[1];
+    const au=raw.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/);
+    if(au){ const d=au[1].padStart(2,'0'), m=au[2].padStart(2,'0'), y=au[3].length===2?'20'+au[3]:au[3]; return `${y}-${m}-${d}`; }
+    const parsed=new Date(raw);
+    return Number.isNaN(parsed.getTime()) ? raw : parsed.toISOString().slice(0,10);
+  }
+  function normaliseNumberInput(value){
+    const raw=String(value ?? '').trim();
+    if(!raw) return '';
+    const n=Number(raw.replace(/[^0-9.\-]/g,''));
+    return Number.isFinite(n) ? String(n) : '';
+  }
   const escapeHtml = (v) => String(v ?? '').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const roundUp = (value, step=1) => Math.ceil(value / step) * step;
   const slugify = (v) => String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
@@ -40,11 +57,17 @@
 
   function first(item, names){ for(const n of names){ if(item[n] !== undefined && item[n] !== null && String(item[n]).trim() !== '') return item[n]; } return ''; }
   function value(item, name){ return item && item[name] != null ? item[name] : ''; }
-  function setInput(id, v){ const el=$(id); if(el) el.value = v ?? ''; }
+  function setInput(id, v){
+    const el=$(id);
+    if(!el) return;
+    if(el.type === 'date') el.value = normaliseDateInput(v);
+    else if(el.type === 'number') el.value = normaliseNumberInput(v);
+    else el.value = v ?? '';
+  }
   function setSelect(id, v){ const el=$(id); if(!el) return; const value=String(v??''); if(value && ![...el.options].some(o=>o.value===value || o.textContent===value)){ const opt=document.createElement('option'); opt.value=value; opt.textContent=value; el.appendChild(opt); } el.value=value; }
   function setText(id, v){ const el=$(id); if(el) el.textContent = v || '—'; }
   function displayName(item){ return [item.House,item.Fragrance].filter(Boolean).join(' · ') || item.ID || 'Untitled'; }
-  function addedDate(item){ const d = new Date(item['Added Date'] || item['Purchase Date'] || ''); return Number.isFinite(d.getTime()) ? d : null; }
+  function addedDate(item){ const raw=normaliseDateInput(item['Added Date'] || item['Purchase Date'] || ''); const d = raw ? new Date(raw + 'T00:00:00') : null; return d && Number.isFinite(d.getTime()) ? d : null; }
   function isNew(item){ const days = num(state.settings?.newArrivalDays || 45); const d = addedDate(item); if(!d) return false; return ((Date.now() - d.getTime()) / 86400000) <= days; }
   function mlLeft(item){ const v = num(first(item, aliases.currentMl)); return v > 0 ? v : (String(first(item, aliases.currentMl)).trim() === '0' ? 0 : null); }
   function stock(item){ return first(item, aliases.stock) || 'Unknown'; }
@@ -206,7 +229,10 @@
     $('saveStatus').textContent='Saving bottle...'; const fields=fieldsFromForm();
     try{
       await DeadEndAdminWrite.submit(state.settings.adminWriteEndpoint,{action:'updateBottle',id:$('editId').value,fields});
-      Object.assign(state.selected, fields); renderStats(); renderFilters(); renderList(); $('saveStatus').textContent='Saved to Google Sheets. Reload catalogue after the published CSV refreshes.';
+      const savedId=$('editId').value;
+      await loadCatalogue();
+      selectItem(savedId);
+      $('saveStatus').textContent='Saved to Google Sheets and reloaded from the live database.';
     }catch(err){ $('saveStatus').textContent='Save failed: '+(err.message||err); }
   }
 
