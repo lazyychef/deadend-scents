@@ -914,3 +914,261 @@ main{width:min(100% - 2rem,1180px)!important;margin:0 auto 4rem!important}.secti
   .featured-bottle-wrap{width:58px!important;height:82px!important}
   .pack-card h3{font-size:1.35rem!important}
 }
+
+
+/* V7.0.4 mobile layout tune patch */
+@media(max-width:760px){
+  /* More green structure on mobile */
+  .hero-card{
+    background:linear-gradient(180deg, #FFFDD0 0%, #FFFDD0 82%, rgba(24,45,9,.08) 100%)!important;
+  }
+
+  /* Fragrance of the Week: compact red-triangle area, text left, bottle right */
+  .featured-grid{
+    margin:.55rem 0 .65rem!important;
+  }
+  .featured-card{
+    position:relative!important;
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    min-height:0!important;
+    padding:.7rem .75rem!important;
+    background:linear-gradient(135deg, rgba(24,45,9,.08), var(--cream-soft) 42%, rgba(166,91,50,.08))!important;
+    border:1px solid var(--wood)!important;
+    overflow:hidden!important;
+  }
+  .featured-main,
+  .featured-main.with-image{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) 86px!important;
+    gap:.5rem!important;
+    align-items:center!important;
+    min-height:112px!important;
+  }
+  .featured-bottle-wrap{
+    grid-column:2!important;
+    grid-row:1!important;
+    width:82px!important;
+    height:108px!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    border:0!important;
+    background:transparent!important;
+    z-index:2!important;
+  }
+  .featured-bottle-wrap img{
+    max-width:82px!important;
+    max-height:108px!important;
+    object-fit:contain!important;
+  }
+  .featured-main > div:not(.featured-bottle-wrap){
+    grid-column:1!important;
+    grid-row:1!important;
+    min-width:0!important;
+  }
+  .featured-label{
+    font-size:.55rem!important;
+    letter-spacing:.13em!important;
+    color:var(--wood)!important;
+    margin-bottom:.08rem!important;
+  }
+  .featured-card h3{
+    font-size:1.55rem!important;
+    line-height:.92!important;
+    margin:.05rem 0 .05rem!important;
+    color:var(--forest)!important;
+  }
+  .featured-house{
+    font-size:.74rem!important;
+    letter-spacing:.11em!important;
+    margin:0!important;
+    color:var(--muted)!important;
+  }
+  .featured-card .collection-pill{
+    font-size:.48rem!important;
+    margin:.2rem 0 0!important;
+    color:var(--forest)!important;
+    border-color:rgba(166,91,50,.45)!important;
+  }
+  .weekly-ribbon{
+    background:var(--wood)!important;
+    color:#fff!important;
+    border:0!important;
+    box-shadow:none!important;
+  }
+  .weekly-offer{
+    margin-top:.55rem!important;
+    padding:.55rem!important;
+    background:rgba(24,45,9,.05)!important;
+    border:1px solid rgba(166,91,50,.35)!important;
+  }
+  .offer-kicker{
+    font-size:.6rem!important;
+    letter-spacing:.13em!important;
+    color:var(--wood)!important;
+  }
+  .offer-ends{
+    font-size:.75rem!important;
+    color:var(--muted)!important;
+  }
+  .featured-actions{
+    gap:.28rem!important;
+  }
+  .featured-actions .price-add,
+  .featured-actions .price-unavailable{
+    min-height:34px!important;
+    padding:.24rem .08rem!important;
+    background:var(--forest)!important;
+    color:var(--cream)!important;
+    border-color:var(--forest)!important;
+  }
+  .featured-actions .price-add strong,
+  .featured-actions .price-unavailable strong{
+    color:var(--cream)!important;
+    font-size:.72rem!important;
+  }
+  .featured-actions .price-add span,
+  .featured-actions .price-unavailable span{
+    color:rgba(255,253,208,.78)!important;
+    font-size:.4rem!important;
+  }
+
+  /* Search/filter block: blue rectangle, condensed but still usable */
+  .controls-wrap{
+    background:rgba(10,31,61,.08)!important;
+    border:1px solid rgba(10,31,61,.22)!important;
+    margin:.55rem .45rem .7rem!important;
+    padding:.42rem!important;
+  }
+  .controls-wrap::before{
+    color:#0A1F3D!important;
+    padding:0 0 .32rem!important;
+  }
+  .panel{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:.3rem!important;
+    padding:0!important;
+    border:0!important;
+    background:transparent!important;
+    max-height:none!important;
+    overflow:visible!important;
+  }
+  .panel label.search-label{
+    grid-column:1/-1!important;
+  }
+  .panel span{
+    color:#0A1F3D!important;
+    font-size:.45rem!important;
+    margin-bottom:.1rem!important;
+  }
+  .panel input,
+  .panel select{
+    background:#fffef0!important;
+    border:1px solid rgba(10,31,61,.28)!important;
+    color:var(--ink)!important;
+    min-height:32px!important;
+    font-size:.68rem!important;
+    padding:.32rem .38rem!important;
+  }
+
+  /* Category buttons closer to search */
+  .collection-buttons,
+  .smart-filter-buttons{
+    margin:.28rem .45rem!important;
+    gap:.3rem!important;
+  }
+
+  /* Fragrance cards: wood border, safer image/text positioning */
+  .card{
+    border:1px solid var(--wood)!important;
+    background:#fffbed!important;
+    padding:.34rem!important;
+  }
+  .tile-image{
+    top:28px!important;
+    right:.24rem!important;
+    width:32%!important;
+    height:34%!important;
+    z-index:1!important;
+  }
+  .tile-image img{
+    max-height:100%!important;
+  }
+  .has-tile-image .house,
+  .has-tile-image h3,
+  .has-tile-image .accords{
+    max-width:64%!important;
+  }
+  .house{
+    margin-top:.22rem!important;
+    font-size:.44rem!important;
+  }
+  .card h3{
+    font-size:.61rem!important;
+    line-height:1.02!important;
+    max-height:2.1em!important;
+    margin-bottom:.06rem!important;
+  }
+  .accords{
+    font-size:.45rem!important;
+    max-height:1.05em!important;
+    margin-bottom:.12rem!important;
+  }
+  .prices{
+    bottom:.28rem!important;
+    left:.26rem!important;
+    right:.26rem!important;
+    gap:.1rem!important;
+    background:#fffbed!important;
+    z-index:5!important;
+  }
+  .price-add,
+  .price-unavailable{
+    min-height:26px!important;
+    background:#fffef0!important;
+    border:1px solid var(--line)!important;
+  }
+  .price-add strong,
+  .price-unavailable strong{
+    font-size:.5rem!important;
+  }
+  .price-add span,
+  .price-unavailable span{
+    font-size:.34rem!important;
+  }
+
+  /* Give tile content a hard safe zone above buttons */
+  .card::after{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    height:42px;
+    background:linear-gradient(180deg, rgba(255,251,237,0), #fffbed 28%, #fffbed 100%);
+    z-index:3;
+    pointer-events:none;
+  }
+  .prices{position:absolute!important}
+}
+
+@media(max-width:390px){
+  .featured-main,
+  .featured-main.with-image{
+    grid-template-columns:minmax(0,1fr) 72px!important;
+    min-height:102px!important;
+  }
+  .featured-bottle-wrap{
+    width:70px!important;
+    height:96px!important;
+  }
+  .featured-bottle-wrap img{
+    max-width:70px!important;
+    max-height:96px!important;
+  }
+  .featured-card h3{font-size:1.38rem!important}
+  .tile-image{width:30%!important;height:32%!important}
+  .card h3{font-size:.56rem!important}
+}
