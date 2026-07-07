@@ -2,17 +2,6 @@
   const $ = (id) => document.getElementById(id);
   const state = { settings:null, items:[] };
   const money = (n) => Number.isFinite(n) ? '$' + n.toFixed(0) : '$0';
-  function normaliseDate(value){
-    const raw=String(value || '').trim();
-    if(!raw) return '';
-    if(/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
-    const iso=raw.match(/^(\d{4}-\d{2}-\d{2})T/);
-    if(iso) return iso[1];
-    const au=raw.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/);
-    if(au){ const d=au[1].padStart(2,'0'), m=au[2].padStart(2,'0'), y=au[3].length===2?'20'+au[3]:au[3]; return `${y}-${m}-${d}`; }
-    const parsed=new Date(raw);
-    return Number.isNaN(parsed.getTime()) ? raw : parsed.toISOString().slice(0,10);
-  }
 
   function parseCSV(text){
     const rows = [];
@@ -55,22 +44,12 @@
   async function loadCatalogue(){
     let items = [];
     try{
-      const endpoint = state.settings && state.settings.adminWriteEndpoint;
-      if(endpoint){
-        const liveUrl = endpoint + (endpoint.includes('?') ? '&' : '?') + 'action=catalogue&t=' + Date.now();
-        const live = await fetch(liveUrl, { cache:'no-store' }).then(r=>r.json());
-        if(live.ok && Array.isArray(live.items)) items = live.items;
+      const url = state.settings && state.settings.catalogueCsvUrl;
+      if(url){
+        const res = await fetch(url, { cache:'no-store' });
+        if(res.ok) items = parseCSV(await res.text());
       }
-    }catch(e){ console.warn('Live catalogue unavailable, falling back to CSV', e); }
-    if(!items.length){
-      try{
-        const url = state.settings && state.settings.catalogueCsvUrl;
-        if(url){
-          const res = await fetch(url + (url.includes('?') ? '&' : '?') + 't=' + Date.now(), { cache:'no-store' });
-          if(res.ok) items = parseCSV(await res.text());
-        }
-      }catch(e){}
-    }
+    }catch(e){}
     if(!items.length){
       try{
         const fallback = await fetch('../catalogue-fallback.json', { cache:'no-store' }).then(r=>r.json());
@@ -85,9 +64,8 @@
     const raw = item['New'] || item['New Arrival'] || item['Recently Added'] || '';
     if(String(raw).toLowerCase() === 'true' || String(raw).toLowerCase() === 'yes' || String(raw) === '1') return true;
     const days = Number(state.settings?.newArrivalDays || 45);
-    const rawDate=normaliseDate(item['Added Date'] || item['Purchase Date'] || '');
-    const d = rawDate ? new Date(rawDate + 'T00:00:00') : null;
-    if(!d || !Number.isFinite(d.getTime())) return false;
+    const d = new Date(item['Added Date'] || item['Purchase Date'] || '');
+    if(!Number.isFinite(d.getTime())) return false;
     return ((Date.now() - d.getTime()) / 86400000) <= days;
   }
 
