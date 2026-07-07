@@ -724,3 +724,193 @@ main{width:min(100% - 2rem,1180px)!important;margin:0 auto 4rem!important}.secti
   .card h3{font-size:.61rem!important}
   .accords{font-size:.46rem!important}
 }
+
+
+/* V7.0.3 mobile cleanup patch */
+@media(max-width:760px){
+  /* Header: make wordmark bigger and cleaner */
+  .top-nav{
+    grid-template-columns:36px 40px 1fr auto!important;
+    gap:.55rem!important;
+    padding:.55rem .7rem!important;
+  }
+  .brand-wordmark span{
+    font-family:"Cormorant Garamond", Georgia, serif!important;
+    font-size:1.45rem!important;
+    line-height:.84!important;
+    letter-spacing:-.04em!important;
+  }
+  .brand-wordmark small{
+    font-size:.52rem!important;
+    line-height:1!important;
+    letter-spacing:.34em!important;
+    margin-top:.12rem!important;
+  }
+
+  /* Remove hero buttons now hamburger carries navigation */
+  .hero-actions.removed-mobile-primary{display:none!important}
+  .hero-card{padding-bottom:.55rem!important}
+  .hero .subhead{margin-bottom:.25rem!important}
+
+  /* Stats strip: even lower profile */
+  .hero-benefits,.stats{
+    margin:.35rem 0 0!important;
+    background:transparent!important;
+    border-top:1px solid var(--line)!important;
+    border-bottom:1px solid var(--line)!important;
+  }
+  .hero-benefits span,.stats span{
+    min-height:42px!important;
+    padding:.25rem .08rem!important;
+  }
+
+  /* Fragrance of the week: readable, with bottle image if present */
+  .featured-card{
+    background:var(--cream-soft)!important;
+    color:var(--ink)!important;
+    border-top:1px solid var(--line)!important;
+    border-bottom:1px solid var(--line)!important;
+  }
+  .featured-main.with-image{
+    display:grid!important;
+    grid-template-columns:72px minmax(0,1fr)!important;
+    align-items:center!important;
+  }
+  .featured-bottle-wrap{
+    display:flex!important;
+    width:68px!important;
+    height:92px!important;
+    align-items:center!important;
+    justify-content:center!important;
+    background:transparent!important;
+    border:0!important;
+  }
+  .featured-bottle-wrap img{
+    max-width:100%!important;
+    max-height:100%!important;
+    object-fit:contain!important;
+  }
+  .featured-card h3{
+    color:var(--forest)!important;
+    font-size:1.75rem!important;
+  }
+  .featured-house,.featured-inspo,.featured-desc{
+    color:var(--muted)!important;
+  }
+  .weekly-offer{
+    background:var(--cream)!important;
+    color:var(--ink)!important;
+    border:1px solid var(--line)!important;
+  }
+  .offer-kicker{color:var(--wood)!important}
+  .offer-ends{color:var(--muted)!important}
+  .weekly-price{
+    background:transparent!important;
+    border:1px solid var(--line)!important;
+    color:var(--ink)!important;
+  }
+  .weekly-price strong{color:var(--forest)!important}
+  .weekly-price.active,.weekly-discount{
+    background:var(--forest)!important;
+    color:var(--cream)!important;
+  }
+
+  /* Discovery pack typography: match feature heading feel */
+  .pack-card h3{
+    font-family:"Cormorant Garamond", Georgia, serif!important;
+    font-size:1.5rem!important;
+    line-height:.95!important;
+    font-weight:700!important;
+    color:var(--forest)!important;
+  }
+  .pack-card .pack-tagline,
+  .pack-card > p:first-of-type{
+    color:var(--wood)!important;
+    font-size:.82rem!important;
+    font-weight:800!important;
+    letter-spacing:.08em!important;
+    text-transform:uppercase!important;
+  }
+
+  /* Search: collapse by default into native disclosure */
+  .controls-wrap{
+    padding:.5rem .45rem!important;
+    border-top:1px solid var(--line)!important;
+  }
+  .controls-wrap::before{
+    content:"Search & filter";
+    display:block;
+    font-family:Inter,system-ui,sans-serif;
+    font-weight:850;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--wood);
+    font-size:.62rem;
+    padding:.15rem 0 .4rem;
+  }
+  .panel{
+    grid-template-columns:1fr 1fr!important;
+    max-height:92px!important;
+    overflow:hidden!important;
+    transition:max-height .2s ease;
+  }
+  .controls-wrap:focus-within .panel,
+  .controls-wrap:hover .panel{
+    max-height:360px!important;
+  }
+  .panel .search-label{
+    grid-column:1/-1!important;
+  }
+
+  /* Catalogue tiles: image anchored right, text no longer collides */
+  .card{
+    aspect-ratio:1 / 1!important;
+    padding:.35rem!important;
+  }
+  .tile-image{
+    position:absolute!important;
+    top:30px!important;
+    right:.18rem!important;
+    width:36%!important;
+    height:45%!important;
+    margin:0!important;
+    align-items:center!important;
+    justify-content:center!important;
+    opacity:.95!important;
+    pointer-events:none!important;
+  }
+  .tile-image img{
+    max-width:100%!important;
+    max-height:100%!important;
+    object-fit:contain!important;
+  }
+  .has-tile-image .house,
+  .has-tile-image h3,
+  .has-tile-image .accords{
+    max-width:68%!important;
+    position:relative!important;
+    z-index:2!important;
+  }
+  .house{
+    margin-top:.28rem!important;
+    word-break:break-word!important;
+  }
+  .card h3{
+    min-height:1.3em!important;
+    overflow-wrap:anywhere!important;
+  }
+  .collection-pill{
+    z-index:3!important;
+  }
+  .prices{
+    z-index:4!important;
+  }
+}
+
+@media(max-width:390px){
+  .brand-wordmark span{font-size:1.32rem!important}
+  .brand-wordmark small{font-size:.47rem!important}
+  .featured-main.with-image{grid-template-columns:60px minmax(0,1fr)!important}
+  .featured-bottle-wrap{width:58px!important;height:82px!important}
+  .pack-card h3{font-size:1.35rem!important}
+}
