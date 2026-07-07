@@ -66,6 +66,7 @@
 </head>
 <body id="top">
   <nav class="top-nav" aria-label="Main navigation">
+    <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
     <a class="brand-mark" href="#top" aria-label="DeadEnd Scents home"><img class="brand-logo" src="assets/deadend-logo.png" alt="DeadEnd Scents"></a>
     <div class="nav-links">
       <a href="#packs">Packs</a>
@@ -206,5 +207,30 @@
     </section>
   </noscript>
   <script src="app.js"></script>
+
+  <script>
+    (function(){
+      var toggle = document.querySelector('.nav-toggle');
+      var nav = document.querySelector('.top-nav');
+      if(!toggle || !nav) return;
+      toggle.addEventListener('click', function(){
+        var open = nav.classList.toggle('nav-open');
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      document.addEventListener('click', function(e){
+        if(!nav.contains(e.target)){
+          nav.classList.remove('nav-open');
+          toggle.setAttribute('aria-expanded','false');
+        }
+      });
+      nav.querySelectorAll('a').forEach(function(a){
+        a.addEventListener('click', function(){
+          nav.classList.remove('nav-open');
+          toggle.setAttribute('aria-expanded','false');
+        });
+      });
+    })();
+  </script>
+
 </body>
 </html>
