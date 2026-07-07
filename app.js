@@ -752,12 +752,10 @@
       const items = resolvePackItems(pack);
       if(!items.length) return;
       const pricing = packPrice(pack, items);
-      const div=document.createElement('details'); div.className='pack-card pack-tile';
+      const div=document.createElement('article'); div.className='pack-card';
       const title = pack.title || pack.name || 'Discovery Pack';
-      const tagline = pack.tagline || 'Curated discovery pack';
-      const desc = pack.description || pack.desc || '';
-      const itemLines = items.map(i=>`<li><span>${escapeHtml(i.house || '')}${i.category ? ' · ' + escapeHtml(i.category) : ''}</span>${escapeHtml(i.name)}</li>`).join('') || '<li><span>Catalogue</span>Pack items loading</li>';
-      div.innerHTML=`<summary><span class="pack-tag">${escapeHtml(tagline)}</span><h3>${escapeHtml(title)}</h3>${desc ? `<p>${escapeHtml(desc)}</p>` : ''}<div class="pack-price"><strong>${money(pricing.final)}</strong><span>${items.length} x ${escapeHtml(pricing.size)} · Save ${money(pricing.save)}</span></div><span class="pack-open-label">View scents</span></summary><div class="pack-details"><ul>${itemLines}</ul><button class="button primary pack-add" type="button" data-pack="${escapeAttr(title)}" data-price="${escapeAttr(money(pricing.final))}">Add pack</button></div>`;
+      const itemLines=items.map(i=>`<li><strong>${escapeHtml(i.name)}</strong><span>${escapeHtml(i.house || '')}${i.category ? ' · ' + escapeHtml(i.category) : ''}</span></li>`).join('');
+      div.innerHTML=`<div class="pack-tag">${escapeHtml(pack.tagline || 'Curated discovery pack')}</div><h3>${escapeHtml(title)}</h3><p>${escapeHtml(pack.description || pack.desc || '')}</p><ul>${itemLines}</ul><div class="pack-price"><strong>${money(pricing.final)}</strong><span>Normally ${money(pricing.value)} · Save ${money(pricing.save)}<br>${items.length} x ${escapeHtml(pricing.size)}</span></div><button class="button primary pack-add" type="button" data-pack="${escapeAttr(title)}" data-price="${escapeAttr(money(pricing.final))}">Add pack</button>`;
       packsGrid.appendChild(div);
     });
     document.querySelectorAll('.pack-add').forEach(btn=>{ if(btn.dataset.bound) return; btn.dataset.bound='1'; btn.addEventListener('click',()=>{ addToCart({type:'pack',name:btn.dataset.pack,size:'Pack',price:btn.dataset.price,house:'Curated discovery pack'}); trackEvent('discovery_pack_add', { pack_name: btn.dataset.pack, value: parseMoney(btn.dataset.price), currency: 'AUD' }); btn.textContent='Added to cart'; setTimeout(()=>btn.textContent='Add pack',1000); }); });
@@ -890,6 +888,18 @@
     return function(...args){ clearTimeout(timer); timer=setTimeout(()=>fn.apply(this,args), wait); };
   }
   const trackedSearch = debounce(()=>{ const q=search ? search.value.trim() : ''; if(q) trackEvent('site_search', { search_term: q }); }, 900);
+  const nav = document.querySelector('.top-nav');
+  const navToggle = document.querySelector('.nav-toggle');
+  if(nav && navToggle){
+    navToggle.addEventListener('click',()=>{
+      const open = nav.classList.toggle('nav-open');
+      navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    nav.querySelectorAll('.nav-links a').forEach(link=>link.addEventListener('click',()=>{
+      nav.classList.remove('nav-open');
+      navToggle.setAttribute('aria-expanded','false');
+    }));
+  }
   if(search) search.addEventListener('input',()=>{ render(); trackedSearch(); });
   if(categoryFilter) categoryFilter.addEventListener('input',()=>{ render(); trackEvent('filter_scent_style', { filter_value: categoryFilter.value }); });
   if(collectionFilter) collectionFilter.addEventListener('input',()=>{ render(); trackEvent('filter_type', { filter_value: collectionFilter.value }); });
