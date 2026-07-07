@@ -513,3 +513,214 @@ main{width:min(100% - 2rem,1180px)!important;margin:0 auto 4rem!important}.secti
   .accords{font-size:.54rem!important}
   .price-add strong,.price-unavailable strong{font-size:.56rem!important}
 }
+
+
+/* V7.0.2 mobile refinement patch */
+.brand-wordmark{
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+  line-height:.9!important;
+  color:var(--cream)!important;
+  text-decoration:none!important;
+  min-width:max-content!important;
+}
+.brand-wordmark span{
+  font-family:"Cormorant Garamond", Georgia, serif!important;
+  font-size:1.35rem!important;
+  font-weight:700!important;
+  letter-spacing:-.03em!important;
+}
+.brand-wordmark small{
+  font-family:Inter,system-ui,sans-serif!important;
+  font-size:.56rem!important;
+  letter-spacing:.32em!important;
+  text-transform:uppercase!important;
+  color:var(--wood)!important;
+  margin-left:.12rem!important;
+}
+.tile-image{
+  width:100%;
+  height:92px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  margin:.2rem 0 .45rem;
+  overflow:hidden;
+}
+.tile-image img{
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+  display:block;
+}
+
+/* Put all category filters in one compact block on V7 */
+.collection-buttons,.smart-filter-buttons{margin:.35rem 0!important}
+.smart-filter-buttons{margin-top:-.1rem!important}
+
+/* Make pack content easier to scan without hiding products */
+.pack-card ul{padding-left:1rem!important}
+.pack-card li{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+
+/* Hide oversized search controls behind compact layout on mobile */
+@media(max-width:760px){
+  .top-nav{
+    grid-template-columns:38px 42px 1fr auto!important;
+    min-height:62px!important;
+    padding:.5rem .7rem!important;
+  }
+  .brand-mark{width:40px!important;height:40px!important;min-width:40px!important}
+  .brand-logo{width:38px!important;height:38px!important}
+  .brand-wordmark{grid-column:3!important}
+  .brand-wordmark span{font-size:1.18rem!important}
+  .brand-wordmark small{font-size:.48rem!important;letter-spacing:.26em!important}
+  .social-links{gap:.35rem!important}
+  .nav-links{grid-column:1/-1!important}
+
+  /* Buttons: tighter */
+  .hero-actions{grid-template-columns:1fr 1fr!important;gap:.45rem!important}
+  .hero-actions .button{font-size:.64rem!important;padding:.55rem .35rem!important;min-height:42px!important}
+  .hero-actions .button.primary{order:1}
+  .hero-actions .button:not(.primary){order:2}
+
+  /* Stats: thinner and less prominent */
+  .hero-benefits,.stats{
+    margin:.45rem 0 0!important;
+    border-left:0!important;
+    border-right:0!important;
+  }
+  .hero-benefits span,.stats span{
+    min-height:48px!important;
+    padding:.34rem .1rem!important;
+    font-size:.52rem!important;
+    font-weight:700!important;
+  }
+  .hero-benefits .benefit-icon,.stats .benefit-icon{width:13px!important;height:13px!important}
+  .hero-benefits strong,.stats strong{font-size:.66rem!important}
+
+  /* Fragrance of the week: remove low-contrast lines and compress */
+  .featured-inspo,.featured-desc{display:none!important}
+  .featured-card{padding:.7rem .75rem!important}
+  .featured-main{gap:.45rem!important}
+  .featured-label{color:var(--wood)!important}
+  .weekly-offer .offer-main{display:none!important}
+
+  /* Search/filter section: compact collapsible-feeling block */
+  .controls-wrap{padding:.45rem .5rem!important}
+  .panel{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:.35rem!important;
+    padding:.45rem!important;
+    border-left:0!important;
+    border-right:0!important;
+  }
+  .panel label.search-label{grid-column:1/-1!important}
+  .panel span{font-size:.48rem!important;letter-spacing:.12em!important}
+  .panel input,.panel select{
+    min-height:34px!important;
+    padding:.38rem .42rem!important;
+    font-size:.72rem!important;
+    border-radius:0!important;
+  }
+  .panel .search-label input{min-height:36px!important}
+
+  /* Combine all quick buttons visually: 3 x 3/compact */
+  .collection-buttons,.smart-filter-buttons{
+    display:grid!important;
+    grid-template-columns:repeat(3,1fr)!important;
+    gap:.35rem!important;
+    margin:.35rem .5rem!important;
+  }
+  .collection-buttons button,.smart-filter-buttons button{
+    min-height:36px!important;
+    border-radius:0!important;
+    font-size:.67rem!important;
+    padding:.3rem .18rem!important;
+  }
+
+  /* Square-ish fragrance tiles with bottle image */
+  .grid{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:.32rem!important;
+    padding:0 .45rem!important;
+  }
+  .card{
+    aspect-ratio:1 / 1!important;
+    min-height:0!important;
+    padding:.35rem!important;
+    overflow:hidden!important;
+    position:relative!important;
+  }
+  .card-top{align-items:flex-start!important}
+  .badge-row{max-width:54%!important}
+  .collection-pill{
+    position:absolute!important;
+    top:.32rem!important;
+    right:.32rem!important;
+    max-width:52%!important;
+    background:transparent!important;
+    border:0!important;
+    color:var(--muted)!important;
+    text-align:right!important;
+    padding:0!important;
+    font-size:.43rem!important;
+  }
+  .new-badge,.status{
+    font-size:.42rem!important;
+    padding:.08rem .14rem!important;
+  }
+  .new-badge.staff{display:none!important}
+  .tile-image{
+    height:34%!important;
+    margin:.12rem 0 .12rem!important;
+    align-items:center!important;
+  }
+  .tile-image img{max-height:100%!important}
+  .house{
+    font-size:.45rem!important;
+    line-height:1!important;
+    margin:.03rem 0 .08rem!important;
+    color:var(--wood)!important;
+  }
+  .card h3{
+    font-size:.66rem!important;
+    line-height:1.02!important;
+    margin:0 0 .08rem!important;
+    -webkit-line-clamp:2!important;
+  }
+  .accords{
+    font-size:.5rem!important;
+    line-height:1.05!important;
+    margin:0 0 .18rem!important;
+  }
+  .prices{
+    position:absolute!important;
+    left:.32rem!important;
+    right:.32rem!important;
+    bottom:.32rem!important;
+    gap:.12rem!important;
+  }
+  .price-add,.price-unavailable{
+    min-height:28px!important;
+    padding:.12rem .02rem!important;
+  }
+  .price-add strong,.price-unavailable strong{font-size:.52rem!important}
+  .price-add span,.price-unavailable span{font-size:.36rem!important}
+
+  /* Packs: show more items in less height */
+  .pack-card{min-width:72vw!important;padding:.65rem!important}
+  .pack-card h3{font-size:.95rem!important}
+  .pack-card p{font-size:.74rem!important}
+  .pack-card ul{font-size:.7rem!important;max-height:145px!important}
+}
+
+@media(max-width:390px){
+  .brand-wordmark span{font-size:1.05rem!important}
+  .grid{gap:.25rem!important}
+  .card{padding:.28rem!important}
+  .tile-image{height:31%!important}
+  .card h3{font-size:.61rem!important}
+  .accords{font-size:.46rem!important}
+}

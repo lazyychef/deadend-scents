@@ -685,11 +685,15 @@
     filtered.forEach(f=>{
       const card=document.createElement('article'); card.className=isNewArrival(f)?'card new-card':'card';
       const linkLabel=f.fragranticaUrl && !f.fragranticaUrl.includes('/search/') ? 'Fragrantica page' : 'Fragrantica search';
+      const imageUrl = String(f.imageUrl || '').trim();
+      const hasImage = /^https?:\/\//i.test(imageUrl);
+      card.classList.toggle('has-tile-image', hasImage);
       card.innerHTML=`
         <div class="card-top">
           <span class="badge-row">${isNewArrival(f)?'<span class="new-badge">New</span>':''}${f.staffPick?'<span class="new-badge staff">Staff Pick</span>':''}</span>
           <span class="collection-pill ${collectionClass(f.collection)}">${escapeHtml(f.collection || 'Type')}</span>
         </div>
+        ${hasImage ? `<div class="tile-image"><img src="${escapeAttr(imageUrl)}" alt="${escapeAttr((f.house ? f.house + ' ' : '') + f.name)} bottle" loading="lazy" onerror="this.closest('.tile-image').remove(); this.closest('.card').classList.remove('has-tile-image');"></div>` : ''}
         <p class="house">${escapeHtml(f.house || '')}</p>
         <h3>${escapeHtml(f.name)}</h3>
         ${shouldShowInspiration(f) ? `<p class="inspo"><span>Inspired by</span>${escapeHtml(f.inspiration)}</p>` : ''}
