@@ -87,7 +87,7 @@
     const days = Number(state.settings?.newArrivalDays || 45);
     const rawDate=normaliseDate(item['Added Date'] || item['Purchase Date'] || '');
     const d = rawDate ? new Date(rawDate + 'T00:00:00') : null;
-    if(!Number.isFinite(d.getTime())) return false;
+    if(!d || !Number.isFinite(d.getTime())) return false;
     return ((Date.now() - d.getTime()) / 86400000) <= days;
   }
 

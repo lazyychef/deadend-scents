@@ -197,3 +197,27 @@ body{background:radial-gradient(circle at 18% 0%,rgba(200,164,77,.12),transparen
   .brand-mark{width:54px!important;height:54px!important;min-width:54px!important}
   .brand-logo{width:54px!important;height:54px!important}
 }
+
+
+/* V6.0.4 quick filter colours */
+.collection-buttons button[data-special="women"]{
+  border-color:rgba(255,135,190,.42);
+  background:rgba(255,135,190,.15);
+  color:#ffd8ea;
+}
+.collection-buttons button[data-special="new"]{
+  border-color:rgba(255,255,255,.46);
+  background:rgba(255,255,255,.10);
+  color:#fffaf0;
+}
+.collection-buttons button[data-special="staff"]{
+  border-color:rgba(0,0,0,.52);
+  background:rgba(0,0,0,.34);
+  color:#f0d372;
+}
+.collection-buttons button[data-special="women"].active,
+.collection-buttons button[data-special="new"].active,
+.collection-buttons button[data-special="staff"].active{
+  box-shadow:0 0 0 2px rgba(255,255,255,.10) inset;
+  filter:brightness(1.18);
+}
