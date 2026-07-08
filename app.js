@@ -676,8 +676,11 @@
     if(!filtered.length){ grid.innerHTML='<div class="empty">No fragrances match that search. Try “fresh”, “vanilla”, “date” or “summer”.</div>'; return; }
     const frag=document.createDocumentFragment();
     filtered.forEach(f=>{
-      const card=document.createElement('article'); card.className=isNewArrival(f)?'card new-card':'card';
-      const linkLabel=f.fragranticaUrl && !f.fragranticaUrl.includes('/search/') ? 'Fragrantica page' : 'Fragrantica search';
+      const card=document.createElement('article');
+      const imageUrl=String(f.imageUrl || '').trim();
+      const hasImage=/^https?:\/\//i.test(imageUrl);
+      card.className=(isNewArrival(f)?'card new-card':'card') + (hasImage ? ' has-image' : '');
+      if(hasImage) card.style.setProperty('--image-url', `url("${imageUrl.replace(/"/g, '%22')}")`);
       card.innerHTML=`
         <div class="card-top">
           <span class="badge-row">${isNewArrival(f)?'<span class="new-badge">New</span>':''}${f.staffPick?'<span class="new-badge staff">Staff Pick</span>':''}</span>
@@ -687,7 +690,7 @@
         <p class="house">${escapeHtml(f.house || '')}</p>
         <h3>${escapeHtml(f.name)}</h3>
         ${shouldShowInspiration(f) ? `<p class="inspo"><span>Inspired by</span>${escapeHtml(f.inspiration)}</p>` : ''}
-        <p class="accords">${escapeHtml(f.accords || f.category || '')}</p>
+        <p class="accords">${escapeHtml(f.notes || f.accords || f.category || '')}</p>
         <div class="prices">${priceButton(f,'3mL',f.p3)}${priceButton(f,'5mL',f.p5)}${priceButton(f,'10mL',f.p10)}</div>
         <div class="card-links">${f.fragranticaUrl?`<a class="mini-link" href="${escapeAttr(f.fragranticaUrl)}" target="_blank" rel="noopener">Fragrantica ↗</a>`:''}</div>`;
       frag.appendChild(card);
@@ -887,8 +890,22 @@
     if(btn.dataset.special) setSpecialFilter(btn.dataset.special);
     else setCollectionFilter(btn.dataset.collection || 'all');
   }));
-  $('copyOrder').addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText($('orderText').value); $('copyOrder').textContent='Copied'; trackEvent('copy_order_message', { cart_items: cart.length }); setTimeout(()=>$('copyOrder').textContent='Copy order message',1400); }catch(e){ $('orderText').select(); document.execCommand('copy'); } });
+  const copyOrderBtn=$('copyOrder'); if(copyOrderBtn) copyOrderBtn.addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText($('orderText').value); copyOrderBtn.textContent='Copied'; trackEvent('copy_order_message', { cart_items: cart.length }); setTimeout(()=>copyOrderBtn.textContent='Copy order',1400); }catch(e){ $('orderText').select(); document.execCommand('copy'); } });
   const clearCart=$('clearCart'); if(clearCart) clearCart.addEventListener('click',()=>{ trackEvent('clear_cart', { cart_items: cart.length }); cart.length=0; updateCart(); });
   if(floatingCart) floatingCart.addEventListener('click',()=>{ trackEvent('floating_cart_click', { cart_items: cart.length }); const order=$('order'); if(order) order.scrollIntoView({behavior:'smooth',block:'start'}); });
+
+  const hamburger=document.querySelector('.hamburger');
+  const mobileMenu=document.getElementById('mobileMenu');
+  if(hamburger && mobileMenu){
+    hamburger.addEventListener('click',()=>{
+      const open=mobileMenu.classList.toggle('open');
+      hamburger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    mobileMenu.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>{
+      mobileMenu.classList.remove('open');
+      hamburger.setAttribute('aria-expanded','false');
+    }));
+  }
+
   init();
 })();
