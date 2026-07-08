@@ -38,8 +38,8 @@ main{padding:8px}.quick-stats{display:grid;grid-template-columns:repeat(4,1fr);g
 .collection-buttons button{min-height:26px;font-family:'Cormorant Garamond',Georgia,serif;font-size:13px;font-weight:700;text-transform:lowercase;letter-spacing:0;}
 .search-box input{padding:7px;font-size:12px;}
 .featured-bottle-wrap{min-height:245px;}
-.featured-bottle-wrap img{max-height:380px;max-width:220%;transform:scale(2);}
-.weekly-ribbon{left:auto;right:-34px;top:22px;transform:rotate(36deg);width:150px;}
+.featured-bottle-wrap img{max-height:342px;max-width:210%;transform:scale(1.8);}
+.weekly-ribbon{left:-28px;right:auto;top:14px;transform:rotate(-35deg);width:140px;}
 .price-add,.pack-add{background:var(--rust)!important;background-image:none!important;border-color:#7b3d22!important;color:#fff!important;}
 .price-add.added{background:#7b3d22!important;}
 .card{min-height:214px;padding:6px;}
