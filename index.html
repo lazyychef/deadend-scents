@@ -19,6 +19,9 @@
   <script type="application/ld+json" id="siteSchema">
   {"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://deadendscents.com/#organization","name":"DeadEnd Scents","url":"https://deadendscents.com/","sameAs":["https://instagram.com/deadendscents","https://m.me/nickstreet09/"]},{"@type":"WebSite","@id":"https://deadendscents.com/#website","url":"https://deadendscents.com/","name":"DeadEnd Scents","publisher":{"@id":"https://deadendscents.com/#organization"},"potentialAction":{"@type":"SearchAction","target":"https://deadendscents.com/?q={search_term_string}#catalogue","query-input":"required name=search_term_string"}},{"@type":"Store","@id":"https://deadendscents.com/#store","name":"DeadEnd Scents","url":"https://deadendscents.com/","description":"Premium fragrance decants and discovery samples in Australia.","areaServed":"AU","priceRange":"$","currenciesAccepted":"AUD","paymentAccepted":"Bank transfer, PayID, PayPal"}]}
   </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body id="top">
@@ -49,6 +52,17 @@
       <div><strong>glass</strong><span>vials</span></div>
     </section>
 
+
+    <section id="featured" class="featured-section">
+      <div class="hero-copy">
+        <p class="eyebrow">DeadEnd Scents</p>
+        <h1>Fragrance samples without the full-bottle spend.</h1>
+        <p>Try designer, niche, Middle Eastern and inspired scents in simple sample sizes.</p>
+      </div>
+      <div id="featuredGrid" class="featured-grid"><div class="empty">Loading fragrance of the week...</div></div>
+    </section>
+
+
     <section class="search-section" aria-label="Search and filters">
       <label class="search-box">
         <span>Search fragrance samples</span>
@@ -72,23 +86,6 @@
       </div>
     </section>
 
-    <section id="featured" class="featured-section">
-      <div class="hero-copy">
-        <p class="eyebrow">DeadEnd Scents</p>
-        <h1>Fragrance samples without the full-bottle spend.</h1>
-        <p>Try designer, niche, Middle Eastern and inspired scents in simple sample sizes.</p>
-      </div>
-      <div id="featuredGrid" class="featured-grid"><div class="empty">Loading fragrance of the week...</div></div>
-    </section>
-
-    <section id="packs" class="section">
-      <div class="section-title">
-        <p class="eyebrow">Discovery Packs</p>
-        <h2>Pick a set and sample the style.</h2>
-      </div>
-      <div id="packsGrid" class="packs-grid"></div>
-    </section>
-
     <section id="catalogue" class="section catalogue-section">
       <div class="section-title row-title">
         <div>
@@ -99,6 +96,15 @@
       </div>
       <div id="catalogueGrid" class="grid"><div class="empty">Loading catalogue from Google Sheets...</div></div>
     </section>
+
+    <section id="packs" class="section">
+      <div class="section-title">
+        <p class="eyebrow">Discovery Packs</p>
+        <h2>Pick a set and sample the style.</h2>
+      </div>
+      <div id="packsGrid" class="packs-grid"></div>
+    </section>
+
 
     <section id="order" class="section order-section">
       <div class="order-card">

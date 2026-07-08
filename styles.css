@@ -26,3 +26,40 @@ main{padding:8px}.quick-stats{display:grid;grid-template-columns:repeat(4,1fr);g
 .card .price-add{display:flex;flex-direction:column;align-items:center;justify-content:center}
 @media (min-width:700px){body{font-size:15px}main{max-width:1180px;margin:0 auto;padding:16px}.site-header{grid-template-columns:1fr auto auto;padding:10px 18px}.contact-buttons{grid-column:auto;display:flex}.hamburger{display:none}.mobile-menu{display:flex!important;grid-column:auto;background:transparent;border:0}.mobile-menu a{border:0;padding:8px 10px}.featured-section{grid-template-columns:1fr 1.2fr}.grid{grid-template-columns:repeat(4,1fr)}.pack-card{flex-basis:31%}.card{min-height:230px}}
 @media (max-width:374px){.brand-text{font-size:19px}.grid{gap:4px}.card{padding:5px;min-height:200px}.card h3{font-size:12px}.featured-section{grid-template-columns:1fr}.hero-copy h1{font-size:24px}.featured-bottle-wrap img{max-height:210px}}
+
+/* Phase 1 mobile order + styling tweaks */
+.brand{position:relative;min-height:60px;width:100%;}
+.brand-logo{width:58px;height:58px;border-radius:50%;}
+.brand-text{position:absolute;left:50%;transform:translateX(-50%);font-family:'Cormorant Garamond',Georgia,serif;font-size:30px;font-weight:700;letter-spacing:.01em;text-align:center;max-width:210px;}
+.site-header{grid-template-columns:1fr auto;padding:8px 10px;}
+.quick-stats{margin-bottom:8px;}
+.featured-section{margin-bottom:8px;}
+.search-section{margin:8px 0 10px;padding:6px;width:100%;}
+.collection-buttons button{min-height:26px;font-family:'Cormorant Garamond',Georgia,serif;font-size:13px;font-weight:700;text-transform:lowercase;letter-spacing:0;}
+.search-box input{padding:7px;font-size:12px;}
+.featured-bottle-wrap{min-height:245px;}
+.featured-bottle-wrap img{max-height:380px;max-width:220%;transform:scale(2);}
+.weekly-ribbon{left:auto;right:-34px;top:22px;transform:rotate(36deg);width:150px;}
+.price-add,.pack-add{background:var(--rust)!important;background-image:none!important;border-color:#7b3d22!important;color:#fff!important;}
+.price-add.added{background:#7b3d22!important;}
+.card{min-height:214px;padding:6px;}
+.card-top{justify-content:flex-start;align-items:flex-start;gap:3px;min-height:20px;}
+.badge-row{margin-left:auto;justify-content:flex-end;}
+.new-badge{font-size:7px;text-transform:lowercase;padding:2px 3px;}
+.card .collection-pill{order:-1;text-align:left;text-transform:lowercase;font-family:'Cormorant Garamond',Georgia,serif;font-size:9px;font-weight:700;letter-spacing:0;max-width:68px;background:transparent;border:0;padding:0;color:var(--rust);}
+.inspo span{font-size:7.5px;text-transform:lowercase;}
+.card .prices{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-top:5px;}
+.card .price-add{min-height:42px;padding:4px 1px;}
+.card .price-add strong{font-size:10.5px;line-height:1.05;}
+.card .price-add span,.card .price-add small{font-size:8px;line-height:1.05;}
+.card-links .mini-link{font-size:9px;text-transform:lowercase;}
+@media (min-width:700px){
+  .brand-text{position:static;transform:none;max-width:none;font-size:34px;}
+  .brand{min-height:58px;}
+}
+@media (max-width:374px){
+  .brand-logo{width:52px;height:52px;}
+  .brand-text{font-size:25px;max-width:180px;}
+  .card{min-height:224px;}
+  .card .price-add{min-height:40px;}
+}
