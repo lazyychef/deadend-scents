@@ -83,129 +83,77 @@
   </nav>
 
   <header class="hero" id="featured">
-    <div class="hero-card">
-      <div class="hero-copy">
-        <div class="line-art" aria-hidden="true"><span></span><i></i><b></b></div>
-        <p class="eyebrow">Authentic fragrances · Your way</p>
-        <h1>Fragrance samples without the full-bottle spend.</h1>
-        <p class="subhead">Designer, niche, Middle Eastern and inspired decants.</p>
-        <div class="hero-actions removed-mobile-primary" aria-label="Shop actions">
-          <a class="button primary" href="#packs">Shop discovery packs</a>
-          <a class="button" href="#catalogue">Browse catalogue</a>
-        </div>
-        <div class="hero-benefits" aria-label="DeadEnd Scents benefits">
-          <span><i class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v5l-4.8 8.7A3 3 0 0 0 7.8 21h8.4a3 3 0 0 0 2.6-4.3L14 8V3"/><path d="M7.2 15h9.6"/></svg></i><strong id="stat-count">0</strong> fragrances</span>
-          <span><i class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M10 2h4M11 2v6l-4 3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-9l-4-3V2"/><path d="M8 14h8"/></svg></i>3mL · 5mL · 10mL</span>
-          <span><i class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><path d="M7 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM18 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/></svg></i>$10 express post</span>
-          <span><i class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M10 2h4v3h-4zM9 5h6v3l1.5 2v10a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2V10L9 8z"/><path d="M8 14h8"/></svg></i>Glass vials</span>
-        </div>
+    <section class="hero-copy" aria-label="DeadEnd Scents intro">
+      <p class="eyebrow">Authentic fragrances · Your way</p>
+      <h1>Fragrance samples without the full-bottle spend.</h1>
+      <p class="subhead">Designer, niche, Middle Eastern and inspired decants in 3mL, 5mL and 10mL.</p>
+      <div class="hero-benefits" aria-label="DeadEnd Scents benefits">
+        <span><i class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v5l-4.8 8.7A3 3 0 0 0 7.8 21h8.4a3 3 0 0 0 2.6-4.3L14 8V3"/><path d="M7.2 15h9.6"/></svg></i><strong id="stat-count">0</strong> options</span>
+        <span><i class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M10 2h4M11 2v6l-4 3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-9l-4-3V2"/><path d="M8 14h8"/></svg></i>3mL · 5mL · 10mL</span>
+        <span><i class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><path d="M7 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM18 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/></svg></i>$10 express post</span>
+        <span><i class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M10 2h4v3h-4zM9 5h6v3l1.5 2v10a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2V10L9 8z"/><path d="M8 14h8"/></svg></i>Glass vials</span>
       </div>
-    </div>
-    <div id="featuredGrid" class="featured-grid hero-feature full-width-feature"><div class="empty">Loading featured fragrance…</div></div>
+    </section>
+    <div id="featuredGrid" class="featured-grid"><div class="empty">Loading featured fragrance…</div></div>
   </header>
 
   <main>
     <section class="controls-wrap landing-search" aria-label="Search and filters">
+      <p class="section-kicker">Search & Filter</p>
       <div class="panel">
-        <label class="search-label">
-          <span>Search</span>
-          <input id="search" type="search" placeholder="Search fragrances">
-        </label>
-        <label>
-          <span>Scent Style</span>
-          <select id="categoryFilter"><option value="all">All scent styles</option></select>
-        </label>
-        <label>
-          <span>Type</span>
-          <select id="collectionFilter"><option value="all">All types</option></select>
-        </label>
-        <label>
-          <span>Occasion</span>
-          <select id="occasionFilter"><option value="all">All occasions</option></select>
-        </label>
-        <label>
-          <span>Sort by</span>
-          <select id="sortBy">
-            <option value="newest">Newest added</option>
-            <option value="alphabetical">Alphabetical</option>
-            <option value="house">House</option>
-            <option value="inspirationHouse">Inspiration house</option>
-            <option value="priceLow">Price: low to high</option>
-            <option value="priceHigh">Price: high to low</option>
-          </select>
-        </label>
+        <label class="search-label"><span>Search</span><input id="search" type="search" placeholder="Search fragrances"></label>
+        <label><span>Type</span><select id="collectionFilter"><option value="all">All types</option></select></label>
+        <label><span>Sort by</span><select id="sortBy"><option value="newest">Newest added</option><option value="alphabetical">Alphabetical</option><option value="house">House</option><option value="inspirationHouse">Inspiration house</option><option value="priceLow">Price: low to high</option><option value="priceHigh">Price: high to low</option></select></label>
+        <label class="visually-hidden"><span>Scent Style</span><select id="categoryFilter"><option value="all">All scent styles</option></select></label>
+        <label class="visually-hidden"><span>Occasion</span><select id="occasionFilter"><option value="all">All occasions</option></select></label>
       </div>
-      <div class="collection-buttons smart-filter-buttons filter-button-grid" aria-label="Quick filters">
-        <button type="button" data-collection="all" class="active">All</button>
-        <button type="button" data-collection="Designer">Designer</button>
-        <button type="button" data-collection="Niche">Niche</button>
-        <button type="button" data-collection="Middle Eastern">Middle Eastern</button>
-        <button type="button" data-collection="Inspired">Inspired</button>
-        <button type="button" data-smart-filter="women">Women</button>
-        <button type="button" data-smart-filter="staff">Staff Pick</button>
-        <button type="button" data-smart-filter="new">New</button>
+      <div class="filter-button-grid" aria-label="Quick filters">
+        <div class="collection-buttons">
+          <button type="button" data-collection="all" class="active">All</button>
+          <button type="button" data-collection="Designer">Designer</button>
+          <button type="button" data-collection="Niche">Niche</button>
+          <button type="button" data-collection="Middle Eastern">Middle Eastern</button>
+          <button type="button" data-collection="Inspired">Inspired</button>
+        </div>
+        <div class="smart-filter-buttons">
+          <button type="button" data-smart-filter="women">Women</button>
+          <button type="button" data-smart-filter="staff">Staff Pick</button>
+          <button type="button" data-smart-filter="new">New</button>
+        </div>
       </div>
     </section>
 
     <section id="catalogue" class="section">
       <div class="section-head">
-        <div>
-          <p class="eyebrow">Samples</p>
-          <h2>Shop the catalogue</h2>
-        </div>
-        <p class="result-line"><span id="resultCount">0</span> matching samples</p>
+        <div><p class="eyebrow">Samples</p><h2>Shop the catalogue</h2></div>
+        <p class="result-line"><span id="resultCount">0</span> options</p>
       </div>
       <div id="catalogueGrid" class="grid"><div class="empty">Loading fragrances…</div></div>
     </section>
 
     <section id="packs" class="section">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Discovery Packs</p>
-          <h2>Pick your vibe</h2>
-        </div>
-        <p class="result-line">Fixed curated packs · priced from live catalogue</p>
-      </div>
+      <div class="section-head"><div><p class="eyebrow">Discovery Packs</p><h2>Pick your vibe</h2></div></div>
       <div id="packsGrid" class="packs-grid"></div>
     </section>
 
     <section id="order" class="section order-section">
       <div class="order-card">
-        <p class="eyebrow">Cart / Order</p>
-        <h2>Your sample list</h2>
-        <p>Tap a size/price on any fragrance to add it here. $10 express postage is added to orders. Shipping Australia wide in glass vials.</p>
+        <p class="eyebrow">Cart / Order</p><h2>Your sample list</h2>
+        <p>Tap a 3mL, 5mL or 10mL button to add it. $10 express postage is added to orders.</p>
         <div id="cartItems" class="cart-items empty-cart">No samples added yet.</div>
         <div class="shipping-summary"><span>Express postage</span><strong>$10</strong></div>
         <div class="cart-total"><span>Estimated total</span><strong id="cartTotal">$0</strong></div>
-        <div class="contact-row cart-actions">
-          <a id="sendWhatsappCart" class="button primary" href="https://wa.me/61434432948" target="_blank" rel="noopener">Send WhatsApp order</a>
-          <a id="messengerLink" class="button" href="https://m.me/nickstreet09/" target="_blank" rel="noopener">Open Messenger</a>
-          <a id="instagramLink" class="button" href="https://instagram.com/deadendscents" target="_blank" rel="noopener">Instagram</a>
-        </div>
+        <div class="contact-row cart-actions"><a id="sendWhatsappCart" class="button primary" href="https://wa.me/61434432948" target="_blank" rel="noopener">Send WhatsApp order</a><a id="messengerLink" class="button" href="https://m.me/nickstreet09/" target="_blank" rel="noopener">Open Messenger</a><a id="instagramLink" class="button" href="https://instagram.com/deadendscents" target="_blank" rel="noopener">Instagram</a></div>
         <textarea id="orderText" readonly>Hi DeadEnd Scents, I’d like to order some samples:</textarea>
-        <div class="contact-row cart-actions">
-          <button id="copyOrder" class="button" type="button">Copy order message</button>
-          <button id="clearCart" class="button danger" type="button">Clear cart</button>
-        </div>
+        <div class="contact-row cart-actions"><button id="copyOrder" class="button" type="button">Copy order message</button><button id="clearCart" class="button danger" type="button">Clear cart</button></div>
       </div>
     </section>
   </main>
 
-  <button id="floatingCart" class="floating-cart" type="button" aria-label="View cart">
-    <span>Cart</span>
-    <strong id="floatingCartCount">0</strong>
-    <em id="floatingCartTotal">$0</em>
-  </button>
-
+  <button id="floatingCart" class="floating-cart" type="button" aria-label="View cart"><strong id="floatingCartCount">0</strong><em id="floatingCartTotal">$0</em></button>
   <footer>DeadEnd Scents · Best value premium decants Australia · Glass vials</footer>
 
-  <noscript>
-    <section class="seo-fallback" aria-label="DeadEnd Scents catalogue summary">
-      <h2>Fragrance samples Australia</h2>
-      <p>DeadEnd Scents sells designer, niche, Middle Eastern and inspired fragrance decants in 3mL, 5mL and 10mL sizes with Australia-wide express postage.</p>
-      <p>Browse Bujairami samples, Lattafa samples, Mancera samples, niche fragrance samples and curated Discovery Packs.</p>
-    </section>
-  </noscript>
+  <noscript><section class="seo-fallback" aria-label="DeadEnd Scents catalogue summary"><h2>Fragrance samples Australia</h2><p>DeadEnd Scents sells designer, niche, Middle Eastern and inspired fragrance decants in 3mL, 5mL and 10mL sizes with Australia-wide express postage.</p></section></noscript>
   <script src="app.js"></script>
 
   <script>

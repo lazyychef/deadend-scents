@@ -607,37 +607,24 @@
     if(!f){ featuredGrid.innerHTML = '<div class="empty">No featured fragrance available.</div>'; return; }
     const active = isFeaturedDiscountActive(f);
     const discountPct = weeklyDiscountPercent();
-    const inspirationLine = shouldShowInspiration(f) ? `<p class="featured-inspo">Inspired by <strong>${escapeHtml(f.inspiration)}</strong></p>` : `<p class="featured-inspo">${escapeHtml(f.collection || 'Featured fragrance')}</p>`;
-    const note = f.featuredNote || f.notes || 'This week’s highlighted fragrance.';
+    const note = f.featuredNote || f.notes || 'A bold leather fragrance balanced by saffron and grapefruit with a clean, confident everyday edge.';
     const imageUrl = String(f.imageUrl || '').trim();
     const hasImage = /^https?:\/\//i.test(imageUrl);
     const featureVisual = hasImage
-      ? `<div class="featured-bottle-wrap"><img src="${escapeAttr(imageUrl)}" alt="${escapeAttr((f.house ? f.house + ' ' : '') + f.name)} bottle" loading="lazy" onerror="this.closest('.featured-bottle-wrap').outerHTML='<div class=&quot;featured-mark&quot;>${escapeAttr(f.emojis || '✨')}</div>';"></div>`
+      ? `<div class="featured-bottle-wrap"><img src="${escapeAttr(imageUrl)}" alt="${escapeAttr((f.house ? f.house + ' ' : '') + f.name)} bottle" loading="eager" onerror="this.closest('.featured-bottle-wrap').outerHTML='<div class=&quot;featured-mark&quot;>${escapeAttr(f.emojis || '✨')}</div>'; this.closest('.featured-card').classList.remove('has-bottle-image');"></div>`
       : `<div class="featured-mark">${escapeHtml(f.emojis || '✨')}</div>`;
     featuredGrid.innerHTML = `
       <article class="featured-card weekly-card ${hasImage ? 'has-bottle-image' : ''} ${active ? 'discount-active' : ''}">
         ${active ? `<div class="weekly-ribbon">${escapeHtml(discountPct)}% OFF</div>` : ''}
-        <div class="featured-main ${hasImage ? 'with-image' : ''}">
-          ${featureVisual}
-          <div class="featured-info">
-            <div class="featured-label">Fragrance of the Week</div>
-            <h3>${escapeHtml(f.name)}</h3>
-            <p class="featured-house">${escapeHtml(f.house || '')}</p>
-            <p class="featured-accords">${escapeHtml(f.accords || f.category || f.collection || '')}</p>
-            <div class="collection-pill ${collectionClass(f.collection)}">${escapeHtml(f.collection || 'Type')}</div>
-            ${inspirationLine}
-            <p class="featured-desc">${escapeHtml(note)}</p>
-          </div>
+        <div class="featured-info">
+          <div class="featured-label">Fragrance of the Week</div>
+          <h3>${escapeHtml(f.name)}</h3>
+          <p class="featured-house">${escapeHtml(f.house || '')}</p>
+          <p class="featured-accords">${escapeHtml(f.accords || f.category || f.collection || '')}</p>
+          <p class="featured-desc">${escapeHtml(note)}</p>
+          <div class="featured-actions">${priceButton(f,'3mL',f.p3)}${priceButton(f,'5mL',f.p5)}${priceButton(f,'10mL',f.p10)}</div>
         </div>
-        <div class="weekly-offer">
-          <div class="offer-kicker">${active ? `${escapeHtml(discountPct)}% off this week` : 'Featured pick'}</div>
-          <div class="offer-main">${active ? 'Auto-discount applied' : 'Normal pricing'}</div>
-          <div class="offer-ends">${escapeHtml(discountEndsText(f))}</div>
-          <div class="featured-actions">
-            ${priceButton(f,'3mL',f.p3)}${priceButton(f,'5mL',f.p5)}${priceButton(f,'10mL',f.p10)}
-          </div>
-          <a class="feature-cart-button" href="#catalogue" aria-label="View samples for featured fragrance">🛒 Add to cart</a>
-        </div>
+        ${featureVisual}
       </article>`;
     attachCardListeners();
     if (f) trackEvent('featured_fragrance_view', { fragrance_name: f.name, house: f.house, type: f.collection || '' });
@@ -662,7 +649,7 @@
   function setSmartFilter(target){
     activeQuickFilter = String(target || 'all').toLowerCase();
     if(collectionFilter) collectionFilter.value = 'all';
-    document.querySelectorAll('.collection-buttons button[data-collection]').forEach(btn=>btn.classList.toggle('active', String(btn.dataset.collection||'all').toLowerCase()==='all'));
+    document.querySelectorAll('.collection-buttons button').forEach(btn=>btn.classList.toggle('active', String(btn.dataset.collection||'all').toLowerCase()==='all'));
     document.querySelectorAll('.smart-filter-buttons button').forEach(btn=>btn.classList.toggle('active', String(btn.dataset.smartFilter||'').toLowerCase()===activeQuickFilter));
     render();
     trackEvent('quick_smart_filter', { filter_value: activeQuickFilter });
@@ -675,7 +662,7 @@
     const options=[...collectionFilter.options];
     const found=options.find(opt=>collectionMatches(opt.value,target));
     collectionFilter.value = found ? found.value : 'all';
-    document.querySelectorAll('.collection-buttons button[data-collection]').forEach(btn=>btn.classList.toggle('active', String(btn.dataset.collection||'all').toLowerCase()===String(target||'all').toLowerCase()));
+    document.querySelectorAll('.collection-buttons button').forEach(btn=>btn.classList.toggle('active', String(btn.dataset.collection||'all').toLowerCase()===String(target||'all').toLowerCase()));
     render();
     trackEvent('quick_collection_filter', { filter_value: target });
   }
@@ -701,22 +688,11 @@
         ${shouldShowInspiration(f) ? `<p class="inspo"><span>Inspired by</span>${escapeHtml(f.inspiration)}</p>` : ''}
         <p class="accords">${escapeHtml(f.accords || f.category || '')}</p>
         <div class="prices">${priceButton(f,'3mL',f.p3)}${priceButton(f,'5mL',f.p5)}${priceButton(f,'10mL',f.p10)}</div>
-        <div class="card-links">${f.fragranticaUrl?`<a class="mini-link" href="${escapeAttr(f.fragranticaUrl)}" target="_blank" rel="noopener">Fragrantica ↗</a>`:''}</div>`;
+        <div class="card-links"><a class="mini-link" href="${escapeAttr(f.fragranticaUrl || ('https://www.fragrantica.com/search/?query=' + encodeURIComponent((f.house ? f.house + ' ' : '') + f.name)))}" target="_blank" rel="noopener">Fragrantica ↗</a></div>`;
       frag.appendChild(card);
     });
     grid.appendChild(frag); attachCardListeners();
   }
-
-  function catalogueCartButton(f){
-    const options = [['3mL', f.p3], ['5mL', f.p5], ['10mL', f.p10]];
-    const picked = options.find(([size, price]) => parseMoney(price) > 0);
-    if(!picked) return '';
-    const [size, price] = picked;
-    const clean = String(price || '').trim();
-    const discounted = discountedPriceText(clean, f);
-    return `<button class="price-add catalogue-cart-button" type="button" data-name="${escapeAttr(f.name)}" data-house="${escapeAttr(f.house||'')}" data-size="${size}" data-price="${escapeAttr(discounted)}" data-original-price="${escapeAttr(clean)}">🛒 <span>Add to cart</span></button>`;
-  }
-
   function priceButton(f,size,price){
     const clean=String(price||'').trim();
     const disabled=!clean || clean.toUpperCase()==='N/A';
@@ -724,12 +700,12 @@
     const discounted = discountedPriceText(clean, f);
     const active = discounted !== clean;
     const priceMarkup = active ? `<strong><s>${escapeHtml(clean)}</s> ${escapeHtml(discounted)}</strong>` : `<strong>${escapeHtml(clean)}</strong>`;
-    return `<button class="price-add ${active?'weekly-discount':''}" type="button" data-name="${escapeAttr(f.name)}" data-house="${escapeAttr(f.house||'')}" data-size="${size}" data-price="${escapeAttr(discounted)}" data-original-price="${escapeAttr(clean)}">${priceMarkup}<span>${size}</span><small>${active ? (weeklyDiscountPercent() + '% off') : 'Add'}</small></button>`;
+    return `<button class="price-add ${active?'weekly-discount':''}" type="button" aria-label="Add ${escapeAttr(f.name)} ${size} to cart" data-name="${escapeAttr(f.name)}" data-house="${escapeAttr(f.house||'')}" data-size="${size}" data-price="${escapeAttr(discounted)}" data-original-price="${escapeAttr(clean)}">${priceMarkup}<span>${size}</span></button>`;
   }
   function attachCardListeners(){
     document.querySelectorAll('[data-copy]').forEach(btn=>{ if(btn.dataset.bound) return; btn.dataset.bound='1'; btn.addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText(btn.dataset.copy); btn.textContent='Copied'; setTimeout(()=>btn.textContent='Copy name',1200); }catch(e){} }); });
     document.querySelectorAll('.mini-link').forEach(link=>{ if(link.dataset.bound) return; link.dataset.bound='1'; link.addEventListener('click',()=>trackEvent('external_fragrantica_click', { link_text: link.textContent || 'Fragrantica' })); });
-    document.querySelectorAll('.price-add').forEach(btn=>{ if(btn.dataset.bound) return; btn.dataset.bound='1'; btn.addEventListener('click',()=>{ addToCart({type:'sample',name:btn.dataset.name,house:btn.dataset.house,size:btn.dataset.size,price:btn.dataset.price}); trackEvent('add_to_cart', { fragrance_name: btn.dataset.name, house: btn.dataset.house, sample_size: btn.dataset.size, value: parseMoney(btn.dataset.price), currency: 'AUD' }); btn.classList.add('added'); const old=btn.querySelector('small').textContent; btn.querySelector('small').textContent='Added'; setTimeout(()=>{btn.classList.remove('added'); btn.querySelector('small').textContent=old;},900); }); });
+    document.querySelectorAll('.price-add').forEach(btn=>{ if(btn.dataset.bound) return; btn.dataset.bound='1'; btn.addEventListener('click',()=>{ addToCart({type:'sample',name:btn.dataset.name,house:btn.dataset.house,size:btn.dataset.size,price:btn.dataset.price}); trackEvent('add_to_cart', { fragrance_name: btn.dataset.name, house: btn.dataset.house, sample_size: btn.dataset.size, value: parseMoney(btn.dataset.price), currency: 'AUD' }); btn.classList.add('added'); setTimeout(()=>{btn.classList.remove('added');},900); }); });
   }
   function findFragranceByToken(token){
     const raw = String(token || '').trim();
@@ -768,10 +744,12 @@
       const div=document.createElement('article'); div.className='pack-card';
       const title = pack.title || pack.name || 'Discovery Pack';
       const itemLines=items.map(i=>`<li><strong>${escapeHtml(i.name)}</strong><span>${escapeHtml(i.house || '')}${i.category ? ' · ' + escapeHtml(i.category) : ''}</span></li>`).join('');
-      div.innerHTML=`<div class="pack-tag">${escapeHtml(pack.tagline || 'Curated discovery pack')}</div><h3>${escapeHtml(title)}</h3><p>${escapeHtml(pack.description || pack.desc || '')}</p><ul>${itemLines}</ul><div class="pack-price"><strong>${money(pricing.final)}</strong><span>Normally ${money(pricing.value)} · Save ${money(pricing.save)}<br>${items.length} x ${escapeHtml(pricing.size)}</span></div><button class="button primary pack-add" type="button" data-pack="${escapeAttr(title)}" data-price="${escapeAttr(money(pricing.final))}">Add pack</button>`;
+      const thumbs = items.slice(0,4).map(i=>i.imageUrl?`<img src="${escapeAttr(i.imageUrl)}" alt="" loading="lazy">`: '').join('');
+      div.innerHTML=`<button class="pack-summary" type="button" aria-expanded="false"><span><strong>${escapeHtml(title)}</strong><em>${items.length} samples</em></span><span class="pack-thumbs">${thumbs}</span><b>›</b></button><div class="pack-details"><div class="pack-tag">${escapeHtml(pack.tagline || 'Curated discovery pack')}</div><p>${escapeHtml(pack.description || pack.desc || '')}</p><ul>${itemLines}</ul><div class="pack-price"><strong>${money(pricing.final)}</strong><span>Normally ${money(pricing.value)} · Save ${money(pricing.save)}<br>${items.length} x ${escapeHtml(pricing.size)}</span></div><button class="button primary pack-add" type="button" data-pack="${escapeAttr(title)}" data-price="${escapeAttr(money(pricing.final))}">Add pack</button></div>`;
       packsGrid.appendChild(div);
     });
-    document.querySelectorAll('.pack-add').forEach(btn=>{ if(btn.dataset.bound) return; btn.dataset.bound='1'; btn.addEventListener('click',()=>{ addToCart({type:'pack',name:btn.dataset.pack,size:'Pack',price:btn.dataset.price,house:'Curated discovery pack'}); trackEvent('discovery_pack_add', { pack_name: btn.dataset.pack, value: parseMoney(btn.dataset.price), currency: 'AUD' }); btn.textContent='Added to cart'; setTimeout(()=>btn.textContent='Add pack',1000); }); });
+    document.querySelectorAll('.pack-summary').forEach(btn=>{ if(btn.dataset.bound) return; btn.dataset.bound='1'; btn.addEventListener('click',()=>{ const card=btn.closest('.pack-card'); const open=card.classList.toggle('open'); btn.setAttribute('aria-expanded', open ? 'true' : 'false'); }); });
+    document.querySelectorAll('.pack-add').forEach(btn=>{ if(btn.dataset.bound) return; btn.dataset.bound='1'; btn.addEventListener('click',()=>{ addToCart({type:'pack',name:btn.dataset.pack,size:'Pack',price:btn.dataset.price,house:'Curated discovery pack'}); trackEvent('discovery_pack_add', { pack_name: btn.dataset.pack, value: parseMoney(btn.dataset.price), currency: 'AUD' }); btn.textContent='Added'; setTimeout(()=>btn.textContent='Add pack',1000); }); });
   }
   function addToCart(item){ cart.push(item); updateCart(); }
   function buildOrderMessage(){
