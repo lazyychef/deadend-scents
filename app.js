@@ -636,6 +636,7 @@
           <div class="featured-actions">
             ${priceButton(f,'3mL',f.p3)}${priceButton(f,'5mL',f.p5)}${priceButton(f,'10mL',f.p10)}
           </div>
+          <a class="feature-cart-button" href="#catalogue" aria-label="View samples for featured fragrance">🛒 Add to cart</a>
         </div>
       </article>`;
     attachCardListeners();
