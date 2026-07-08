@@ -701,11 +701,23 @@
         ${shouldShowInspiration(f) ? `<p class="inspo"><span>Inspired by</span>${escapeHtml(f.inspiration)}</p>` : ''}
         <p class="accords">${escapeHtml(f.accords || f.category || '')}</p>
         <div class="prices">${priceButton(f,'3mL',f.p3)}${priceButton(f,'5mL',f.p5)}${priceButton(f,'10mL',f.p10)}</div>
+        ${catalogueCartButton(f)}
         <div class="card-links">${f.fragranticaUrl?`<a class="mini-link" href="${escapeAttr(f.fragranticaUrl)}" target="_blank" rel="noopener">Fragrantica ↗</a>`:''}</div>`;
       frag.appendChild(card);
     });
     grid.appendChild(frag); attachCardListeners();
   }
+
+  function catalogueCartButton(f){
+    const options = [['3mL', f.p3], ['5mL', f.p5], ['10mL', f.p10]];
+    const picked = options.find(([size, price]) => parseMoney(price) > 0);
+    if(!picked) return '';
+    const [size, price] = picked;
+    const clean = String(price || '').trim();
+    const discounted = discountedPriceText(clean, f);
+    return `<button class="price-add catalogue-cart-button" type="button" data-name="${escapeAttr(f.name)}" data-house="${escapeAttr(f.house||'')}" data-size="${size}" data-price="${escapeAttr(discounted)}" data-original-price="${escapeAttr(clean)}">🛒 <span>Add to cart</span></button>`;
+  }
+
   function priceButton(f,size,price){
     const clean=String(price||'').trim();
     const disabled=!clean || clean.toUpperCase()==='N/A';
