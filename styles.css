@@ -1392,3 +1392,229 @@ main{width:min(100% - 2rem,1180px)!important;margin:0 auto 4rem!important}.secti
   .featured-actions .price-add strong,.featured-actions .price-unavailable strong{font-size:.5rem!important}
   .landing-search .collection-buttons{grid-template-columns:repeat(3,1fr)!important}
 }
+
+/* V7.0.9 mobile final polish */
+@media(max-width:760px){
+  .top-nav{
+    grid-template-columns:36px 58px minmax(0,1fr) auto!important;
+    min-height:76px!important;
+    padding:.6rem .72rem!important;
+    gap:.5rem!important;
+  }
+  .brand-mark{width:58px!important;height:58px!important;min-width:58px!important}
+  .brand-logo{width:56px!important;height:56px!important}
+  .brand-wordmark{font-size:1.62rem!important;color:#182D09!important}
+  .social-links{gap:.36rem!important}
+  .social{
+    width:32px!important;
+    height:32px!important;
+    border-radius:50%!important;
+    background:#182D09!important;
+    color:#FFFDD0!important;
+    border:1px solid #182D09!important;
+    padding:.22rem!important;
+  }
+  .social svg{width:19px!important;height:19px!important;fill:currentColor!important}
+
+  .hero{
+    grid-template-columns:minmax(0,1fr) minmax(150px,.78fr)!important;
+    column-gap:.45rem!important;
+    padding:.7rem .65rem .45rem!important;
+  }
+  .hero h1{font-size:1.85rem!important}
+  .hero .subhead{font-size:.74rem!important;max-width:18rem!important}
+  .hero-feature.full-width-feature{padding-top:0!important}
+  .featured-card.weekly-card{overflow:visible!important}
+  .weekly-ribbon{
+    top:-.18rem!important;
+    right:.1rem!important;
+    transform:rotate(42deg) translate(21px,-13px)!important;
+    transform-origin:center!important;
+    z-index:4!important;
+    font-size:.48rem!important;
+  }
+  .featured-main,.full-width-feature .featured-main,.full-width-feature .featured-main.with-image{
+    grid-template-columns:minmax(0,1fr) 86px!important;
+    gap:.25rem!important;
+  }
+  .featured-bottle-wrap{
+    width:86px!important;
+    max-width:86px!important;
+    height:166px!important;
+    transform:translateX(.15rem)!important;
+  }
+  .featured-bottle-wrap img{max-width:86px!important;max-height:166px!important}
+  .featured-label{
+    font-size:.47rem!important;
+    padding:.24rem .34rem!important;
+    line-height:1.05!important;
+    z-index:6!important;
+  }
+  .featured-card h3{font-size:1.22rem!important;line-height:.95!important}
+  .featured-house{font-size:.54rem!important;margin:.06rem 0!important}
+  .featured-accords{
+    display:block!important;
+    color:#5f6855!important;
+    font-size:.58rem!important;
+    line-height:1.2!important;
+    margin:.04rem 0 .18rem!important;
+    white-space:normal!important;
+  }
+  .featured-desc{
+    display:block!important;
+    color:#5f6855!important;
+    font-size:.56rem!important;
+    line-height:1.25!important;
+    margin:.08rem 0 0!important;
+    max-height:2.6em!important;
+    overflow:hidden!important;
+  }
+  .featured-inspo{display:none!important}
+  .weekly-offer{margin:.24rem 0 0!important}
+  .featured-actions{grid-template-columns:repeat(3,1fr)!important;gap:.2rem!important}
+  .featured-actions .price-add,.featured-actions .price-unavailable{
+    min-height:34px!important;
+    border-radius:4px!important;
+  }
+  .featured-actions .price-add strong,.featured-actions .price-unavailable strong{font-size:.62rem!important}
+
+  .hero-benefits{
+    grid-column:1!important;
+    margin:.46rem 0 0!important;
+  }
+  .hero-benefits span{min-height:44px!important}
+
+  .landing-search .smart-filter-buttons{
+    display:grid!important;
+    grid-template-columns:repeat(3,1fr)!important;
+    gap:.3rem!important;
+    margin:.3rem 0 0!important;
+  }
+  .landing-search .collection-buttons{
+    grid-template-columns:repeat(4,1fr)!important;
+  }
+  .landing-search .collection-buttons button,
+  .landing-search .smart-filter-buttons button{
+    display:block!important;
+    min-height:32px!important;
+    border-radius:3px!important;
+    font-size:.6rem!important;
+    padding:.25rem .1rem!important;
+    background:#fffbed!important;
+    border:1px solid #d6d0ad!important;
+    color:#182D09!important;
+  }
+  .landing-search .collection-buttons button.active,
+  .landing-search .smart-filter-buttons button.active{
+    background:#182D09!important;
+    color:#FFFDD0!important;
+    border-color:#182D09!important;
+  }
+
+  #catalogue.section{padding:.75rem 0 1rem!important}
+  #catalogue .section-head{padding:0 .65rem!important;margin-bottom:.45rem!important}
+  .grid{
+    width:100%!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:.28rem!important;
+    padding:0 .28rem!important;
+  }
+  .card{
+    aspect-ratio:1/1!important;
+    border-radius:0!important;
+    padding:.36rem!important;
+    overflow:hidden!important;
+    display:grid!important;
+    grid-template-rows:auto 1fr auto auto!important;
+    min-height:0!important;
+  }
+  .card::after{display:none!important}
+  .card-top{min-height:16px!important;z-index:5!important}
+  .new-badge,.status{font-size:.46rem!important;padding:.1rem .18rem!important}
+  .collection-pill{font-size:.44rem!important;top:.36rem!important;right:.36rem!important;max-width:48%!important;z-index:5!important}
+  .tile-image{
+    top:1.55rem!important;
+    right:.22rem!important;
+    width:38%!important;
+    height:47%!important;
+    z-index:1!important;
+  }
+  .card .house,
+  .has-tile-image .house{
+    margin:.28rem 42% .08rem 0!important;
+    font-size:.44rem!important;
+    line-height:1.05!important;
+    -webkit-line-clamp:2!important;
+    max-width:none!important;
+  }
+  .card h3,
+  .has-tile-image h3{
+    margin:0 42% .08rem 0!important;
+    font-size:.66rem!important;
+    line-height:1.02!important;
+    max-height:none!important;
+    -webkit-line-clamp:3!important;
+    max-width:none!important;
+  }
+  .accords,
+  .has-tile-image .accords{
+    margin:0 42% 0 0!important;
+    font-size:.45rem!important;
+    line-height:1.08!important;
+    -webkit-line-clamp:2!important;
+    max-width:none!important;
+  }
+  .prices{
+    position:relative!important;
+    left:auto!important;
+    right:auto!important;
+    bottom:auto!important;
+    align-self:end!important;
+    margin:.08rem 0 .12rem!important;
+    background:transparent!important;
+    z-index:4!important;
+    gap:.1rem!important;
+  }
+  .price-add,.price-unavailable{
+    min-height:27px!important;
+    border-radius:2px!important;
+    padding:.12rem .02rem!important;
+  }
+  .price-add strong,.price-unavailable strong{font-size:.5rem!important}
+  .price-add span,.price-unavailable span{font-size:.34rem!important}
+  .card-links{
+    position:relative!important;
+    left:auto!important;
+    right:auto!important;
+    bottom:auto!important;
+    display:block!important;
+    z-index:5!important;
+  }
+  .mini-link{
+    display:block!important;
+    border-radius:2px!important;
+    padding:.18rem .12rem!important;
+    font-size:.5rem!important;
+    line-height:1!important;
+    background:#182D09!important;
+    color:#FFFDD0!important;
+    border-color:#182D09!important;
+  }
+}
+
+@media(max-width:390px){
+  .top-nav{grid-template-columns:34px 54px minmax(0,1fr) auto!important;gap:.42rem!important}
+  .brand-mark{width:54px!important;height:54px!important;min-width:54px!important}
+  .brand-logo{width:52px!important;height:52px!important}
+  .brand-wordmark{font-size:1.42rem!important}
+  .social{width:28px!important;height:28px!important}.social svg{width:17px!important;height:17px!important}
+  .hero{grid-template-columns:minmax(0,1fr) 136px!important}
+  .hero h1{font-size:1.62rem!important}
+  .featured-main,.full-width-feature .featured-main,.full-width-feature .featured-main.with-image{grid-template-columns:minmax(0,1fr) 78px!important}
+  .featured-bottle-wrap{width:78px!important;max-width:78px!important;height:154px!important}
+  .featured-bottle-wrap img{max-width:78px!important;max-height:154px!important}
+  .featured-desc{display:none!important}
+  .card h3,.has-tile-image h3{font-size:.61rem!important}
+  .card .house,.has-tile-image .house{font-size:.4rem!important}
+  .accords,.has-tile-image .accords{font-size:.41rem!important}
+}

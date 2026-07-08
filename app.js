@@ -623,6 +623,7 @@
             <div class="featured-label">Fragrance of the Week</div>
             <h3>${escapeHtml(f.name)}</h3>
             <p class="featured-house">${escapeHtml(f.house || '')}</p>
+            <p class="featured-accords">${escapeHtml(f.accords || f.category || f.collection || '')}</p>
             <div class="collection-pill ${collectionClass(f.collection)}">${escapeHtml(f.collection || 'Type')}</div>
             ${inspirationLine}
             <p class="featured-desc">${escapeHtml(note)}</p>
