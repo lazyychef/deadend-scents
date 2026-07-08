@@ -619,7 +619,7 @@
         ${active ? `<div class="weekly-ribbon">${escapeHtml(discountPct)}% OFF</div>` : ''}
         <div class="featured-main ${hasImage ? 'with-image' : ''}">
           ${featureVisual}
-          <div>
+          <div class="featured-info">
             <div class="featured-label">Fragrance of the Week</div>
             <h3>${escapeHtml(f.name)}</h3>
             <p class="featured-house">${escapeHtml(f.house || '')}</p>
