@@ -63,3 +63,11 @@ main{padding:8px}.quick-stats{display:grid;grid-template-columns:repeat(4,1fr);g
   .card{min-height:224px;}
   .card .price-add{min-height:40px;}
 }
+
+
+/* Last polish: compact cart labels + catalogue card alignment */
+.card::after{top:28px;height:84px;}
+.card.has-image .prices{margin-right:calc(-36% - 4px);width:auto;position:relative;z-index:2;}
+.card .price-add{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;}
+.price-add small{display:none!important;}
+.featured-actions .price-add span,.card .price-add span{font-weight:800;}
