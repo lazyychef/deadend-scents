@@ -662,7 +662,7 @@
   function setSmartFilter(target){
     activeQuickFilter = String(target || 'all').toLowerCase();
     if(collectionFilter) collectionFilter.value = 'all';
-    document.querySelectorAll('.collection-buttons button').forEach(btn=>btn.classList.toggle('active', String(btn.dataset.collection||'all').toLowerCase()==='all'));
+    document.querySelectorAll('.collection-buttons button[data-collection]').forEach(btn=>btn.classList.toggle('active', String(btn.dataset.collection||'all').toLowerCase()==='all'));
     document.querySelectorAll('.smart-filter-buttons button').forEach(btn=>btn.classList.toggle('active', String(btn.dataset.smartFilter||'').toLowerCase()===activeQuickFilter));
     render();
     trackEvent('quick_smart_filter', { filter_value: activeQuickFilter });
@@ -675,7 +675,7 @@
     const options=[...collectionFilter.options];
     const found=options.find(opt=>collectionMatches(opt.value,target));
     collectionFilter.value = found ? found.value : 'all';
-    document.querySelectorAll('.collection-buttons button').forEach(btn=>btn.classList.toggle('active', String(btn.dataset.collection||'all').toLowerCase()===String(target||'all').toLowerCase()));
+    document.querySelectorAll('.collection-buttons button[data-collection]').forEach(btn=>btn.classList.toggle('active', String(btn.dataset.collection||'all').toLowerCase()===String(target||'all').toLowerCase()));
     render();
     trackEvent('quick_collection_filter', { filter_value: target });
   }
@@ -701,7 +701,6 @@
         ${shouldShowInspiration(f) ? `<p class="inspo"><span>Inspired by</span>${escapeHtml(f.inspiration)}</p>` : ''}
         <p class="accords">${escapeHtml(f.accords || f.category || '')}</p>
         <div class="prices">${priceButton(f,'3mL',f.p3)}${priceButton(f,'5mL',f.p5)}${priceButton(f,'10mL',f.p10)}</div>
-        ${catalogueCartButton(f)}
         <div class="card-links">${f.fragranticaUrl?`<a class="mini-link" href="${escapeAttr(f.fragranticaUrl)}" target="_blank" rel="noopener">Fragrantica ↗</a>`:''}</div>`;
       frag.appendChild(card);
     });
