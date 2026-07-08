@@ -603,35 +603,22 @@
     if(!f){ featuredGrid.innerHTML = '<div class="empty">No featured fragrance available.</div>'; return; }
     const active = isFeaturedDiscountActive(f);
     const discountPct = weeklyDiscountPercent();
-    const inspirationLine = shouldShowInspiration(f) ? `<p class="featured-inspo">Inspired by <strong>${escapeHtml(f.inspiration)}</strong></p>` : `<p class="featured-inspo">${escapeHtml(f.collection || 'Featured fragrance')}</p>`;
-    const note = f.featuredNote || f.notes || 'This week’s highlighted fragrance.';
+    const note = f.featuredNote || f.notes || 'A bold fragrance with a clean, confident everyday edge.';
     const imageUrl = String(f.imageUrl || '').trim();
     const hasImage = /^https?:\/\//i.test(imageUrl);
-    const featureVisual = hasImage
-      ? `<div class="featured-bottle-wrap"><img src="${escapeAttr(imageUrl)}" alt="${escapeAttr((f.house ? f.house + ' ' : '') + f.name)} bottle" loading="lazy" onerror="this.closest('.featured-bottle-wrap').outerHTML='<div class=&quot;featured-mark&quot;>${escapeAttr(f.emojis || '✨')}</div>';"></div>`
-      : `<div class="featured-mark">${escapeHtml(f.emojis || '✨')}</div>`;
+    const visual = hasImage ? `<img class="featured-bottle" src="${escapeAttr(imageUrl)}" alt="${escapeAttr((f.house ? f.house + ' ' : '') + f.name)} bottle" loading="lazy">` : `<div class="featured-mark">${escapeHtml(f.emojis || '✨')}</div>`;
     featuredGrid.innerHTML = `
-      <article class="featured-card weekly-card ${hasImage ? 'has-bottle-image' : ''} ${active ? 'discount-active' : ''}">
+      <article class="featured-card ${active ? 'discount-active' : ''}">
         ${active ? `<div class="weekly-ribbon">${escapeHtml(discountPct)}% OFF</div>` : ''}
-        <div class="featured-main ${hasImage ? 'with-image' : ''}">
-          ${featureVisual}
-          <div>
-            <div class="featured-label">Fragrance of the Week</div>
-            <h3>${escapeHtml(f.name)}</h3>
-            <p class="featured-house">${escapeHtml(f.house || '')}</p>
-            <div class="collection-pill ${collectionClass(f.collection)}">${escapeHtml(f.collection || 'Type')}</div>
-            ${inspirationLine}
-            <p class="featured-desc">${escapeHtml(note)}</p>
-          </div>
+        <div class="featured-details">
+          <div class="featured-label">Fragrance of the Week</div>
+          <h2>${escapeHtml(f.name)}</h2>
+          <p class="featured-house">${escapeHtml(f.house || '')}</p>
+          <p class="featured-accords">${escapeHtml(f.accords || f.category || '')}</p>
+          <p class="featured-desc">${escapeHtml(note)}</p>
+          <div class="featured-actions">${priceButton(f,'3mL',f.p3)}${priceButton(f,'5mL',f.p5)}${priceButton(f,'10mL',f.p10)}</div>
         </div>
-        <div class="weekly-offer">
-          <div class="offer-kicker">${active ? `${escapeHtml(discountPct)}% off this week` : 'Featured pick'}</div>
-          <div class="offer-main">${active ? 'Auto-discount applied' : 'Normal pricing'}</div>
-          <div class="offer-ends">${escapeHtml(discountEndsText(f))}</div>
-          <div class="featured-actions">
-            ${priceButton(f,'3mL',f.p3)}${priceButton(f,'5mL',f.p5)}${priceButton(f,'10mL',f.p10)}
-          </div>
-        </div>
+        <div class="featured-visual">${visual}</div>
       </article>`;
     attachCardListeners();
     if (f) trackEvent('featured_fragrance_view', { fragrance_name: f.name, house: f.house, type: f.collection || '' });
@@ -677,17 +664,23 @@
     const frag=document.createDocumentFragment();
     filtered.forEach(f=>{
       const card=document.createElement('article'); card.className=isNewArrival(f)?'card new-card':'card';
-      const linkLabel=f.fragranticaUrl && !f.fragranticaUrl.includes('/search/') ? 'Fragrantica page' : 'Fragrantica search';
+      const imageUrl=String(f.imageUrl||'').trim();
+      const hasImage=/^https?:\/\//i.test(imageUrl);
+      const visual=hasImage?`<img class="card-bottle" src="${escapeAttr(imageUrl)}" alt="${escapeAttr((f.house ? f.house + ' ' : '') + f.name)} bottle" loading="lazy">`:`<div class="card-fallback">${emojiMarkup(f.emojis)}</div>`;
       card.innerHTML=`
         <div class="card-top">
           <span class="badge-row">${isNewArrival(f)?'<span class="new-badge">New</span>':''}${f.staffPick?'<span class="new-badge staff">Staff Pick</span>':''}</span>
           <span class="collection-pill ${collectionClass(f.collection)}">${escapeHtml(f.collection || 'Type')}</span>
         </div>
-        <div class="emoji-row">${emojiMarkup(f.emojis)}</div>
-        <p class="house">${escapeHtml(f.house || '')}</p>
-        <h3>${escapeHtml(f.name)}</h3>
+        <div class="card-main">
+          <div class="card-copy">
+            <h3>${escapeHtml(f.name)}</h3>
+            <p class="house">${escapeHtml(f.house || '')}</p>
+            <p class="accords">${escapeHtml(f.accords || f.category || '')}</p>
+          </div>
+          <div class="card-image">${visual}</div>
+        </div>
         ${shouldShowInspiration(f) ? `<p class="inspo"><span>Inspired by</span>${escapeHtml(f.inspiration)}</p>` : ''}
-        <p class="accords">${escapeHtml(f.accords || f.category || '')}</p>
         <div class="prices">${priceButton(f,'3mL',f.p3)}${priceButton(f,'5mL',f.p5)}${priceButton(f,'10mL',f.p10)}</div>
         <div class="card-links">${f.fragranticaUrl?`<a class="mini-link" href="${escapeAttr(f.fragranticaUrl)}" target="_blank" rel="noopener">Fragrantica ↗</a>`:''}</div>`;
       frag.appendChild(card);
