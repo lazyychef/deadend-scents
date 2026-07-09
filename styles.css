@@ -71,3 +71,209 @@ main{padding:8px}.quick-stats{display:grid;grid-template-columns:repeat(4,1fr);g
 .card .price-add{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;}
 .price-add small{display:none!important;}
 .featured-actions .price-add span,.card .price-add span{font-weight:800;}
+
+/* Desktop polish — starts at desktop width only. Mobile layout above remains untouched. */
+@media (min-width: 900px){
+  body{font-size:15px;}
+
+  .site-header{
+    position:sticky;
+    grid-template-columns:minmax(260px,1fr) auto minmax(260px,1fr);
+    gap:18px;
+    padding:12px 28px;
+    align-items:center;
+  }
+  .brand{min-height:68px;gap:14px;justify-content:flex-start;}
+  .brand-logo{width:68px;height:68px;}
+  .brand-text{
+    position:static;
+    transform:none;
+    max-width:none;
+    font-family:'Cormorant Garamond',Georgia,serif;
+    font-size:42px;
+    line-height:1;
+  }
+  .mobile-menu{
+    justify-content:center;
+    gap:2px;
+  }
+  .mobile-menu a{
+    font-size:13px;
+    padding:8px 12px;
+    border:1px solid rgba(255,255,255,.14);
+  }
+  .contact-buttons{
+    justify-content:flex-end;
+    gap:8px;
+  }
+  .contact-buttons a{
+    min-width:92px;
+    padding:9px 12px;
+    font-size:13px;
+  }
+
+  main{
+    max-width:1380px;
+    padding:22px 28px;
+  }
+
+  .quick-stats{
+    gap:10px;
+    margin-bottom:16px;
+  }
+  .quick-stats div{
+    min-height:70px;
+    padding:12px 10px;
+  }
+  .quick-stats strong{font-size:24px;}
+  .quick-stats span{font-size:11px;}
+
+  .featured-section{
+    grid-template-columns:0.95fr 1.35fr;
+    gap:16px;
+    margin-bottom:18px;
+  }
+  .hero-copy{
+    padding:34px 32px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    min-height:360px;
+  }
+  .hero-copy h1{
+    font-family:'Cormorant Garamond',Georgia,serif;
+    font-size:54px;
+    line-height:.92;
+    max-width:560px;
+  }
+  .hero-copy p{font-size:17px;max-width:460px;}
+
+  .featured-card{padding:18px;min-height:360px;}
+  .featured-main{
+    grid-template-columns:54% 46%;
+    min-height:326px;
+  }
+  .featured-card h3{
+    font-family:'Cormorant Garamond',Georgia,serif;
+    font-size:34px;
+  }
+  .featured-house{font-size:15px;}
+  .featured-inspo,.featured-desc{font-size:14px;}
+  .featured-bottle-wrap{min-height:330px;}
+  .featured-bottle-wrap img{
+    max-height:390px;
+    max-width:150%;
+    transform:scale(1.2);
+  }
+  .weekly-ribbon{
+    top:18px;
+    left:-34px;
+    width:150px;
+    padding:6px 0;
+    font-size:12px;
+  }
+  .featured-actions{gap:8px;margin-top:12px;}
+  .featured-actions .price-add{min-height:52px;}
+  .featured-actions .price-add strong{font-size:16px;}
+  .featured-actions .price-add span{font-size:11px;}
+
+  .search-section{
+    max-width:980px;
+    margin:18px auto 22px;
+    padding:12px;
+  }
+  .search-box input{
+    padding:12px;
+    font-size:15px;
+  }
+  .collection-buttons{
+    grid-template-columns:repeat(8,1fr);
+    gap:7px;
+    margin-top:10px;
+  }
+  .collection-buttons button{
+    min-height:36px;
+    font-size:15px;
+  }
+
+  .section{margin-top:24px;}
+  .section-title h2{
+    font-family:'Cormorant Garamond',Georgia,serif;
+    font-size:38px;
+  }
+
+  .grid{
+    grid-template-columns:repeat(5,minmax(0,1fr));
+    gap:12px;
+  }
+  .card{
+    min-height:272px;
+    padding:11px;
+  }
+  .card.has-image{
+    padding-right:35%;
+  }
+  .card::after{
+    right:8px;
+    top:36px;
+    width:36%;
+    height:112px;
+  }
+  .card.has-image .prices{
+    margin-right:0;
+    width:calc(100% + 54%);
+  }
+  .card h3{
+    font-family:'Cormorant Garamond',Georgia,serif;
+    font-size:20px;
+    line-height:1;
+  }
+  .house{font-size:12px;}
+  .card .collection-pill{font-size:12px;max-width:none;}
+  .inspo,.accords{font-size:12px;line-height:1.2;}
+  .inspo span{font-size:10px;}
+  .card .prices{gap:5px;margin-top:8px;}
+  .card .price-add{min-height:44px;padding:5px 2px;}
+  .card .price-add strong{font-size:12px;}
+  .card .price-add span{font-size:9.5px;}
+  .mini-link{font-size:11px;}
+
+  .packs-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+    overflow:visible;
+    scroll-snap-type:none;
+    padding-bottom:0;
+  }
+  .pack-card{
+    flex:auto;
+    padding:16px;
+  }
+  .pack-card h3{
+    font-family:'Cormorant Garamond',Georgia,serif;
+    font-size:27px;
+  }
+
+  .order-section{
+    max-width:980px;
+    margin-left:auto;
+    margin-right:auto;
+  }
+  .order-card{padding:18px;}
+  .order-card h2{
+    font-family:'Cormorant Garamond',Georgia,serif;
+    font-size:38px;
+  }
+
+  .site-footer{
+    margin-top:28px;
+    padding:34px 16px 42px;
+  }
+}
+
+@media (min-width: 1280px){
+  .grid{grid-template-columns:repeat(6,minmax(0,1fr));}
+  .hero-copy h1{font-size:60px;}
+  .featured-section{grid-template-columns:1fr 1.45fr;}
+}
