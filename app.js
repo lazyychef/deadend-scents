@@ -739,16 +739,19 @@
     return found.slice(0, desired || found.length);
   }
   function renderPacks(){
-    const packsGrid=$('packsGrid'); if(!packsGrid || !packs.length) return; packsGrid.innerHTML='';
-    packs.forEach(pack=>{
-      const items = resolvePackItems(pack);
-      if(!items.length) return;
-      const pricing = packPrice(pack, items);
-      const div=document.createElement('article'); div.className='pack-card';
-      const title = pack.title || pack.name || 'Discovery Pack';
-      const itemLines=items.map(i=>`<li><strong>${escapeHtml(i.name)}</strong><span>${escapeHtml(i.house || '')}${i.category ? ' · ' + escapeHtml(i.category) : ''}</span></li>`).join('');
-      div.innerHTML=`<div class="pack-tag">${escapeHtml(pack.tagline || 'Curated discovery pack')}</div><h3>${escapeHtml(title)}</h3><p>${escapeHtml(pack.description || pack.desc || '')}</p><ul>${itemLines}</ul><div class="pack-price"><strong>${money(pricing.final)}</strong><span>Normally ${money(pricing.value)} · Save ${money(pricing.save)}<br>${items.length} x ${escapeHtml(pricing.size)}</span></div><button class="button primary pack-add" type="button" data-pack="${escapeAttr(title)}" data-price="${escapeAttr(money(pricing.final))}">Add pack</button>`;
-      packsGrid.appendChild(div);
+    const packGrids=[...document.querySelectorAll('.packs-grid')]; if(!packGrids.length || !packs.length) return;
+    packGrids.forEach(packsGrid=>{
+      packsGrid.innerHTML='';
+      packs.forEach(pack=>{
+        const items = resolvePackItems(pack);
+        if(!items.length) return;
+        const pricing = packPrice(pack, items);
+        const div=document.createElement('article'); div.className='pack-card';
+        const title = pack.title || pack.name || 'Discovery Pack';
+        const itemLines=items.map(i=>`<li><strong>${escapeHtml(i.name)}</strong><span>${escapeHtml(i.house || '')}${i.category ? ' · ' + escapeHtml(i.category) : ''}</span></li>`).join('');
+        div.innerHTML=`<div class="pack-tag">${escapeHtml(pack.tagline || 'Curated discovery pack')}</div><h3>${escapeHtml(title)}</h3><p>${escapeHtml(pack.description || pack.desc || '')}</p><ul>${itemLines}</ul><div class="pack-price"><strong>${money(pricing.final)}</strong><span>Normally ${money(pricing.value)} · Save ${money(pricing.save)}<br>${items.length} x ${escapeHtml(pricing.size)}</span></div><button class="button primary pack-add" type="button" data-pack="${escapeAttr(title)}" data-price="${escapeAttr(money(pricing.final))}">Add pack</button>`;
+        packsGrid.appendChild(div);
+      });
     });
     document.querySelectorAll('.pack-add').forEach(btn=>{ if(btn.dataset.bound) return; btn.dataset.bound='1'; btn.addEventListener('click',()=>{ addToCart({type:'pack',name:btn.dataset.pack,size:'Pack',price:btn.dataset.price,house:'Curated discovery pack'}); trackEvent('discovery_pack_add', { pack_name: btn.dataset.pack, value: parseMoney(btn.dataset.price), currency: 'AUD' }); btn.textContent='Added to cart'; setTimeout(()=>btn.textContent='Add pack',1000); }); });
   }
