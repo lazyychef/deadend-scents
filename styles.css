@@ -1721,13 +1721,15 @@ main{width:min(100% - 2rem,1180px)!important;margin:0 auto 4rem!important}.secti
   .card h3,.has-tile-image h3{font-size:.58rem!important}.card .house,.has-tile-image .house{font-size:.39rem!important}.accords,.has-tile-image .accords{font-size:.39rem!important}.price-add strong,.price-unavailable strong{font-size:.47rem!important}
 }
 
-/* V7.0.11 — Fragrance of the Week image auto-fit only
+/* V7.3.3 — Fragrance of the Week image auto-fit only
    Keeps every weekly bottle proportional, centred and contained. */
 .featured-bottle-wrap {
-  display: grid !important;
-  place-items: center !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   overflow: hidden !important;
 }
+
 .featured-bottle-wrap img {
   display: block !important;
   width: 100% !important;
@@ -1739,35 +1741,24 @@ main{width:min(100% - 2rem,1180px)!important;margin:0 auto 4rem!important}.secti
 }
 
 @media (max-width: 760px) {
-  .featured-main,
-  .full-width-feature .featured-main,
-  .full-width-feature .featured-main.with-image {
-    grid-template-columns: minmax(0, 1fr) minmax(108px, 40%) !important;
-  }
-
-  .featured-bottle-wrap {
-    width: 100% !important;
-    max-width: none !important;
-    height: clamp(190px, 52vw, 285px) !important;
-    margin: 0 !important;
-    transform: none !important;
-    padding: 4px !important;
-  }
-
-  .featured-bottle-wrap img {
+  .hero-feature .featured-bottle-wrap,
+  .featured-card.weekly-card .featured-bottle-wrap {
     width: 100% !important;
     height: 100% !important;
-  }
-}
-
-@media (max-width: 390px) {
-  .featured-main,
-  .full-width-feature .featured-main,
-  .full-width-feature .featured-main.with-image {
-    grid-template-columns: minmax(0, 1fr) minmax(96px, 39%) !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    padding: 0.2rem !important;
+    box-sizing: border-box !important;
   }
 
-  .featured-bottle-wrap {
-    height: clamp(170px, 50vw, 225px) !important;
+  .hero-feature .featured-bottle-wrap img,
+  .featured-card.weekly-card .featured-bottle-wrap img {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
   }
 }
