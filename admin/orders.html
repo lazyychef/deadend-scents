@@ -1,24 +1,11 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex,nofollow">
-  <title>Orders & Sales | DeadEnd Scents Admin</title>
-  <link rel="stylesheet" href="admin.css">
-</head>
-<body>
-  <header class="admin-shell admin-header compact">
-    <a class="admin-logo" href="index.html" aria-label="Admin dashboard"><img src="../assets/deadend-logo.png" alt="DeadEnd Scents"></a>
-    <div><p class="eyebrow">Admin V2 · Phase 1</p><h1>Orders & Sales</h1><p class="muted">Record new sales, review order history and prepare the historical database import.</p></div>
-  </header>
-  <main class="admin-shell">
-    <section class="admin-panel">
-      <div class="admin-page-intro"><div><p class="eyebrow">Foundation installed</p><h2>Ready for Phase 2 connection</h2><p class="muted">This page is intentionally non-destructive. It establishes the final admin navigation and visual system before Google Sheets write-back is added.</p></div><a class="button" href="index.html">Back to Dashboard</a></div>
-    </section>
-    <section class="phase-grid"><article class="phase-card"><h3>New Order</h3><p>Working order-entry form will be connected to Catalogue, Orders and Order Items in Phase 2.</p><span class="phase-status">Foundation ready</span></article><article class="phase-card"><h3>Order History</h3><p>Search, filter and edit historical and future orders.</p><span class="phase-status">Foundation ready</span></article><article class="phase-card"><h3>Historical Import</h3><p>Bring the prepared Orders, Order Items and Customers sheets into the live master database.</p><span class="phase-status">Foundation ready</span></article></section>
-    <section class="admin-panel"><p class="eyebrow">Next connection steps</p><h2>Phase 2 checklist</h2><ul class="admin-checklist"><li>Confirm the Orders and Order Items tabs exist in the master Google Sheet.</li><li>Connect the admin page to the Google Apps Script endpoint.</li><li>Build save, edit and stock-deduction safeguards.</li></ul></section>
-  </main>
-  <script src="admin-shell.js"></script>
-</body>
-</html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Orders | DeadEnd Scents Admin</title><link rel="stylesheet" href="admin.css"></head>
+<body><header class="admin-shell admin-header compact"><a class="admin-logo" href="index.html"><img src="../assets/deadend-logo.png" alt="DeadEnd Scents"></a><div><p class="eyebrow">Admin V2 · Phase 2</p><h1>Orders & Quick Sale</h1><p class="muted">Create orders, deduct stock and review sales history.</p></div></header>
+<main class="admin-shell">
+<section class="admin-panel"><div class="section-head"><div><p class="eyebrow">Setup</p><h2>Orders database</h2></div><button id="setupSheets" class="button" type="button">Check/Create Sheets</button></div><p id="setupStatus" class="muted">Use once after copying the historical Orders, Order Items and Customers tabs into the master spreadsheet.</p></section>
+<section class="order-layout">
+<form id="orderForm" class="admin-panel order-entry"><p class="eyebrow">Quick Sale</p><h2>New order</h2><div class="form-grid two"><label>Order date<input id="orderDate" type="date" required></label><label>Customer<input id="customer" type="text" placeholder="Customer name" required></label><label>Sales source<select id="salesSource"><option>Facebook</option><option>Instagram</option><option>Website</option><option>Repeat Customer</option><option>Direct</option><option>Other</option></select></label><label>Payment status<select id="paymentStatus"><option>Paid</option><option>Pending</option><option>Refunded</option></select></label></div>
+<div class="product-picker"><label>Search fragrance<input id="productSearch" type="search" placeholder="House or fragrance"></label><div id="productResults" class="picker-results"></div></div>
+<div class="cart-head"><h3>Order items</h3><button id="clearCart" class="button subtle" type="button">Clear</button></div><div id="orderItems" class="order-items"><div class="empty">Search and add a fragrance.</div></div>
+<div class="form-grid three"><label>Postage<input id="postage" type="number" min="0" step="0.01" value="10"></label><label>Discount<input id="discount" type="number" min="0" step="0.01" value="0"></label><label>Order status<select id="orderStatus"><option>New</option><option>Preparing</option><option>Packed</option><option>Posted</option><option>Completed</option></select></label></div><label>Notes<textarea id="notes" rows="3"></textarea></label><label class="check-line"><input id="deductStock" type="checkbox" checked> Deduct sold mL from current bottle stock</label><div class="order-total"><span>Total</span><strong id="grandTotal">$0.00</strong></div><button class="button primary full" type="submit">Save Order</button><p id="saveStatus" class="muted"></p></form>
+<section class="admin-panel order-history"><div class="section-head"><div><p class="eyebrow">History</p><h2>Recent orders</h2></div><button id="refreshOrders" class="button" type="button">Refresh</button></div><input id="orderSearch" type="search" placeholder="Search customer, ID or status"><div id="ordersList" class="orders-list"><div class="empty">Loading orders...</div></div></section>
+</section></main><script src="admin-write.js"></script><script src="orders.js"></script><script src="admin-shell.js"></script></body></html>

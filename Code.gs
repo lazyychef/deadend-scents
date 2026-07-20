@@ -1,5 +1,5 @@
 /**
- * DeadEnd Scents Admin V5.2.4 admin sync hotfix endpoint.
+ * DeadEnd Scents Admin V6.0.3 consolidation endpoint.
  * Copy this file into the Apps Script project attached to the master Google Sheet.
  * Deploy as Web App: Execute as Me, Access Anyone with the link.
  */
@@ -23,6 +23,9 @@ function doPost(e) {
     if (payload.action === 'generateFragranceSEO') return json_(generateFragranceSEO_(ss, payload));
     if (payload.action === 'saveFragranceSEO') return json_(saveFragranceSEO_(ss, payload));
     if (payload.action === 'generateBulkFragranceSEO') return json_(generateBulkFragranceSEO_(ss, payload));
+    if (payload.action === 'setupOrderSheets') return json_(setupOrderSheets_(ss));
+    if (payload.action === 'createOrder') return json_(createOrder_(ss, payload));
+    if (payload.action === 'updateOrderStatus') return json_(updateOrderStatus_(ss, payload));
 
     return json_({ ok:false, error:'Unknown action: ' + payload.action });
   } catch (err) {
@@ -35,7 +38,10 @@ function doGet(e) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   if (action === 'settings') return json_({ ok:true, settings:getSettings_(ss) });
   if (action === 'catalogue') return json_(getCatalogue_(ss));
-  return json_({ ok:true, app:'DeadEnd Scents Admin V5.2.4', status:'ready' });
+  if (action === 'orders') return json_(getOrders_(ss));
+  if (action === 'customers') return json_(getCustomers_(ss));
+  if (action === 'orderSummary') return json_(getOrderSummary_(ss));
+  return json_({ ok:true, app:'DeadEnd Scents Admin V6.0.3', status:'ready' });
 }
 
 function json_(obj) {
@@ -495,15 +501,32 @@ function addBottle_(ss, payload) {
 
 function getCatalogue_(ss) {
   var sheet = catalogueSheet_(ss);
-  var values = sheet.getDataRange().getDisplayValues();
-  if (!values.length) return { ok:true, items:[] };
-  var headers = values.shift();
-  var items = values.filter(function(row){ return row.some(function(v){ return String(v || '').trim() !== ''; }); }).map(function(row){
+  var range = sheet.getDataRange();
+  var display = range.getDisplayValues();
+  var raw = range.getValues();
+  if (!display.length) return { ok:true, items:[] };
+  var headers = display[0];
+  var items = [];
+  for (var r = 1; r < display.length; r++) {
+    var rowDisplay = display[r];
+    var rowRaw = raw[r];
+    if (!rowDisplay.some(function(v){ return String(v || '').trim() !== ''; })) continue;
     var obj = {};
-    headers.forEach(function(h,i){ if (h) obj[String(h)] = row[i] || ''; });
-    return obj;
-  });
-  return { ok:true, items:items };
+    headers.forEach(function(h, i){
+      if (!h) return;
+      var key = String(h);
+      var val = rowRaw[i];
+      if (val instanceof Date) {
+        obj[key] = Utilities.formatDate(val, Session.getScriptTimeZone(), 'yyyy-MM-dd');
+      } else if (typeof val === 'number') {
+        obj[key] = val;
+      } else {
+        obj[key] = rowDisplay[i] || '';
+      }
+    });
+    items.push(obj);
+  }
+  return { ok:true, items:items, source:'live-spreadsheet', generated:new Date().toISOString() };
 }
 
 function duplicateBottle_(ss, payload) {
@@ -712,4 +735,105 @@ function generateBulkFragranceSEO_(ss, payload) {
     count++;
   });
   return { ok:true, action:'generateBulkFragranceSEO', count:count };
+}
+
+
+/* =========================
+ * ADMIN V2 PHASE 2: ORDERS
+ * ========================= */
+function headerMap_(headers) {
+  var out = {};
+  headers.forEach(function(h, i){ out[String(h || '').toLowerCase().replace(/[^a-z0-9]/g,'')] = i; });
+  return out;
+}
+function ensureSheet_(ss, name, headers) {
+  var sheet = ss.getSheetByName(name) || ss.insertSheet(name);
+  if (sheet.getLastRow() === 0) sheet.getRange(1,1,1,headers.length).setValues([headers]);
+  var existing = sheet.getRange(1,1,1,Math.max(sheet.getLastColumn(),1)).getValues()[0];
+  var norm = headerMap_(existing);
+  var missing = headers.filter(function(h){ return norm[String(h).toLowerCase().replace(/[^a-z0-9]/g,'')] === undefined; });
+  if (missing.length) sheet.getRange(1,existing.length+1,1,missing.length).setValues([missing]);
+  sheet.setFrozenRows(1);
+  return sheet;
+}
+function setupOrderSheets_(ss) {
+  ensureSheet_(ss,'Orders',['Order ID','Order Date','Customer ID','Customer','Sales Source','Items Sold','Total mL','Subtotal','Postage','Discount','Total Paid','Payment Status','Order Status','Tracking Number','Notes','Stock Deducted','Created At']);
+  ensureSheet_(ss,'Order Items',['Order Item ID','Order ID','Order Date','Customer ID','Customer','Fragrance ID','House','Fragrance','Size mL','Quantity','Price Each','Line Total','Product Cost','Profit']);
+  ensureSheet_(ss,'Customers',['Customer ID','Customer','First Order','Last Order','Orders','Total Spend','Email','Phone','Notes']);
+  return {ok:true, action:'setupOrderSheets'};
+}
+function nextSequentialId_(sheet, prefix, width) {
+  var vals = sheet.getLastRow() > 1 ? sheet.getRange(2,1,sheet.getLastRow()-1,1).getDisplayValues().flat() : [];
+  var max = 0;
+  vals.forEach(function(v){ var m=String(v||'').match(/(\d+)$/); if(m) max=Math.max(max,Number(m[1])); });
+  return prefix + String(max+1).padStart(width,'0');
+}
+function rowObject_(headers, row) { var o={}; headers.forEach(function(h,i){ o[h]=row[i]; }); return o; }
+function getOrders_(ss) {
+  var sheet=ss.getSheetByName('Orders'); if(!sheet) return {ok:true,items:[]};
+  var values=sheet.getDataRange().getDisplayValues(); if(values.length<2) return {ok:true,items:[]};
+  var headers=values.shift();
+  var items=values.filter(function(r){return r.some(String);}).map(function(r){return rowObject_(headers,r);});
+  items.reverse();
+  return {ok:true,items:items};
+}
+function getCustomers_(ss) {
+  var sheet=ss.getSheetByName('Customers'); if(!sheet) return {ok:true,items:[]};
+  var values=sheet.getDataRange().getDisplayValues(); if(values.length<2) return {ok:true,items:[]};
+  var headers=values.shift();
+  return {ok:true,items:values.filter(function(r){return r.some(String);}).map(function(r){return rowObject_(headers,r);})};
+}
+function getOrderSummary_(ss) {
+  var orders=getOrders_(ss).items;
+  var revenue=0, pending=0, totalMl=0;
+  orders.forEach(function(o){ revenue += Number(String(o['Total Paid']||'').replace(/[^0-9.-]/g,''))||0; totalMl += Number(o['Total mL'])||0; if(!/completed|posted|delivered/i.test(String(o['Order Status']||''))) pending++; });
+  return {ok:true,summary:{orders:orders.length,revenue:revenue,average:orders.length?revenue/orders.length:0,pending:pending,totalMl:totalMl}};
+}
+function findHeader_(headers, aliases) {
+  var map=headerMap_(headers); for(var i=0;i<aliases.length;i++){ var k=String(aliases[i]).toLowerCase().replace(/[^a-z0-9]/g,''); if(map[k]!==undefined) return map[k]; } return -1;
+}
+function appendByHeaders_(sheet, obj) {
+  var headers=sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0];
+  var row=headers.map(function(h){ return obj[h] !== undefined ? obj[h] : ''; });
+  sheet.appendRow(row);
+}
+function createOrder_(ss,payload) {
+  setupOrderSheets_(ss);
+  var orders=ss.getSheetByName('Orders'), itemsSheet=ss.getSheetByName('Order Items'), customers=ss.getSheetByName('Customers');
+  var p=payload.order||{}; var items=Array.isArray(p.items)?p.items:[]; if(!items.length) throw new Error('Add at least one fragrance.');
+  var orderId=nextSequentialId_(orders,'DES-',5); var date=p.orderDate||Utilities.formatDate(new Date(),Session.getScriptTimeZone()||'Australia/Sydney','yyyy-MM-dd');
+  var customerName=String(p.customer||'').trim()||'Walk-in / Unknown';
+  var customerId=upsertCustomer_(customers,customerName,p,date);
+  var subtotal=0,totalMl=0,totalQty=0,totalCost=0;
+  items.forEach(function(it){ var q=Math.max(1,Number(it.quantity)||1), size=Number(it.sizeMl)||0, price=Number(it.priceEach)||0; subtotal+=q*price; totalMl+=q*size; totalQty+=q; totalCost+=Number(it.productCost)||0; });
+  var postage=Number(p.postage)||0, discount=Number(p.discount)||0, total=Math.max(0,subtotal+postage-discount);
+  appendByHeaders_(orders,{'Order ID':orderId,'Order Date':date,'Customer ID':customerId,'Customer':customerName,'Sales Source':p.salesSource||'Website / Direct','Items Sold':totalQty,'Total mL':totalMl,'Subtotal':subtotal,'Postage':postage,'Discount':discount,'Total Paid':total,'Payment Status':p.paymentStatus||'Paid','Order Status':p.orderStatus||'New','Tracking Number':p.trackingNumber||'','Notes':p.notes||'','Stock Deducted':p.deductStock?'TRUE':'FALSE','Created At':new Date()});
+  items.forEach(function(it,index){ var q=Math.max(1,Number(it.quantity)||1), size=Number(it.sizeMl)||0, price=Number(it.priceEach)||0, line=q*price, cost=Number(it.productCost)||0; appendByHeaders_(itemsSheet,{'Order Item ID':orderId+'-'+String(index+1).padStart(2,'0'),'Order ID':orderId,'Order Date':date,'Customer ID':customerId,'Customer':customerName,'Fragrance ID':it.fragranceId||'','House':it.house||'','Fragrance':it.fragrance||'','Size mL':size,'Quantity':q,'Price Each':price,'Line Total':line,'Product Cost':cost,'Profit':line-cost}); });
+  if(p.deductStock) deductOrderStock_(ss,items);
+  refreshCustomerStats_(ss,customerId);
+  return {ok:true,action:'createOrder',orderId:orderId,total:total};
+}
+function upsertCustomer_(sheet,name,p,date) {
+  var values=sheet.getDataRange().getValues(), headers=values[0], hi=headerMap_(headers), nameCol=hi.customer, idCol=hi.customerid;
+  for(var r=1;r<values.length;r++) if(String(values[r][nameCol]||'').trim().toLowerCase()===name.toLowerCase()) return String(values[r][idCol]||'');
+  var id=nextSequentialId_(sheet,'CUST-',4); appendByHeaders_(sheet,{'Customer ID':id,'Customer':name,'First Order':date,'Last Order':date,'Orders':0,'Total Spend':0,'Email':p.email||'','Phone':p.phone||'','Notes':p.customerNotes||''}); return id;
+}
+function refreshCustomerStats_(ss,customerId) {
+  var cs=ss.getSheetByName('Customers'), os=ss.getSheetByName('Orders'); if(!cs||!os) return;
+  var cv=cs.getDataRange().getValues(), ch=cv[0], chi=headerMap_(ch), ov=os.getDataRange().getValues(), oh=ov[0], ohi=headerMap_(oh);
+  var count=0,total=0,first='',last='';
+  for(var i=1;i<ov.length;i++) if(String(ov[i][ohi.customerid])===customerId){ count++; total+=Number(ov[i][ohi.totalpaid])||0; var d=ov[i][ohi.orderdate]; if(!first||d<first) first=d; if(!last||d>last) last=d; }
+  for(var r=1;r<cv.length;r++) if(String(cv[r][chi.customerid])===customerId){ if(chi.orders!==undefined) cs.getRange(r+1,chi.orders+1).setValue(count); if(chi.totalspend!==undefined) cs.getRange(r+1,chi.totalspend+1).setValue(total); if(chi.firstorder!==undefined) cs.getRange(r+1,chi.firstorder+1).setValue(first); if(chi.lastorder!==undefined) cs.getRange(r+1,chi.lastorder+1).setValue(last); break; }
+}
+function deductOrderStock_(ss,items) {
+  var sheet=ss.getSheetByName('Catalogue')||ss.getSheets()[0], values=sheet.getDataRange().getValues(), headers=values[0];
+  var idCol=findHeader_(headers,['ID']), mlCol=findHeader_(headers,['Current mL','Current Amount Left (mL)','Amount Left','Remaining mL']);
+  if(idCol<0||mlCol<0) throw new Error('Catalogue needs ID and Current mL columns before stock can be deducted.');
+  items.forEach(function(it){ var qty=Math.max(1,Number(it.quantity)||1), size=Number(it.sizeMl)||0; for(var r=1;r<values.length;r++) if(String(values[r][idCol])===String(it.fragranceId)){ var current=Number(values[r][mlCol])||0; var next=Math.max(0,current-(qty*size)); sheet.getRange(r+1,mlCol+1).setValue(next); values[r][mlCol]=next; break; } });
+}
+function updateOrderStatus_(ss,payload) {
+  var sheet=ss.getSheetByName('Orders'); if(!sheet) throw new Error('Orders sheet not found.');
+  var values=sheet.getDataRange().getValues(), headers=values[0], hi=headerMap_(headers), id=String(payload.orderId||'');
+  for(var r=1;r<values.length;r++) if(String(values[r][hi.orderid])===id){ if(hi.orderstatus!==undefined&&payload.orderStatus!==undefined) sheet.getRange(r+1,hi.orderstatus+1).setValue(payload.orderStatus); if(hi.paymentstatus!==undefined&&payload.paymentStatus!==undefined) sheet.getRange(r+1,hi.paymentstatus+1).setValue(payload.paymentStatus); if(hi.trackingnumber!==undefined&&payload.trackingNumber!==undefined) sheet.getRange(r+1,hi.trackingnumber+1).setValue(payload.trackingNumber); return {ok:true,action:'updateOrderStatus',orderId:id}; }
+  throw new Error('Order not found: '+id);
 }
