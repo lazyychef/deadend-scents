@@ -1,5 +1,5 @@
 /**
- * DeadEnd Scents Admin V5.2.4 admin sync hotfix endpoint.
+ * DeadEnd Scents Admin V5.2.4 admin sync hotfix endpoint
  * Copy this file into the Apps Script project attached to the master Google Sheet.
  * Deploy as Web App: Execute as Me, Access Anyone with the link.
  */
