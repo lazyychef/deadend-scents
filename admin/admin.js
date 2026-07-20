@@ -52,6 +52,21 @@
     renderSettings();
   }
 
+
+  async function loadBusinessSummary(){
+    try{
+      const endpoint=state.settings && state.settings.adminWriteEndpoint;
+      if(!endpoint) return;
+      const url=endpoint+(endpoint.includes('?')?'&':'?')+'action=orderSummary&t='+Date.now();
+      const data=await fetch(url,{cache:'no-store'}).then(r=>r.json());
+      const x=data.summary||{};
+      if($('businessRevenue')) $('businessRevenue').textContent=money(Number(x.revenue)||0);
+      if($('businessOrders')) $('businessOrders').textContent=Number(x.orders)||0;
+      if($('businessAverage')) $('businessAverage').textContent=money(Number(x.average)||0);
+      if($('businessPending')) $('businessPending').textContent=Number(x.pending)||0;
+    }catch(e){ console.warn('Order summary unavailable',e); }
+  }
+
   async function loadCatalogue(){
     let items = [];
     try{
@@ -145,7 +160,7 @@
 
   async function init(){
     await loadSettings();
-    await loadCatalogue();
+    await Promise.all([loadCatalogue(),loadBusinessSummary()]);
   }
   $('refreshData').addEventListener('click', loadCatalogue);
   init();
