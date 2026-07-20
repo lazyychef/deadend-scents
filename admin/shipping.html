@@ -10,15 +10,57 @@
 <body>
   <header class="admin-shell admin-header compact">
     <a class="admin-logo" href="index.html" aria-label="Admin dashboard"><img src="../assets/deadend-logo.png" alt="DeadEnd Scents"></a>
-    <div><p class="eyebrow">Admin V2 · Phase 1</p><h1>Shipping</h1><p class="muted">A simple workflow for orders waiting to be packed, posted or completed.</p></div>
+    <div><p class="eyebrow">Admin V2 · Phase 4</p><h1>Shipping</h1><p class="muted">Pack, track and complete current orders from one workflow.</p></div>
   </header>
-  <main class="admin-shell">
-    <section class="admin-panel">
-      <div class="admin-page-intro"><div><p class="eyebrow">Foundation installed</p><h2>Ready for Phase 2 connection</h2><p class="muted">This page is intentionally non-destructive. It establishes the final admin navigation and visual system before Google Sheets write-back is added.</p></div><a class="button" href="index.html">Back to Dashboard</a></div>
+
+  <main class="admin-shell shipping-page">
+    <section class="admin-panel shipping-toolbar">
+      <div><p class="eyebrow">Order fulfilment</p><h2>Shipping workflow</h2><p class="muted">Historical imports remain in completed history. Current orders move from Pending to Ready to Post and then Completed.</p></div>
+      <div class="shipping-toolbar-actions">
+        <label>Find an order<input id="shippingSearch" type="search" placeholder="Customer, order ID or tracking"></label>
+        <button id="refreshShipping" class="button primary" type="button">Refresh orders</button>
+      </div>
     </section>
-    <section class="phase-grid"><article class="phase-card"><h3>Pending</h3><p>Paid orders that still need packing.</p><span class="phase-status">Foundation ready</span></article><article class="phase-card"><h3>Ready to Post</h3><p>Packed orders awaiting tracking details.</p><span class="phase-status">Foundation ready</span></article><article class="phase-card"><h3>Completed</h3><p>Posted or collected orders retained in history.</p><span class="phase-status">Foundation ready</span></article></section>
-    <section class="admin-panel"><p class="eyebrow">Next connection steps</p><h2>Phase 2 checklist</h2><ul class="admin-checklist"><li>Use Order Status and Tracking Number fields.</li><li>Add quick status buttons.</li><li>Keep historical imports marked Completed.</li></ul></section>
+
+    <div id="shippingStatus" class="analytics-status">Loading orders and order items…</div>
+
+    <section class="shipping-kpis" aria-label="Shipping summary">
+      <article><span>Pending</span><strong id="pendingCount">—</strong><em>Needs packing</em></article>
+      <article><span>Ready to post</span><strong id="readyCount">—</strong><em>Packed or awaiting tracking</em></article>
+      <article><span>Completed</span><strong id="completedCount">—</strong><em>Posted, delivered or collected</em></article>
+      <article><span>Unpaid</span><strong id="unpaidCount">—</strong><em>Payment follow-up</em></article>
+    </section>
+
+    <section class="shipping-board">
+      <article class="shipping-column">
+        <div class="shipping-column-head"><div><p class="eyebrow">Step 1</p><h2>Pending</h2></div><span id="pendingBadge" class="shipping-badge">0</span></div>
+        <p class="shipping-column-help">Paid or new orders that still need to be packed.</p>
+        <div id="pendingOrders" class="shipping-list"><div class="empty">Loading…</div></div>
+      </article>
+
+      <article class="shipping-column">
+        <div class="shipping-column-head"><div><p class="eyebrow">Step 2</p><h2>Ready to Post</h2></div><span id="readyBadge" class="shipping-badge">0</span></div>
+        <p class="shipping-column-help">Packed orders awaiting tracking details or final posting.</p>
+        <div id="readyOrders" class="shipping-list"><div class="empty">Loading…</div></div>
+      </article>
+
+      <article class="shipping-column">
+        <div class="shipping-column-head"><div><p class="eyebrow">History</p><h2>Completed</h2></div><span id="completedBadge" class="shipping-badge">0</span></div>
+        <p class="shipping-column-help">Posted, delivered, collected and historical orders.</p>
+        <div id="completedOrders" class="shipping-list"><div class="empty">Loading…</div></div>
+      </article>
+    </section>
   </main>
+
+  <dialog id="shippingDialog" class="shipping-dialog">
+    <form method="dialog" class="shipping-dialog-shell">
+      <button class="shipping-dialog-close" value="cancel" aria-label="Close">×</button>
+      <div id="shippingDialogContent"></div>
+    </form>
+  </dialog>
+
+  <script src="admin-write.js"></script>
+  <script src="shipping.js"></script>
   <script src="admin-shell.js"></script>
 </body>
 </html>
