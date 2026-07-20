@@ -13,7 +13,7 @@
   "weeklyDiscountPercent": 20,
   "weeklyDiscountDays": 7,
   "siteUrl": "https://deadendscents.com",
-  "adminWriteEndpoint": "https://script.google.com/macros/s/AKfycbxKVU2Qt1XTu4z_ezx_BcjdfCuaOphLGBxqV3uGzfqaz3CX2tDIZmIG28QkbT7rpRTr/exec",
+  "adminWriteEndpoint": "https://script.google.com/macros/s/AKfycbzgQI3baJo18-ZgxZ2BkRSA0v8o1GS3xBl5rvxqmtFI2-wljKuKbGuNASnlivfJOfrD/exec",
   "catalogueFallbackFile": "catalogue-fallback.json",
   "masterSheetId": "1GSW1Bytauoi53o4orbojoZl9K-ixL4Y4Mj6NyehzCrc",
   "discoveryPacksCsvUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQCyIBU5X2VVuXZakb_eub3-mCiXi7lYgnolDSqHsU8ECz_ey3aec1Z0ADFbfxbOnw6RAjWFT03YKJi/pub?gid=523175048&single=true&output=csv",
