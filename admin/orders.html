@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Orders & Sales | DeadEnd Scents Admin</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <header class="admin-shell admin-header compact">
+    <a class="admin-logo" href="index.html" aria-label="Admin dashboard"><img src="../assets/deadend-logo.png" alt="DeadEnd Scents"></a>
+    <div><p class="eyebrow">Admin V2 · Phase 1</p><h1>Orders & Sales</h1><p class="muted">Record new sales, review order history and prepare the historical database import.</p></div>
+  </header>
+  <main class="admin-shell">
+    <section class="admin-panel">
+      <div class="admin-page-intro"><div><p class="eyebrow">Foundation installed</p><h2>Ready for Phase 2 connection</h2><p class="muted">This page is intentionally non-destructive. It establishes the final admin navigation and visual system before Google Sheets write-back is added.</p></div><a class="button" href="index.html">Back to Dashboard</a></div>
+    </section>
+    <section class="phase-grid"><article class="phase-card"><h3>New Order</h3><p>Working order-entry form will be connected to Catalogue, Orders and Order Items in Phase 2.</p><span class="phase-status">Foundation ready</span></article><article class="phase-card"><h3>Order History</h3><p>Search, filter and edit historical and future orders.</p><span class="phase-status">Foundation ready</span></article><article class="phase-card"><h3>Historical Import</h3><p>Bring the prepared Orders, Order Items and Customers sheets into the live master database.</p><span class="phase-status">Foundation ready</span></article></section>
+    <section class="admin-panel"><p class="eyebrow">Next connection steps</p><h2>Phase 2 checklist</h2><ul class="admin-checklist"><li>Confirm the Orders and Order Items tabs exist in the master Google Sheet.</li><li>Connect the admin page to the Google Apps Script endpoint.</li><li>Build save, edit and stock-deduction safeguards.</li></ul></section>
+  </main>
+  <script src="admin-shell.js"></script>
+</body>
+</html>

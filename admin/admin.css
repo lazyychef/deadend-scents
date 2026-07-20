@@ -77,3 +77,35 @@ textarea{min-height:140px}.seo-score-ring{border-radius:0!important;border-color
 .save-bar,.form-actions{background:rgba(246,239,226,.92)!important;border-color:var(--de-line)!important;border-radius:0!important;}
 @media(max-width:980px){.calc-form-card,.seo-editor-card,.image-preview-card{position:static}.admin-header{padding:10px .7rem!important}.admin-logo{width:58px!important;height:58px!important}}
 @media(max-width:560px){body{background:var(--de-cream)!important}.admin-header h1{font-size:2.15rem!important}.dashboard-grid{grid-template-columns:1fr}.tool-card{display:block;min-height:unset}.tool-card strong{display:block}.tool-card em{display:block}.form-actions{position:sticky;bottom:.5rem;z-index:4}.result-grid{grid-template-columns:repeat(3,1fr)}.admin-panel{padding:.8rem}.section-head{display:grid;gap:.5rem}.section-actions,.bulk-actions{display:grid;grid-template-columns:1fr;width:100%}}
+
+
+/* =========================================================
+   ADMIN V2 — PHASE 1 SHARED SHELL
+   Admin-only styles. Public site files are not referenced or changed.
+   ========================================================= */
+.admin-nav{position:sticky;top:0;z-index:50;background:var(--de-paper);border-bottom:1px solid var(--de-line);box-shadow:0 5px 18px rgba(24,45,9,.08)}
+.admin-nav-inner{width:min(100% - 1.1rem,1180px);margin:0 auto}
+.admin-nav-toggle{display:none;width:100%;border:0;background:transparent;color:var(--de-green);padding:.72rem 0;font:800 .76rem/1 var(--de-sans);text-transform:uppercase;letter-spacing:.12em;justify-content:space-between;align-items:center;cursor:pointer}
+.admin-nav-links{display:flex;align-items:center;gap:.1rem;overflow-x:auto;scrollbar-width:thin}
+.admin-nav-links a{display:block;flex:0 0 auto;padding:.78rem .68rem;border-bottom:3px solid transparent;color:var(--de-muted);font-size:.73rem;font-weight:900;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap}
+.admin-nav-links a:hover{color:var(--de-green);border-bottom-color:var(--de-gold)}
+.admin-nav-links a[aria-current="page"]{color:var(--de-green);border-bottom-color:var(--de-rust)}
+.admin-nav-links .admin-nav-site{margin-left:auto;color:var(--de-rust)}
+.admin-header.compact{min-height:112px}
+.admin-panel,.tool-card,.quick-stats article,.result-grid article,.settings-group,.mini-row,.edit-row,.check-row,.inventory-card-v52,.seo-preview-card,.seo-health-list div,.seo-score-badge,.seo-setup-details{border-radius:0!important}
+.tool-card{background:var(--de-paper)!important;border:1px solid var(--de-line)!important;box-shadow:none!important}
+.tool-card:hover{border-color:var(--de-rust)!important;transform:translateY(-1px)}
+.tool-card.live{border-left:5px solid var(--de-green)!important}
+.tool-card.phase-one{border-left:5px solid var(--de-rust)!important}
+.button,.pill,.admin-filter-row input,.admin-filter-row select,.wide-label select,.form-grid input,.form-grid select,.edit-form input,.edit-form select,.edit-form textarea,.calc-form input,.calc-form select,textarea{border-radius:0!important}
+.admin-page-intro{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1rem;align-items:end}
+.phase-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem}
+.phase-card{border:1px solid var(--de-line);background:#fff;padding:1rem;min-height:150px}
+.phase-card h3{font-size:1.45rem;margin:0 0 .35rem}
+.phase-card p{margin:.25rem 0;color:var(--de-muted)}
+.phase-status{display:inline-block;margin-top:.65rem;border-left:4px solid var(--de-rust);padding:.25rem .55rem;background:var(--de-cream);font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:var(--de-green)}
+.admin-empty-state{border:1px dashed var(--de-line);background:#fff;padding:1rem;color:var(--de-muted)}
+.admin-checklist{display:grid;gap:.45rem;margin:0;padding:0;list-style:none}
+.admin-checklist li{border-left:4px solid var(--de-green);background:#fff;border-top:1px solid var(--de-line);border-right:1px solid var(--de-line);border-bottom:1px solid var(--de-line);padding:.7rem .8rem}
+@media(max-width:900px){.phase-grid{grid-template-columns:1fr 1fr}.admin-page-intro{grid-template-columns:1fr}}
+@media(max-width:700px){.admin-nav-toggle{display:flex}.admin-nav-links{display:none;overflow:visible;flex-direction:column;align-items:stretch;padding:0 0 .55rem}.admin-nav.is-open .admin-nav-links{display:flex}.admin-nav-links a{border:0;border-left:4px solid transparent;padding:.68rem .75rem}.admin-nav-links a[aria-current="page"]{border-left-color:var(--de-rust);background:var(--de-cream)}.admin-nav-links .admin-nav-site{margin-left:0;border-top:1px solid var(--de-line)}.phase-grid{grid-template-columns:1fr}.admin-header.compact{min-height:auto}}
