@@ -1,0 +1,29 @@
+{
+  "public_files_unchanged": [
+    "index.html",
+    "styles.css",
+    "app.js",
+    "data.js",
+    "settings.json",
+    "fragrances.json",
+    "catalogue-fallback.json",
+    "packs.json",
+    "seo-pages.css"
+  ],
+  "changed_files": [
+    "admin/admin.css",
+    "admin/admin-shell.js",
+    "admin/index.html",
+    "admin/inventory.html",
+    "admin/add-bottle.html",
+    "admin/calculator.html",
+    "admin/features.html",
+    "admin/seo.html",
+    "admin/settings.html",
+    "admin/orders.html",
+    "admin/customers.html",
+    "admin/analytics.html",
+    "admin/shipping.html",
+    "ADMIN_V2_PHASE_1_NOTES.md"
+  ]
+}
