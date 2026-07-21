@@ -177,11 +177,25 @@
     }
   }
 
+  function applyWishlistPrefill(){
+    try{
+      const raw=sessionStorage.getItem('deadendAddBottlePrefill');
+      if(!raw) return;
+      const x=JSON.parse(raw);
+      sessionStorage.removeItem('deadendAddBottlePrefill');
+      Object.entries(x).forEach(([id,value])=>setInput(id,value));
+      if(x.imageUrl) renderImage(x.imageUrl);
+      state.suggested={3:num(x.price3),5:num(x.price5),10:num(x.price10)};
+      $('saveStatus').textContent='Prefilled from DeadEnd Intelligence. Review the bottle details, then add it to the database.';
+    }catch(e){ console.warn('Wishlist prefill could not be applied',e); }
+  }
+
   async function init(){
     await loadSettings();
     await loadCatalogueOptions();
     const d=today();
     setInput('addedDate', d); setInput('purchaseDate', d); setInput('stock','In Stock'); setInput('condition','New');
+    applyWishlistPrefill();
     ['purchasePrice','bottleSize','currentMl','rrp','collection','competitor3','competitor5','competitor10'].forEach(id=>$(id).addEventListener('input',()=>calculatePrices(false)));
     $('imageUrl').addEventListener('input',e=>renderImage(e.target.value));
     $('calculatePrices').addEventListener('click',()=>calculatePrices(true));

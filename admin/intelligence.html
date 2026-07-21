@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
   <title>DeadEnd Intelligence · Acquisition Advisor</title>
-  <link rel="stylesheet" href="admin.css?v=7.1">
+  <link rel="stylesheet" href="admin.css?v=7.2">
 </head>
 <body>
   <header class="admin-shell admin-header">
     <a class="admin-logo" href="../index.html" aria-label="DeadEnd Scents home"><img src="../assets/deadend-logo.png" alt="DeadEnd Scents"></a>
-    <div><p class="eyebrow">DeadEnd Intelligence · Phase 7.1</p><h1>Acquisition Advisor</h1><p class="muted">Test a potential bottle against your real catalogue, sales and sample economics before you blind buy.</p></div>
+    <div><p class="eyebrow">DeadEnd Intelligence · Phase 7.2</p><h1>Acquisition Advisor</h1><p class="muted">Test a potential bottle against your real catalogue, sales and sample economics before you blind buy.</p></div>
   </header>
   <main class="admin-shell intelligence-page">
     <div id="intelligenceStatus" class="status-strip">Loading live catalogue, sales and wishlist…</div>
@@ -41,14 +41,22 @@
       <section class="admin-panel"><p class="eyebrow">Collection fit</p><h2>Closest catalogue DNA</h2><p class="muted">Scent Style is the strongest comparison signal, followed by season, occasion, collection and shared notes.</p><div id="similarityList" class="similarity-list"></div></section>
       <section class="admin-panel two-column-panel"><div><p class="eyebrow">Financial model</p><h2>Suggested sample economics</h2><div id="financialModel" class="metric-list"></div></div><div><p class="eyebrow">Decision support</p><h2>Reasons and warnings</h2><div id="decisionReasons" class="decision-list"></div></div></section>
     </section>
-    <section class="admin-panel">
-      <div class="section-head"><div><p class="eyebrow">Wishlist Manager</p><h2>Ranked potential purchases</h2></div><button id="exportWishlist" class="button" type="button">Export CSV</button></div>
-      <p class="muted">Stored in the new <strong>Wishlist</strong> tab of your master database and available across devices.</p>
+    <section class="admin-panel wishlist-intelligence">
+      <div class="section-head"><div><p class="eyebrow">Wishlist Intelligence</p><h2>What should I buy next?</h2></div><button id="exportWishlist" class="button" type="button">Export CSV</button></div>
+      <p class="muted">Ranked using deal strength, projected ROI, catalogue overlap, recorded demand and your personal interest.</p>
+      <div id="wishlistSummary" class="wishlist-summary-grid"></div>
+      <div id="collectionGap" class="collection-gap"></div>
+      <div class="wishlist-toolbar">
+        <label><span>Show</span><select id="wishlistStatusFilter"><option value="">All active statuses</option><option>Wishlist</option><option>Watching</option><option>Waiting for Sale</option><option>Bought</option><option>Skip</option></select></label>
+        <label><span>Scent Style</span><select id="wishlistStyleFilter"><option value="">All scent styles</option></select></label>
+        <label><span>Sort by</span><select id="wishlistSort"><option value="score">Best next purchase</option><option value="roi">Highest ROI</option><option value="price">Lowest landed cost</option><option value="newest">Newest added</option><option value="style">Scent Style</option></select></label>
+      </div>
+      <div id="comparePanel" class="compare-panel" hidden></div>
       <div id="wishlistTable"><div class="empty">Loading wishlist…</div></div>
     </section>
   </main>
   <script src="admin-write.js?v=2.1"></script>
-  <script src="intelligence.js?v=7.1"></script>
-  <script src="admin-shell.js?v=7.1"></script>
+  <script src="intelligence.js?v=7.2"></script>
+  <script src="admin-shell.js?v=7.2"></script>
 </body>
 </html>
