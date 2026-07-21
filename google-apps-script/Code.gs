@@ -1,57 +1,99 @@
 /**
- * DeadEnd Scents Admin V6.0.6 consolidation endpoint.
- * Copy this file into the Apps Script project attached to the master Google Sheet.
- * Deploy as Web App: Execute as Me, Access Anyone with the link.
+ * DeadEnd Scents Admin V2.1 write engine.
+ * Copy this complete file into the Apps Script project attached to the master Google Sheet.
+ * Deploy as Web App: Execute as Me, Access Anyone.
  */
 function doPost(e) {
+  var payload = {};
+  var requestId = '';
   try {
     var payloadText = '';
-    if (e && e.postData && e.postData.contents) payloadText = e.postData.contents;
     if (e && e.parameter && e.parameter.payload) payloadText = e.parameter.payload;
-    var payload = JSON.parse(payloadText || '{}');
+    else if (e && e.postData && e.postData.contents) payloadText = e.postData.contents;
+    payload = JSON.parse(payloadText || '{}');
+    requestId = String(payload.requestId || '');
+    if (requestId) setWriteReceipt_(requestId, { ok:true, status:'processing', requestId:requestId });
+
     var ss = SpreadsheetApp.openById('1GSW1Bytauoi53o4orbojoZl9K-ixL4Y4Mj6NyehzCrc');
-
-    if (payload.action === 'updateBottle') return json_({ ok:true, result:updateBottle_(ss, payload) });
-    if (payload.action === 'setFeatured') return json_({ ok:true, result:setFeatured_(ss, payload) });
-    if (payload.action === 'setStaffPicks') return json_({ ok:true, result:setStaffPicks_(ss, payload) });
-    if (payload.action === 'updateSettings') return json_({ ok:true, result:updateSettings_(ss, payload) });
-    if (payload.action === 'addPurchase') return json_(addPurchase_(ss, payload));
-    if (payload.action === 'addBottle') return json_(addBottle_(ss, payload));
-    if (payload.action === 'duplicateBottle') return json_(duplicateBottle_(ss, payload));
-    if (payload.action === 'deleteBottle') return json_(deleteBottle_(ss, payload));
-    if (payload.action === 'setupSEOColumns') return json_(setupSEOColumns_(ss));
-    if (payload.action === 'generateFragranceSEO') return json_(generateFragranceSEO_(ss, payload));
-    if (payload.action === 'saveFragranceSEO') return json_(saveFragranceSEO_(ss, payload));
-    if (payload.action === 'generateBulkFragranceSEO') return json_(generateBulkFragranceSEO_(ss, payload));
-    if (payload.action === 'setupOrderSheets') return json_(setupOrderSheets_(ss));
-    if (payload.action === 'createOrder') return json_(createOrder_(ss, payload));
-    if (payload.action === 'updateOrderStatus') return json_(updateOrderStatus_(ss, payload));
-    if (payload.action === 'updateOrder') return json_(updateOrder_(ss, payload));
-    if (payload.action === 'duplicateOrder') return json_(duplicateOrder_(ss, payload));
-    if (payload.action === 'updateCustomer') return json_(updateCustomer_(ss, payload));
-
-    return json_({ ok:false, error:'Unknown action: ' + payload.action });
+    var result = dispatchWrite_(ss, payload);
+    var response = result && typeof result === 'object' ? result : { ok:true, result:result };
+    if (response.ok === undefined) response.ok = true;
+    response.status = response.ok === false ? 'error' : 'complete';
+    response.requestId = requestId;
+    if (requestId) setWriteReceipt_(requestId, response);
+    return json_(response);
   } catch (err) {
-    return json_({ ok:false, error:String(err && err.message ? err.message : err) });
+    var failure = {
+      ok:false,
+      status:'error',
+      requestId:requestId,
+      error:String(err && err.message ? err.message : err)
+    };
+    if (requestId) setWriteReceipt_(requestId, failure);
+    return json_(failure);
   }
+}
+
+function dispatchWrite_(ss, payload) {
+  if (payload.action === 'updateBottle') return { ok:true, result:updateBottle_(ss, payload) };
+  if (payload.action === 'setFeatured') return { ok:true, result:setFeatured_(ss, payload) };
+  if (payload.action === 'setStaffPicks') return { ok:true, result:setStaffPicks_(ss, payload) };
+  if (payload.action === 'updateSettings') return { ok:true, result:updateSettings_(ss, payload) };
+  if (payload.action === 'addPurchase') return addPurchase_(ss, payload);
+  if (payload.action === 'addBottle') return addBottle_(ss, payload);
+  if (payload.action === 'duplicateBottle') return duplicateBottle_(ss, payload);
+  if (payload.action === 'deleteBottle') return deleteBottle_(ss, payload);
+  if (payload.action === 'setupSEOColumns') return setupSEOColumns_(ss);
+  if (payload.action === 'generateFragranceSEO') return generateFragranceSEO_(ss, payload);
+  if (payload.action === 'saveFragranceSEO') return saveFragranceSEO_(ss, payload);
+  if (payload.action === 'generateBulkFragranceSEO') return generateBulkFragranceSEO_(ss, payload);
+  if (payload.action === 'setupOrderSheets') return setupOrderSheets_(ss);
+  if (payload.action === 'createOrder') return createOrder_(ss, payload);
+  if (payload.action === 'updateOrderStatus') return updateOrderStatus_(ss, payload);
+  if (payload.action === 'updateOrder') return updateOrder_(ss, payload);
+  if (payload.action === 'duplicateOrder') return duplicateOrder_(ss, payload);
+  if (payload.action === 'updateCustomer') return updateCustomer_(ss, payload);
+  if (payload.action === 'saveWishlist') return saveWishlist_(ss, payload);
+  if (payload.action === 'deleteWishlist') return deleteWishlist_(ss, payload);
+  throw new Error('Unknown action: ' + payload.action);
+}
+
+function writeReceiptKey_(requestId) {
+  return 'adminWrite:' + String(requestId || '').replace(/[^a-zA-Z0-9_-]/g, '');
+}
+function setWriteReceipt_(requestId, receipt) {
+  if (!requestId) return;
+  var value = JSON.stringify(receipt);
+  CacheService.getScriptCache().put(writeReceiptKey_(requestId), value, 600);
+  PropertiesService.getScriptProperties().setProperty(writeReceiptKey_(requestId), value);
+}
+function getWriteReceipt_(requestId) {
+  if (!requestId) return null;
+  var key = writeReceiptKey_(requestId);
+  var value = CacheService.getScriptCache().get(key) || PropertiesService.getScriptProperties().getProperty(key);
+  return value ? JSON.parse(value) : null;
 }
 
 function doGet(e) {
   var action = e && e.parameter && e.parameter.action;
+  if (action === 'writeStatus') {
+    var requestId = String((e && e.parameter && e.parameter.requestId) || '');
+    return json_(getWriteReceipt_(requestId) || { ok:true, status:'waiting', requestId:requestId });
+  }
   var ss = SpreadsheetApp.openById('1GSW1Bytauoi53o4orbojoZl9K-ixL4Y4Mj6NyehzCrc');
-  if (action === 'settings') return json_({ ok:true, settings:getSettings_(ss) });
+  if (action === 'settings') return json_({ok:true, settings:getSettings_(ss)});
   if (action === 'catalogue') return json_(getCatalogue_(ss));
   if (action === 'orders') return json_(getOrders_(ss));
   if (action === 'orderItems') return json_(getOrderItems_(ss));
   if (action === 'customers') return json_(getCustomers_(ss));
   if (action === 'orderSummary') return json_(getOrderSummary_(ss));
-  return json_({ ok:true, app:'DeadEnd Scents Admin V6.0.6', status:'ready' });
+  if (action === 'wishlist') return json_(getWishlist_(ss));
+  return json_({ok:true, app:'DeadEnd Scents Admin V2.1', status:'ready'});
 }
 
 function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
 }
-
 
 function normaliseSettingKey_(label) {
   var k = String(label || '').toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -863,17 +905,48 @@ function orderItemsFor_(sheet, orderId) {
   for(var r=1;r<values.length;r++) if(String(values[r][hi.orderid])===String(orderId)) out.push({row:r+1,obj:rowObject_(headers,values[r])});
   return out;
 }
-function adjustOrderStock_(ss,items,direction) {
-  var sheet=ss.getSheetByName('Catalogue')||ss.getSheets()[0], values=sheet.getDataRange().getValues(), headers=values[0];
-  var idCol=findHeader_(headers,['ID']), mlCol=findHeader_(headers,['Current mL','Current Amount Left (mL)','Amount Left','Remaining mL']);
-  if(idCol<0||mlCol<0) throw new Error('Catalogue needs ID and Current mL columns before stock can be adjusted.');
-  items.forEach(function(it){
-    var id=it.fragranceId||it['Fragrance ID']||'', qty=Math.max(1,Number(it.quantity||it.Quantity)||1), size=Number(it.sizeMl||it['Size mL'])||0;
-    if(!id||!size) return;
-    for(var r=1;r<values.length;r++) if(String(values[r][idCol])===String(id)){
-      var current=Number(values[r][mlCol])||0, next=Math.max(0,current+(direction*qty*size));
-      sheet.getRange(r+1,mlCol+1).setValue(next); values[r][mlCol]=next; break;
+function normaliseMatchText_(v) {
+  return String(v || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+function resolveCatalogueStockRows_(ss, items) {
+  var sheet = ss.getSheetByName('Catalogue') || ss.getSheets()[0];
+  var values = sheet.getDataRange().getValues(), headers = values[0];
+  var idCol = findHeader_(headers, ['ID']);
+  var houseCol = findHeader_(headers, ['House']);
+  var fragranceCol = findHeader_(headers, ['Fragrance', 'Name']);
+  var mlCol = findHeader_(headers, ['Current mL','Current Amount Left (mL)','Amount Left','Remaining mL']);
+  if (mlCol < 0) throw new Error('Catalogue needs a Current mL column before stock can be adjusted.');
+
+  var resolved = items.map(function(it) {
+    var id = String(it.fragranceId || it['Fragrance ID'] || '').trim();
+    var house = normaliseMatchText_(it.house || it.House || '');
+    var fragrance = normaliseMatchText_(it.fragrance || it.Fragrance || '');
+    var row = -1;
+    if (id && idCol >= 0) {
+      for (var r=1; r<values.length; r++) if (String(values[r][idCol]).trim() === id) { row=r; break; }
     }
+    if (row < 0 && fragrance && fragranceCol >= 0) {
+      for (var x=1; x<values.length; x++) {
+        var sameFragrance = normaliseMatchText_(values[x][fragranceCol]) === fragrance;
+        var sameHouse = houseCol < 0 || !house || normaliseMatchText_(values[x][houseCol]) === house;
+        if (sameFragrance && sameHouse) { row=x; break; }
+      }
+    }
+    if (row < 0) throw new Error('Could not match Catalogue bottle for ' + [it.house || it.House, it.fragrance || it.Fragrance].filter(String).join(' - '));
+    return { row:row, item:it };
+  });
+  return { sheet:sheet, values:values, mlCol:mlCol, resolved:resolved };
+}
+function adjustOrderStock_(ss,items,direction) {
+  var match = resolveCatalogueStockRows_(ss, items);
+  match.resolved.forEach(function(entry) {
+    var it=entry.item, qty=Math.max(1,Number(it.quantity || it.Quantity)||1), size=Number(it.sizeMl || it['Size mL'])||0;
+    if (!size) throw new Error('Missing sample size for ' + (it.fragrance || it.Fragrance || 'order item'));
+    var current=Number(match.values[entry.row][match.mlCol])||0;
+    var next=current+(direction*qty*size);
+    if (next < 0) throw new Error('Not enough stock for ' + (it.fragrance || it.Fragrance || 'order item') + '. Current stock: ' + current + 'mL.');
+    match.sheet.getRange(entry.row+1,match.mlCol+1).setValue(next);
+    match.values[entry.row][match.mlCol]=next;
   });
 }
 function writeOrderItems_(sheet,orderId,date,customerId,customerName,items){
@@ -892,6 +965,9 @@ function updateOrder_(ss,payload) {
   var customerId=upsertCustomer_(customers,customerName,p,date), subtotal=0,totalMl=0,totalQty=0;
   items.forEach(function(it){var q=Math.max(1,Number(it.quantity)||1),size=Number(it.sizeMl)||0,price=Number(it.priceEach)||0;subtotal+=q*price;totalMl+=q*size;totalQty+=q;});
   var postage=Number(p.postage)||0,discount=Number(p.discount)||0,total=Math.max(0,subtotal+postage-discount),newStock=boolValue_(p.deductStock);
+  // Validate every new stock match before changing the old order or catalogue.
+  if(newStock) resolveCatalogueStockRows_(ss, items);
+  if(oldStock) resolveCatalogueStockRows_(ss, oldItems.map(function(x){return x.obj;}));
   if(oldStock) adjustOrderStock_(ss,oldItems.map(function(x){return x.obj;}),1);
   oldItems.sort(function(a,b){return b.row-a.row;}).forEach(function(x){itemsSheet.deleteRow(x.row);});
   writeOrderItems_(itemsSheet,id,date,customerId,customerName,items);
@@ -920,4 +996,103 @@ function updateCustomer_(ss,payload) {
     return {ok:true,action:'updateCustomer',customerId:id};
   }
   throw new Error('Customer not found: '+id);
+}
+
+
+/* Phase 7.1 — DeadEnd Intelligence Wishlist */
+var WISHLIST_HEADERS_ = [
+  'Wishlist ID','Date Added','Last Updated','House','Fragrance','Collection','Scent Style',
+  'Season','Occasion','Purchase Price','Shipping / Extra','Landed Cost','Normal RRP','Bottle Size mL',
+  'Suggested 3mL','Suggested 5mL','Suggested 10mL','Buy Score','Verdict','Projected ROI %',
+  'Closest Match','Closest Match %','Similarity Reasons','Status','Personal Interest','Notes / Accords','URL'
+];
+
+function wishlistSheet_(ss) {
+  var sheet = ss.getSheetByName('Wishlist');
+  if (!sheet) sheet = ss.insertSheet('Wishlist');
+  var current = sheet.getLastColumn() ? sheet.getRange(1,1,1,sheet.getLastColumn()).getDisplayValues()[0] : [];
+  var existing = {};
+  current.forEach(function(h){ existing[norm_(h)] = true; });
+  if (!current.length || !current.some(function(v){ return String(v || '').trim(); })) {
+    sheet.getRange(1,1,1,WISHLIST_HEADERS_.length).setValues([WISHLIST_HEADERS_]);
+  } else {
+    WISHLIST_HEADERS_.forEach(function(h){
+      if (!existing[norm_(h)]) sheet.getRange(1,sheet.getLastColumn()+1).setValue(h);
+    });
+  }
+  sheet.setFrozenRows(1);
+  return sheet;
+}
+
+function getWishlist_(ss) {
+  var sheet = wishlistSheet_(ss);
+  var values = sheet.getDataRange().getDisplayValues();
+  if (values.length < 2) return {ok:true,items:[]};
+  var headers = values.shift();
+  var items = values.filter(function(r){ return r.some(function(v){ return String(v || '').trim(); }); })
+    .map(function(r){ return rowObject_(headers,r); });
+  return {ok:true,items:items};
+}
+
+function saveWishlist_(ss,payload) {
+  var sheet = wishlistSheet_(ss);
+  var item = payload.item || {};
+  var id = String(item['Wishlist ID'] || item.id || '').trim();
+  if (!id) id = 'W-' + Utilities.getUuid().substring(0,8).toUpperCase();
+  var values = sheet.getDataRange().getValues();
+  var headers = values[0];
+  var hi = headerMap_(headers);
+  var row = 0;
+  for (var r=1;r<values.length;r++) {
+    if (String(values[r][hi.wishlistid] || '') === id) { row=r+1; break; }
+  }
+  var now = new Date();
+  var out = {
+    'Wishlist ID':id,
+    'Date Added':item['Date Added'] || item.saved || now,
+    'Last Updated':now,
+    'House':item.House || item.house || '',
+    'Fragrance':item.Fragrance || item.name || '',
+    'Collection':item.Collection || item.collection || '',
+    'Scent Style':item['Scent Style'] || item.scentStyle || '',
+    'Season':item.Season || item.season || '',
+    'Occasion':item.Occasion || item.occasion || '',
+    'Purchase Price':Number(item['Purchase Price'] || item.cost || 0),
+    'Shipping / Extra':Number(item['Shipping / Extra'] || item.shipping || 0),
+    'Landed Cost':Number(item['Landed Cost'] || item.landedCost || 0),
+    'Normal RRP':Number(item['Normal RRP'] || item.rrp || 0),
+    'Bottle Size mL':Number(item['Bottle Size mL'] || item.size || 0),
+    'Suggested 3mL':Number(item['Suggested 3mL'] || item.p3 || 0),
+    'Suggested 5mL':Number(item['Suggested 5mL'] || item.p5 || 0),
+    'Suggested 10mL':Number(item['Suggested 10mL'] || item.p10 || 0),
+    'Buy Score':Number(item['Buy Score'] || item.score || 0),
+    'Verdict':item.Verdict || item.verdict || '',
+    'Projected ROI %':Number(item['Projected ROI %'] || item.roi || 0),
+    'Closest Match':item['Closest Match'] || item.closest || '',
+    'Closest Match %':Number(item['Closest Match %'] || item.overlap || 0),
+    'Similarity Reasons':item['Similarity Reasons'] || item.similarityReasons || '',
+    'Status':item.Status || item.status || 'Wishlist',
+    'Personal Interest':Number(item['Personal Interest'] || item.interest || 3),
+    'Notes / Accords':item['Notes / Accords'] || item.notes || '',
+    'URL':item.URL || item.url || ''
+  };
+  var rowValues = headers.map(function(h){ return out[h] !== undefined ? out[h] : ''; });
+  if (row) sheet.getRange(row,1,1,headers.length).setValues([rowValues]);
+  else { sheet.appendRow(rowValues); row=sheet.getLastRow(); }
+  return {ok:true,action:'saveWishlist',id:id,row:row};
+}
+
+function deleteWishlist_(ss,payload) {
+  var sheet = wishlistSheet_(ss);
+  var id = String(payload.id || '').trim();
+  if (!id) throw new Error('Wishlist ID is required.');
+  var values = sheet.getDataRange().getValues();
+  var hi = headerMap_(values[0]);
+  for (var r=1;r<values.length;r++) {
+    if (String(values[r][hi.wishlistid] || '') === id) {
+      sheet.deleteRow(r+1);
+      return {ok:true,action:'deleteWishlist',id:id};
+    }
+  }
+  throw new Error('Wishlist item not found: ' + id);
 }
