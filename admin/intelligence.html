@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>DeadEnd Intelligence · Acquisition Advisor</title>
+  <link rel="stylesheet" href="admin.css?v=7.0">
+</head>
+<body>
+  <header class="admin-shell admin-header">
+    <a class="admin-logo" href="../index.html" aria-label="DeadEnd Scents home"><img src="../assets/deadend-logo.png" alt="DeadEnd Scents"></a>
+    <div>
+      <p class="eyebrow">DeadEnd Intelligence · Phase 7</p>
+      <h1>Acquisition Advisor</h1>
+      <p class="muted">Score a potential bottle against your catalogue, item-level sales and sample economics before you blind buy.</p>
+    </div>
+  </header>
+
+  <main class="admin-shell intelligence-page">
+    <div id="intelligenceStatus" class="status-strip">Loading live catalogue and sales data…</div>
+
+    <section class="admin-panel">
+      <div class="section-head">
+        <div><p class="eyebrow">Potential purchase</p><h2>Analyse a bottle</h2></div>
+        <button id="clearCandidate" class="button" type="button">Clear</button>
+      </div>
+
+      <form id="candidateForm" class="intelligence-form">
+        <label><span>Fragrance</span><input id="candidateName" required placeholder="e.g. Lattafa The Kingdom"></label>
+        <label><span>House</span><input id="candidateHouse" placeholder="e.g. Lattafa"></label>
+        <label><span>Sale price</span><input id="candidateCost" required inputmode="decimal" type="number" min="0" step="0.01" placeholder="72"></label>
+        <label><span>Bottle size (mL)</span><input id="candidateSize" required inputmode="numeric" type="number" min="1" step="1" value="100"></label>
+        <label><span>Shipping / extra cost</span><input id="candidateShipping" inputmode="decimal" type="number" min="0" step="0.01" value="0"></label>
+        <label><span>Category / DNA</span><input id="candidateCategory" placeholder="e.g. sweet amber vanilla"></label>
+        <label class="wide"><span>Notes and accords</span><textarea id="candidateNotes" rows="3" placeholder="Paste the main notes or accords: vanilla, cinnamon, amber, woods, tobacco…"></textarea></label>
+        <label><span>Likely 3mL price</span><input id="candidateP3" inputmode="decimal" type="number" min="0" step="1" placeholder="9"></label>
+        <label><span>Likely 5mL price</span><input id="candidateP5" inputmode="decimal" type="number" min="0" step="1" placeholder="15"></label>
+        <label><span>Likely 10mL price</span><input id="candidateP10" inputmode="decimal" type="number" min="0" step="1" placeholder="26"></label>
+        <label><span>Personal interest</span><select id="candidateInterest"><option value="3">Curious</option><option value="4">Really want to try it</option><option value="5">Collector excitement</option><option value="2">Mostly business interest</option><option value="1">Low personal interest</option></select></label>
+        <label class="wide"><span>Product / reference URL (optional)</span><input id="candidateUrl" type="url" placeholder="https://…"></label>
+        <div class="form-actions wide"><button class="button primary" type="submit">Analyse bottle</button><button id="saveWishlist" class="button" type="button" disabled>Save to wishlist</button></div>
+      </form>
+      <p class="helper-text">Tip: notes and accords make the DNA-overlap check much more accurate. This version uses your live business data; it does not automatically scrape product websites.</p>
+    </section>
+
+    <section id="analysisResults" class="intelligence-results" hidden>
+      <section class="verdict-card admin-panel">
+        <div><p class="eyebrow">Acquisition verdict</p><h2 id="verdictLabel">—</h2><p id="verdictSummary" class="muted"></p></div>
+        <div class="score-orbit"><strong id="buyScore">0</strong><span>/ 100</span></div>
+      </section>
+
+      <section id="scoreCards" class="intelligence-score-grid"></section>
+
+      <section class="admin-panel">
+        <p class="eyebrow">Collection fit</p><h2>Closest catalogue DNA</h2>
+        <div id="similarityList" class="similarity-list"></div>
+      </section>
+
+      <section class="admin-panel two-column-panel">
+        <div><p class="eyebrow">Financial model</p><h2>Sample economics</h2><div id="financialModel" class="metric-list"></div></div>
+        <div><p class="eyebrow">Decision support</p><h2>Reasons and warnings</h2><div id="decisionReasons" class="decision-list"></div></div>
+      </section>
+    </section>
+
+    <section class="admin-panel">
+      <div class="section-head"><div><p class="eyebrow">Wishlist Manager</p><h2>Ranked potential purchases</h2></div><button id="exportWishlist" class="button" type="button">Export CSV</button></div>
+      <p class="muted">Saved on this device. Re-analyse any row after prices or your catalogue change.</p>
+      <div id="wishlistTable"><div class="empty">No bottles saved yet.</div></div>
+    </section>
+  </main>
+
+  <script src="intelligence.js?v=7.0"></script>
+  <script src="admin-shell.js?v=7.0"></script>
+</body>
+</html>

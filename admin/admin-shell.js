@@ -7,6 +7,7 @@
     ['orders.html','Orders'],
     ['customers.html','Customers'],
     ['analytics.html','Analytics'],
+    ['intelligence.html','Intelligence'],
     ['shipping.html','Shipping'],
     ['features.html','Features'],
     ['seo.html','SEO'],
