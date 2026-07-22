@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Inventory Intelligence | DeadEnd Scents Admin</title>
+  <link rel="stylesheet" href="admin.css?v=7.3">
+</head>
+<body>
+  <header class="admin-shell admin-header compact">
+    <a class="admin-logo" href="index.html" aria-label="Admin dashboard"><img src="../assets/deadend-logo.png" alt="DeadEnd Scents"></a>
+    <div><p class="eyebrow">DeadEnd Intelligence · Phase 7.3</p><h1>Inventory Intelligence</h1><p class="muted">Know what to promote, reorder, discount or stop buying—using your live catalogue and sales history.</p></div>
+  </header>
+  <main class="admin-shell inventory-intelligence-page">
+    <section class="analytics-toolbar admin-panel">
+      <div><p class="eyebrow">Live stock health</p><h2>Make your current bottles work harder</h2></div>
+      <div class="analytics-actions"><select id="styleFilter" aria-label="Filter by Scent Style"><option value="">All Scent Styles</option></select><button id="refreshInventoryIntel" class="button primary" type="button">Refresh data</button></div>
+    </section>
+    <div id="inventoryIntelStatus" class="analytics-status">Loading live inventory and sales…</div>
+
+    <section class="inventory-intel-kpis" aria-label="Inventory value summary">
+      <article><span>Stock remaining</span><strong id="intelMl">—</strong><em>Tracked current mL</em></article>
+      <article><span>Capital remaining</span><strong id="intelCapital">—</strong><em>Estimated cost still in bottles</em></article>
+      <article><span>Projected sales</span><strong id="intelProjected">—</strong><em>At current sample prices</em></article>
+      <article><span>Unrealised profit</span><strong id="intelProfit">—</strong><em>Projected sales less remaining cost</em></article>
+      <article><span>Slow-stock capital</span><strong id="intelSlowCapital">—</strong><em>Tied up in slow movers</em></article>
+      <article><span>Paid for itself</span><strong id="intelPaid">—</strong><em>Bottles above purchase cost</em></article>
+    </section>
+
+    <section class="inventory-action-grid">
+      <article class="admin-panel inventory-action-card promote"><p class="eyebrow">Content opportunity</p><h2>Promote this week</h2><div id="promoteCandidates" class="intel-list"><div class="empty">Loading…</div></div></article>
+      <article class="admin-panel inventory-action-card reorder"><p class="eyebrow">Restock opportunity</p><h2>Reorder candidates</h2><div id="reorderCandidates" class="intel-list"><div class="empty">Loading…</div></div></article>
+      <article class="admin-panel inventory-action-card slow"><p class="eyebrow">Capital at risk</p><h2>Slow movers</h2><div id="slowCandidates" class="intel-list"><div class="empty">Loading…</div></div></article>
+      <article class="admin-panel inventory-action-card avoid"><p class="eyebrow">Buying discipline</p><h2>Do not rebuy yet</h2><div id="avoidCandidates" class="intel-list"><div class="empty">Loading…</div></div></article>
+    </section>
+
+    <section class="analytics-grid two-col">
+      <article class="admin-panel"><div class="section-head"><div><p class="eyebrow">Catalogue balance</p><h2>Stock by Scent Style</h2></div></div><div id="styleStock" class="rank-list"><div class="empty">Loading…</div></div></article>
+      <article class="admin-panel"><div class="section-head"><div><p class="eyebrow">Performance</p><h2>Top bottles by revenue</h2></div></div><div id="topBottleRevenue" class="data-table-wrap"><div class="empty">Loading…</div></div></article>
+    </section>
+
+    <section class="admin-panel">
+      <div class="section-head inventory-table-head"><div><p class="eyebrow">Bottle health</p><h2>Full inventory scorecard</h2></div><div class="inventory-table-tools"><select id="healthFilter"><option value="">All health statuses</option><option>Strong performer</option><option>Paid for itself</option><option>Promote this week</option><option>Low stock</option><option>Slow mover</option><option>Overstocked</option><option>Do not rebuy</option><option>Needs data</option></select><select id="sortInventoryIntel"><option value="action">Best next action</option><option value="revenue">Highest revenue</option><option value="roi">Highest ROI</option><option value="stock">Most mL remaining</option><option value="slow">Slowest mover</option></select></div></div>
+      <div id="inventoryScorecard" class="data-table-wrap"><div class="empty">Loading…</div></div>
+      <p class="analytics-footnote">Recommendations are decision support based on the sales and catalogue fields currently recorded. Bottles with incomplete purchase dates, costs or item-level sales are labelled accordingly.</p>
+    </section>
+  </main>
+  <script src="inventory-intelligence.js?v=7.3"></script>
+  <script src="admin-shell.js?v=7.3"></script>
+</body>
+</html>

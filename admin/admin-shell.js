@@ -8,6 +8,7 @@
     ['customers.html','Customers'],
     ['analytics.html','Analytics'],
     ['intelligence.html','Intelligence'],
+    ['inventory-intelligence.html','Stock Intelligence'],
     ['shipping.html','Shipping'],
     ['features.html','Features'],
     ['seo.html','SEO'],
