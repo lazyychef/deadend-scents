@@ -1132,6 +1132,8 @@ function bulkStocktake_(ss,payload){
     var mlCol=getColumn_(map,['Current mL','Current Amount Left (mL)','Amount Left','Remaining mL']);
     if(!mlCol) throw new Error('Catalogue needs a Current mL column.');
     var prev=Number(sheet.getRange(row,mlCol).getValue())||0, next=Math.max(0,Number(e.ml)||0), now=new Date();
+    var sizeCol=getColumn_(map,['Bottle Size (mL)','Bottle Size','Size mL']);
+    if(e.bottleSize && Number(e.bottleSize)>0 && sizeCol && !(Number(sheet.getRange(row,sizeCol).getValue())>0)) sheet.getRange(row,sizeCol).setValue(Number(e.bottleSize));
     var houseCol=getColumn_(map,['House']), fragranceCol=getColumn_(map,['Fragrance']);
     var house=houseCol?sheet.getRange(row,houseCol).getDisplayValue():'', fragrance=fragranceCol?sheet.getRange(row,fragranceCol).getDisplayValue():'';
     sheet.getRange(row,mlCol).setValue(next);
