@@ -97,7 +97,7 @@
     if(!items.length){ try{ const res=await fetch(state.settings.catalogueCsvUrl,{cache:'no-store'}); if(res.ok) items=parseCSV(await res.text()); }catch(e){} }
     if(!items.length){ try{ const fb=await fetch('../catalogue-fallback.json',{cache:'no-store'}).then(r=>r.json()); items=fb.items||[]; }catch(e){} }
     state.items=items;
-    state.scentStyles=[...new Set(items.map(i=>String(i['Scent Style']||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+    state.scentStyles=[...new Set([...items.map(i=>String(i['Scent Style']||'').trim()).filter(Boolean),'Vanilla'])].sort((a,b)=>a.localeCompare(b));
     renderStats(); renderFilters(); renderEditorDropdowns(); renderList();
   }
 

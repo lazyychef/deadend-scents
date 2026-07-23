@@ -36,6 +36,8 @@ function doPost(e) {
 
 function dispatchWrite_(ss, payload) {
   if (payload.action === 'updateBottle') return { ok:true, result:updateBottle_(ss, payload) };
+  if (payload.action === 'setupOperationsColumns') return { ok:true, result:setupOperationsColumns_(ss) };
+  if (payload.action === 'bulkStocktake') return { ok:true, result:bulkStocktake_(ss, payload) };
   if (payload.action === 'setFeatured') return { ok:true, result:setFeatured_(ss, payload) };
   if (payload.action === 'setStaffPicks') return { ok:true, result:setStaffPicks_(ss, payload) };
   if (payload.action === 'updateSettings') return { ok:true, result:updateSettings_(ss, payload) };
@@ -88,6 +90,7 @@ function doGet(e) {
   if (action === 'customers') return json_(getCustomers_(ss));
   if (action === 'orderSummary') return json_(getOrderSummary_(ss));
   if (action === 'wishlist') return json_(getWishlist_(ss));
+  if (action === 'stockAdjustments') return json_(getStockAdjustments_(ss));
   return json_({ok:true, app:'DeadEnd Scents Admin V2.1', status:'ready'});
 }
 
@@ -313,6 +316,10 @@ function updateBottle_(ss, payload) {
   setByAnyHeader_(sheet, row, map, ['Stock','Status'], fields['Stock'] || fields['Status']);
   setByAnyHeader_(sheet, row, map, ['RRP','Normal RRP','Retail Price'], fields['RRP'] || fields['Normal RRP']);
   setByAnyHeader_(sheet, row, map, ['Image','Image URL','Bottle Image'], fields['Image']);
+  if (fields['Current mL'] !== undefined || fields['Current Amount Left (mL)'] !== undefined) {
+    setByAnyHeader_(sheet, row, map, ['Last Stocktake'], new Date());
+    setByAnyHeader_(sheet, row, map, ['Stock Confidence'], fields['Stock Confidence'] || 'Manual');
+  }
   setByAnyHeader_(sheet, row, map, ['Last Updated','Updated'], new Date());
 
   applyCatalogueFormulaColumns_(sheet, row, sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0]);
@@ -1095,4 +1102,51 @@ function deleteWishlist_(ss,payload) {
     }
   }
   throw new Error('Wishlist item not found: ' + id);
+}
+
+
+// =========================================================
+// Phase 7.3.1 — Operations / Bulk Stocktake
+// =========================================================
+function setupOperationsColumns_(ss) {
+  var sheet = catalogueSheet_(ss);
+  var wanted = ['Last Stocktake','Stock Confidence','Last Promotion Date','Times Featured','Reorder Threshold','Favourite','Discontinued','Seasonal Score'];
+  var headers = sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0];
+  var existing = {}; headers.forEach(function(h){ existing[norm_(h)] = true; });
+  var added=[];
+  wanted.forEach(function(h){ if(!existing[norm_(h)]){ sheet.getRange(1,sheet.getLastColumn()+1).setValue(h); existing[norm_(h)]=true; added.push(h); } });
+  ensureInventoryAdjustments_(ss);
+  return {action:'setupOperationsColumns',added:added};
+}
+function ensureInventoryAdjustments_(ss){
+  var sh=ss.getSheetByName('Inventory Adjustments');
+  var headers=['Adjustment ID','Timestamp','Bottle ID','House','Fragrance','Previous mL','New mL','Change mL','Reason','Confidence','Source'];
+  if(!sh){sh=ss.insertSheet('Inventory Adjustments');sh.getRange(1,1,1,headers.length).setValues([headers]);sh.setFrozenRows(1);}
+  return sh;
+}
+function bulkStocktake_(ss,payload){
+  setupOperationsColumns_(ss);
+  var entries=payload.entries||[], sheet=catalogueSheet_(ss), map=headerMap_(sheet), history=ensureInventoryAdjustments_(ss), logs=[];
+  entries.forEach(function(e){
+    var row=findRowById_(sheet,e.id); if(!row) throw new Error('Bottle ID not found: '+e.id);
+    var mlCol=getColumn_(map,['Current mL','Current Amount Left (mL)','Amount Left','Remaining mL']);
+    if(!mlCol) throw new Error('Catalogue needs a Current mL column.');
+    var prev=Number(sheet.getRange(row,mlCol).getValue())||0, next=Math.max(0,Number(e.ml)||0), now=new Date();
+    var houseCol=getColumn_(map,['House']), fragranceCol=getColumn_(map,['Fragrance']);
+    var house=houseCol?sheet.getRange(row,houseCol).getDisplayValue():'', fragrance=fragranceCol?sheet.getRange(row,fragranceCol).getDisplayValue():'';
+    sheet.getRange(row,mlCol).setValue(next);
+    setByAnyHeader_(sheet,row,map,['Last Stocktake'],now);
+    setByAnyHeader_(sheet,row,map,['Stock Confidence'],e.confidence||'Manual');
+    setByAnyHeader_(sheet,row,map,['Last Updated','Updated'],now);
+    logs.push(['ADJ-'+Utilities.getUuid().slice(0,8).toUpperCase(),now,String(e.id),house,fragrance,prev,next,next-prev,e.reason||'Physical stocktake',e.confidence||'Manual','Admin Bulk Stocktake']);
+    applyCatalogueFormulaColumns_(sheet,row,sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0]);
+  });
+  if(logs.length)history.getRange(history.getLastRow()+1,1,logs.length,logs[0].length).setValues(logs);
+  return {action:'bulkStocktake',count:logs.length};
+}
+function getStockAdjustments_(ss){
+  var sh=ss.getSheetByName('Inventory Adjustments'); if(!sh||sh.getLastRow()<2)return {ok:true,items:[]};
+  var vals=sh.getDataRange().getDisplayValues(), h=vals.shift();
+  var items=vals.map(function(r){var o={};h.forEach(function(k,i){o[k]=r[i]||''});return o;}).reverse().slice(0,100);
+  return {ok:true,items:items};
 }

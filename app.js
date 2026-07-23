@@ -510,7 +510,7 @@
     packs = await loadDiscoveryPacks();
     showCatalogueSourceNotice();
     if(statCount) statCount.textContent=data.length;
-    resetOptions(categoryFilter,'All scent styles',uniqueValues('category'));
+    resetOptions(categoryFilter,'All scent styles',[...new Set([...uniqueValues('category'),'Vanilla'])].sort((a,b)=>a.localeCompare(b)));
     resetOptions(collectionFilter,'All types',uniqueValues('collection'));
     resetOptions(occasionFilter,'All occasions',uniqueMultiValues('occasion'));
     setupContactLinks(); setupAnalytics(); injectSeoSchema(); applySearchQueryFromUrl(); renderFeatured(); renderPacks(); render(); updateCart();

@@ -1,0 +1,5 @@
+DeadEnd Scents Admin V2 — Phase 7.3.1
+
+Upload/replace all files in this ZIP, preserving folders.
+Then copy google-apps-script/Code.gs into Apps Script and deploy a new version.
+Open Admin > Stocktake and click Create/check sheet columns once.

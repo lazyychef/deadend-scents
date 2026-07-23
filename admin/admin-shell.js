@@ -3,6 +3,7 @@
   const items = [
     ['index.html','Dashboard'],
     ['inventory.html','Inventory'],
+    ['stocktake.html','Stocktake'],
     ['add-bottle.html','Add Bottle'],
     ['orders.html','Orders'],
     ['customers.html','Customers'],

@@ -63,7 +63,7 @@
       }catch(e){ console.warn('CSV catalogue options unavailable', e); }
     }
     const collections=items.map(i=>i.Collection);
-    const scentStyles=items.map(i=>i['Scent Style']);
+    const scentStyles=[...items.map(i=>i['Scent Style']),'Vanilla'];
     setOptions(collectionSelect, collections.length ? collections : collectionFallback, 'Select collection');
     setOptions(scentSelect, scentStyles.length ? scentStyles : scentFallback, 'Select scent style');
     if(!collectionSelect.value) collectionSelect.value = collectionFallback[0];

@@ -16,3 +16,7 @@
 - Replaced top-left text brand with circular DeadEnd Scents logo.
 - Increased mobile Fragrance of the Week bottle image size.
 - Main page layout otherwise unchanged.
+
+
+## Phase 7.3.1
+Bulk Stocktake, inventory adjustment history, stock confidence, last-stocktake dates and Vanilla Scent Style support.
