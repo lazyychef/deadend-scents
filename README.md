@@ -20,3 +20,5 @@
 
 ## Phase 7.3.1
 Bulk Stocktake, inventory adjustment history, stock confidence, last-stocktake dates and Vanilla Scent Style support.
+
+Phase 7.3.2 adds free hybrid photo stocktake estimation and fixes bulk stocktake saving.

@@ -266,7 +266,7 @@ function norm_(value) {
   return String(value || '').toLowerCase().replace(/[^a-z0-9]/g,'');
 }
 
-function headerMap_(sheet) {
+function sheetHeaderMap_(sheet) {
   var headers = sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0];
   var map = {};
   headers.forEach(function(h,i){ if (h) map[norm_(h)] = i + 1; });
@@ -287,7 +287,7 @@ function setByAnyHeader_(sheet, rowNumber, map, names, value) {
 }
 
 function findRowById_(sheet, id) {
-  var map = headerMap_(sheet);
+  var map = sheetHeaderMap_(sheet);
   var idCol = getColumn_(map, ['ID','Fragrance ID']);
   if (!idCol) throw new Error('No ID column found in Catalogue sheet.');
   var last = sheet.getLastRow();
@@ -303,7 +303,7 @@ function updateBottle_(ss, payload) {
   var sheet = catalogueSheet_(ss);
   var row = findRowById_(sheet, payload.id);
   if (!row) throw new Error('Bottle ID not found: ' + payload.id);
-  var map = headerMap_(sheet);
+  var map = sheetHeaderMap_(sheet);
   var fields = payload.fields || {};
 
   // V5.2.3 writes by actual spreadsheet column name first, with aliases for older fields.
@@ -328,7 +328,7 @@ function updateBottle_(ss, payload) {
 
 function setFeatured_(ss, payload) {
   var sheet = catalogueSheet_(ss);
-  var map = headerMap_(sheet);
+  var map = sheetHeaderMap_(sheet);
   var featuredCol = getColumn_(map, ['Featured','Fragrance of the Week','FOTW']);
   if (!featuredCol) throw new Error('No Featured column found in Catalogue sheet.');
   var last = sheet.getLastRow();
@@ -348,7 +348,7 @@ function setStaffPicks_(ss, payload) {
   var lookup = {};
   ids.forEach(function(id){ lookup[String(id)] = true; });
   var sheet = catalogueSheet_(ss);
-  var map = headerMap_(sheet);
+  var map = sheetHeaderMap_(sheet);
   var idCol = getColumn_(map, ['ID','Fragrance ID']);
   var staffCol = getColumn_(map, ['Staff Pick','Staff Picks','StaffPick']);
   if (!idCol) throw new Error('No ID column found in Catalogue sheet.');
@@ -379,7 +379,7 @@ function addPurchase_(ss, payload) {
     itemSheet.appendRow([p.purchaseId, fragranceId, item.fragrance, item.bottleSize, item.fullness + '% full', item.allocatedCost, item.currentMl, item.mode === 'new' ? 'New bottle from Admin' : 'Restock from Admin']);
     var row = findRowById_(catalogue, fragranceId);
     if (row) {
-      var map = headerMap_(catalogue);
+      var map = sheetHeaderMap_(catalogue);
       setByAnyHeader_(catalogue, row, map, ['Purchase Date'], p.purchaseDate);
       setByAnyHeader_(catalogue, row, map, ['Purchase Price','Purchase Cost'], item.allocatedCost);
       setByAnyHeader_(catalogue, row, map, ['Bottle Size (mL)','Bottle Size'], item.bottleSize);
@@ -400,7 +400,7 @@ function nextCatalogueId_(catalogue, collection) {
   else if (c.indexOf('niche') >= 0) prefix = 'NIC';
   else if (c.indexOf('middle') >= 0) prefix = 'ME';
   else if (c.indexOf('inspired') >= 0) prefix = 'INS';
-  var map = headerMap_(catalogue);
+  var map = sheetHeaderMap_(catalogue);
   var idCol = getColumn_(map, ['ID','Fragrance ID']);
   var max = 0;
   if (idCol && catalogue.getLastRow() > 1) {
@@ -754,7 +754,7 @@ function generateFragranceSEO_(ss, payload) {
   var bundle = rowObjectFromSheet_(sheet, row);
   var all = getCatalogue_(ss).items || [];
   var seo = generateSEODataForRow_(bundle.obj, all);
-  var map = headerMap_(sheet);
+  var map = sheetHeaderMap_(sheet);
   Object.keys(seo).forEach(function(name){ setByAnyHeader_(sheet, row, map, [name], seo[name]); });
   return { ok:true, action:'generateFragranceSEO', id:payload.id, seo:seo };
 }
@@ -766,7 +766,7 @@ function saveFragranceSEO_(ss, payload) {
   if (!row) throw new Error('Bottle ID not found: ' + payload.id);
   var fields = payload.fields || {};
   fields['SEO Last Updated'] = new Date();
-  var map = headerMap_(sheet);
+  var map = sheetHeaderMap_(sheet);
   Object.keys(fields).forEach(function(name){ setByAnyHeader_(sheet, row, map, [name], fields[name]); });
   return { ok:true, action:'saveFragranceSEO', id:payload.id };
 }
@@ -777,7 +777,7 @@ function generateBulkFragranceSEO_(ss, payload) {
   if (!ids.length) return { ok:true, action:'generateBulkFragranceSEO', count:0 };
   var sheet = catalogueSheet_(ss);
   var all = getCatalogue_(ss).items || [];
-  var map = headerMap_(sheet);
+  var map = sheetHeaderMap_(sheet);
   var count = 0;
   ids.forEach(function(id){
     var row = findRowById_(sheet, id);
@@ -1126,7 +1126,7 @@ function ensureInventoryAdjustments_(ss){
 }
 function bulkStocktake_(ss,payload){
   setupOperationsColumns_(ss);
-  var entries=payload.entries||[], sheet=catalogueSheet_(ss), map=headerMap_(sheet), history=ensureInventoryAdjustments_(ss), logs=[];
+  var entries=payload.entries||[], sheet=catalogueSheet_(ss), map=sheetHeaderMap_(sheet), history=ensureInventoryAdjustments_(ss), logs=[];
   entries.forEach(function(e){
     var row=findRowById_(sheet,e.id); if(!row) throw new Error('Bottle ID not found: '+e.id);
     var mlCol=getColumn_(map,['Current mL','Current Amount Left (mL)','Amount Left','Remaining mL']);
