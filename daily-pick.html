@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Daily Pick · DeadEnd Scents Admin</title>
+  <link rel="stylesheet" href="admin.css?v=7.4">
+</head>
+<body class="daily-pick-page">
+<header class="admin-shell admin-header compact">
+  <a class="admin-logo" href="../index.html" aria-label="DeadEnd Scents home"><img src="../assets/deadend-logo.png" alt="DeadEnd Scents"></a>
+  <div><p class="eyebrow">DeadEnd Intelligence · Phase 7.4</p><h1>Daily Pick</h1><p class="muted">Let your catalogue, weather and plans choose today's fragrance.</p></div>
+</header>
+<main class="admin-shell">
+  <section class="admin-panel daily-controls">
+    <div class="section-head"><div><p class="eyebrow">This morning</p><h2>What does today look like?</h2></div><button id="refreshWeather" class="button" type="button">Refresh weather</button></div>
+    <div id="weatherCard" class="weather-card"><strong>Loading weather…</strong><span id="weatherStatus">Sydney weather will load automatically when configured.</span></div>
+    <div class="daily-form-grid">
+      <label><span>Today I'm</span><select id="dayType"><option>Office</option><option>Work from home</option><option>Weekend / casual</option><option>Going out</option><option>Date night</option><option>Sport / outdoors</option><option>Surprise me</option></select></label>
+      <label><span>Temperature °C</span><input id="temperature" type="number" inputmode="decimal" placeholder="e.g. 19"></label>
+      <label><span>Conditions</span><select id="condition"><option value="">Choose conditions</option><option>Sunny</option><option>Partly cloudy</option><option>Cloudy</option><option>Rain</option><option>Storm</option><option>Windy</option><option>Hot</option><option>Cold</option></select></label>
+      <label><span>Mood / direction</span><select id="mood"><option value="">No preference</option><option>Fresh and clean</option><option>Easy / versatile</option><option>Warm and cosy</option><option>Dark / bold</option><option>Sweet</option><option>Something different</option></select></label>
+    </div>
+    <div class="form-actions"><button id="pickButton" class="button primary" type="button">Pick my fragrance</button><button id="surpriseButton" class="button" type="button">🎲 Surprise me</button></div>
+    <p id="dailyStatus" class="status-strip">Loading your catalogue…</p>
+  </section>
+
+  <section id="pickPanel" class="admin-panel daily-result" hidden>
+    <p class="eyebrow">Today's pick</p>
+    <div id="mainPick"></div>
+    <div class="form-actions"><button id="wearButton" class="button primary" type="button">✓ Wearing this today</button><button id="rerollButton" class="button" type="button">🎲 Pick again</button></div>
+    <h3>Other good options</h3><div id="alternatives" class="daily-alternatives"></div>
+  </section>
+
+  <section class="admin-panel">
+    <div class="section-head"><div><p class="eyebrow">Wear Intelligence</p><h2>Your rotation</h2></div></div>
+    <div class="quick-stats daily-kpis"><article><span>Wears logged</span><strong id="wearCount">0</strong></article><article><span>This month</span><strong id="wearMonth">0</strong></article><article><span>Most worn</span><strong id="mostWorn">—</strong></article><article><span>Neglected</span><strong id="neglectedCount">—</strong></article></div>
+    <div class="daily-two-col"><div><h3>Recent wears</h3><div id="recentWears" class="mini-list"><div class="empty">No wears logged yet.</div></div></div><div><h3>Try something forgotten</h3><div id="neglected" class="mini-list"><div class="empty">Loading…</div></div></div>
+  </section>
+</main>
+<script src="admin-write.js?v=2.1"></script>
+<script src="daily-pick.js?v=7.4"></script>
+<script src="admin-shell.js?v=7.4"></script>
+</body></html>

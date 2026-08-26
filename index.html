@@ -3,140 +3,165 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Buy Fragrance Samples Australia | DeadEnd Scents</title>
-  <meta name="description" content="Buy designer, niche, Middle Eastern and inspired fragrance samples in Australia. Browse fragrance decants, Discovery Packs, Fragrantica links and $10 express postage from Sydney.">
-  <meta name="keywords" content="fragrance samples Australia, fragrance decants Australia, perfume samples Australia, cologne samples Sydney, niche fragrance samples Australia, designer fragrance samples, Middle Eastern fragrance samples, DeadEnd Scents">
-  <link rel="canonical" href="https://deadendscents.com/">
-  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-  <meta name="theme-color" content="#163f34">
-  <meta property="og:site_name" content="DeadEnd Scents">
-  <meta property="og:locale" content="en_AU">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://deadendscents.com/">
-  <meta property="og:title" content="Buy Fragrance Samples Australia | DeadEnd Scents">
-  <meta property="og:description" content="Designer, niche, Middle Eastern and inspired fragrance decants in 3mL, 5mL and 10mL sizes.">
-  <meta name="twitter:card" content="summary">
-  <script type="application/ld+json" id="siteSchema">
-  {"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://deadendscents.com/#organization","name":"DeadEnd Scents","url":"https://deadendscents.com/","sameAs":["https://instagram.com/deadendscents","https://m.me/nickstreet09/"]},{"@type":"WebSite","@id":"https://deadendscents.com/#website","url":"https://deadendscents.com/","name":"DeadEnd Scents","publisher":{"@id":"https://deadendscents.com/#organization"},"potentialAction":{"@type":"SearchAction","target":"https://deadendscents.com/?q={search_term_string}#catalogue","query-input":"required name=search_term_string"}},{"@type":"Store","@id":"https://deadendscents.com/#store","name":"DeadEnd Scents","url":"https://deadendscents.com/","description":"Premium fragrance decants and discovery samples in Australia.","areaServed":"AU","priceRange":"$","currenciesAccepted":"AUD","paymentAccepted":"Bank transfer, PayID, PayPal"}]}
-  </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <meta name="robots" content="noindex,nofollow">
+  <title>DeadEnd Scents Admin</title>
+  <link rel="stylesheet" href="admin.css?v=7.4">
 </head>
-<body id="top">
-  <header class="site-header">
-    <a class="brand" href="#top" aria-label="DeadEnd Scents home">
-      <img src="assets/deadend-logo.png" alt="DeadEnd Scents" class="brand-logo">
-      <span class="brand-text">DeadEnd Scents</span>
+<body>
+  <header class="admin-shell admin-header">
+    <a class="admin-logo" href="../index.html" aria-label="DeadEnd Scents home">
+      <img src="../assets/deadend-logo.png" alt="DeadEnd Scents">
     </a>
-    <button class="hamburger" type="button" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu"><span></span><span></span><span></span></button>
-    <nav id="mobileMenu" class="mobile-menu" aria-label="Main menu">
-      <a href="#featured">Fragrance of the Week</a>
-      <a href="#packs">Discovery Packs</a>
-      <a href="#catalogue">Catalogue</a>
-      <a href="#order">Cart</a>
-    </nav>
-    <div class="contact-buttons" aria-label="Contact links">
-      <a id="navMessengerLink" href="https://m.me/nickstreet09/" target="_blank" rel="noopener">Messenger</a>
-      <a id="navWhatsappLink" href="https://wa.me/61434432948" target="_blank" rel="noopener">WhatsApp</a>
-      <a id="navInstagramLink" href="https://instagram.com/deadendscents" target="_blank" rel="noopener">Instagram</a>
+    <div>
+      <p class="eyebrow">Admin V2 · Phase 7.4</p>
+      <h1>DeadEnd Scents Admin</h1>
+      <p class="muted">One consistent control centre for inventory, orders, customers, analytics and site management.</p>
     </div>
   </header>
 
-  <main>
-    <section class="quick-stats" aria-label="Store benefits">
-      <div><strong id="stat-count">96</strong><span>options</span></div>
-      <div><strong>3 · 5 · 10</strong><span>mL</span></div>
-      <div><strong>$10</strong><span>express</span></div>
-      <div><strong>glass</strong><span>vials</span></div>
+  <main class="admin-shell">
+    <section class="quick-stats business-stats" aria-label="Business performance">
+      <article><span>Revenue</span><strong id="businessRevenue">—</strong></article>
+      <article><span>Orders</span><strong id="businessOrders">—</strong></article>
+      <article><span>Average order</span><strong id="businessAverage">—</strong></article>
+      <article><span>Pending</span><strong id="businessPending">—</strong></article>
+    </section>
+    <section class="quick-stats" aria-label="Quick stats">
+      <article><span>Total bottles</span><strong id="statTotal">—</strong></article>
+      <article><span>New arrivals</span><strong id="statNew">—</strong></article>
+      <article><span>Low stock</span><strong id="statLow">—</strong></article>
+      <article><span>Out of stock</span><strong id="statOut">—</strong></article>
     </section>
 
-
-    <section id="featured" class="featured-section">
-      <section class="desktop-packs-panel" aria-label="Discovery Packs desktop">
-        <div class="section-title">
-          <p class="eyebrow">Discovery Packs</p>
-          <h2>Pick a set and sample the style.</h2>
-        </div>
-        <div class="packs-grid desktop-packs-grid"></div>
-      </section>
-      <div class="hero-copy">
-        <p class="eyebrow">DeadEnd Scents</p>
-        <h1>Fragrance samples without the full-bottle spend.</h1>
-        <p>Try designer, niche, Middle Eastern and inspired scents in simple sample sizes.</p>
-      </div>
-      <div id="featuredGrid" class="featured-grid"><div class="empty">Loading fragrance of the week...</div></div>
+    <section class="dashboard-grid" aria-label="Admin tools">
+      <a class="tool-card live" href="inventory.html">
+        <span class="tool-icon">📦</span>
+        <strong>Inventory Manager</strong>
+        <em>Edit bottles, calculate prices and save to Google Sheets.</em>
+      </a>
+      <a class="tool-card live phase-seven-three" href="stocktake.html">
+        <span class="tool-icon">📏</span>
+        <strong>Bulk Stocktake</strong>
+        <em>Update remaining mL in bulk, record confidence and keep an adjustment history.</em>
+      </a>
+      <a class="tool-card live" href="add-bottle.html">
+        <span class="tool-icon">➕</span>
+        <strong>Add New Bottle</strong>
+        <em>Mobile-first form for adding new purchases to the database.</em>
+      </a>
+      <a class="tool-card" href="calculator.html">
+        <span class="tool-icon">💰</span>
+        <strong>Sample Pricing Calculator</strong>
+        <em>Quick buying and market price checks.</em>
+      </a>
+      <a class="tool-card" href="features.html">
+        <span class="tool-icon">⭐</span>
+        <strong>Fragrance of the Week</strong>
+        <em>Pick and publish to Google Sheets.</em>
+      </a>
+      <a class="tool-card" href="features.html">
+        <span class="tool-icon">❤️</span>
+        <strong>Staff Picks</strong>
+        <em>Set picks from admin.</em>
+      </a>
+      <a class="tool-card" href="#newArrivals">
+        <span class="tool-icon">🆕</span>
+        <strong>New Arrivals</strong>
+        <em>Auto-review recent bottles.</em>
+      </a>
+      <a class="tool-card" href="#lowStock">
+        <span class="tool-icon">📉</span>
+        <strong>Low Stock</strong>
+        <em>Find bottles that need attention.</em>
+      </a>
+      <a class="tool-card phase-two live" href="orders.html">
+        <strong>Orders & Sales</strong>
+        <em>Create quick sales, deduct stock and review order history.</em>
+      </a>
+      <a class="tool-card phase-two live" href="customers.html">
+        <strong>Customers</strong>
+        <em>Customer records, repeat orders and lifetime spend.</em>
+      </a>
+      <a class="tool-card phase-six live" href="analytics.html">
+        <strong>Owner Intelligence</strong>
+        <em>Revenue trends, ROI, projected inventory value and business recommendations.</em>
+      </a>
+      <a class="tool-card phase-seven live" href="intelligence.html">
+        <span class="tool-icon">🧠</span>
+        <strong>DeadEnd Intelligence</strong>
+        <em>Score potential bottles, check catalogue DNA overlap and rank your wishlist.</em>
+      </a>
+      <a class="tool-card phase-seven-three live" href="inventory-intelligence.html">
+        <span class="tool-icon">📊</span>
+        <strong>Inventory Intelligence</strong>
+        <em>See what to promote, reorder, discount or avoid rebuying.</em>
+      </a>
+      <a class="tool-card phase-seven-four live" href="daily-pick.html">
+        <span class="tool-icon">☀️</span>
+        <strong>Daily Pick</strong>
+        <em>Choose today's fragrance from the weather, your plans and your wear history.</em>
+      </a>
+      <a class="tool-card phase-one" href="shipping.html">
+        <strong>Shipping</strong>
+        <em>Pending, packed and posted order workflow foundation.</em>
+      </a>
+      <a class="tool-card live" href="seo.html">
+        <span class="tool-icon">📝</span>
+        <strong>SEO Engine</strong>
+        <em>Generate SEO, score bottles, preview metadata and manage bulk fixes.</em>
+      </a>
+      <a class="tool-card" href="settings.html">
+        <span class="tool-icon">⚙️</span>
+        <strong>Settings</strong>
+        <em>Edit live site settings from the dashboard.</em>
+      </a>
     </section>
 
-
-    <section class="search-section" aria-label="Search and filters">
-      <label class="search-box">
-        <span>Search fragrance samples</span>
-        <input id="search" type="search" placeholder="Search vanilla, fresh, tobacco...">
-      </label>
-      <div class="collection-buttons" aria-label="Quick filters">
-        <button type="button" data-collection="Designer">designer</button>
-        <button type="button" data-collection="Niche">niche</button>
-        <button type="button" data-collection="Middle Eastern">middle eastern</button>
-        <button type="button" data-collection="Inspired">inspired</button>
-        <button type="button" data-special="new">new</button>
-        <button type="button" data-special="women">women</button>
-        <button type="button" data-special="staff">staff pick</button>
-        <button type="button" data-collection="all" class="active">all</button>
-      </div>
-      <div class="hidden-controls" aria-hidden="true">
-        <select id="categoryFilter"><option value="all">All scent styles</option></select>
-        <select id="collectionFilter"><option value="all">All types</option></select>
-        <select id="occasionFilter"><option value="all">All occasions</option></select>
-        <select id="sortBy"><option value="newest">Newest added</option><option value="alphabetical">Alphabetical</option><option value="house">House</option><option value="inspirationHouse">Inspiration house</option><option value="priceLow">Price: low to high</option><option value="priceHigh">Price: high to low</option></select>
-      </div>
-    </section>
-
-    <section id="catalogue" class="section catalogue-section">
-      <div class="section-title row-title">
+    <section id="inventoryPreview" class="admin-panel">
+      <div class="section-head">
         <div>
-          <p class="eyebrow">Catalogue</p>
-          <h2>Fragrance samples</h2>
+          <p class="eyebrow">Inventory</p>
+          <h2>Catalogue snapshot</h2>
         </div>
-        <p><span id="resultCount">0</span> showing</p>
+        <button id="refreshData" class="button" type="button">Refresh</button>
       </div>
-      <div id="catalogueGrid" class="grid"><div class="empty">Loading catalogue from Google Sheets...</div></div>
+      <div id="inventoryList" class="mini-list"><div class="empty">Loading catalogue...</div></div>
     </section>
 
-    <section id="packs" class="section">
-      <div class="section-title">
-        <p class="eyebrow">Discovery Packs</p>
-        <h2>Pick a set and sample the style.</h2>
-      </div>
-      <div id="packsGrid" class="packs-grid"></div>
+    <section id="lowStock" class="admin-panel">
+      <p class="eyebrow">Low Stock</p>
+      <h2>Needs attention</h2>
+      <div id="lowStockList" class="mini-list"><div class="empty">Loading stock data...</div></div>
     </section>
 
+    <section id="newArrivals" class="admin-panel">
+      <p class="eyebrow">New Arrivals</p>
+      <h2>Recently added</h2>
+      <div id="newArrivalList" class="mini-list"><div class="empty">Loading recent bottles...</div></div>
+    </section>
 
-    <section id="order" class="section order-section">
-      <div class="order-card">
-        <p class="eyebrow">Cart</p>
-        <h2>Your order list</h2>
-        <div id="cartItems" class="cart-items empty-cart">No samples added yet.</div>
-        <div class="cart-total"><span>Total with express postage</span><strong id="cartTotal">$0</strong></div>
-        <textarea id="orderText" readonly aria-label="Order message"></textarea>
-        <div class="order-actions">
-          <button id="copyOrder" type="button">copy order</button>
-          <a id="sendWhatsappCart" href="https://wa.me/61434432948" target="_blank" rel="noopener">Send via WhatsApp</a>
-          <button id="clearCart" type="button">clear</button>
-        </div>
-      </div>
+    <section id="featureTools" class="admin-panel roadmap-panel">
+      <p class="eyebrow">Next Build</p>
+      <h2>Feature controls</h2>
+      <p class="muted">Next step: add simple buttons for Fragrance of the Week and Staff Picks so you can update the spreadsheet without opening Google Sheets.</p>
+    </section>
+
+    <section id="seoTools" class="admin-panel roadmap-panel">
+      <p class="eyebrow">SEO</p>
+      <h2>SEO generator</h2>
+      <p class="muted">V6.0.2 is live: open SEO Engine to generate fragrance SEO fields, bulk-fix missing data and check SEO health.</p>
+      <p><a class="button primary" href="seo.html">Open SEO Engine</a></p>
+    </section>
+
+    <section id="settingsPanel" class="admin-panel">
+      <p class="eyebrow">Settings</p>
+      <h2>Current settings</h2>
+      <div id="settingsList" class="settings-list"><div class="empty">Loading settings...</div></div>
+      <p><a class="button primary" href="settings.html">Open Settings Editor</a></p>
     </section>
   </main>
 
-  <button id="floatingCart" class="floating-cart" type="button" aria-label="View cart"><span id="floatingCartCount">0</span><strong id="floatingCartTotal">$0</strong></button>
-
-  <footer class="site-footer">
-    <strong>DeadEnd Scents</strong>
-    <span>Fragrance samples · Sydney · Australia-wide express post</span>
-  </footer>
-
-  <script src="data.js"></script>
-  <script src="app.js"></script>
+  <script src="admin.js"></script>
+  <script src="admin-shell.js?v=7.4"></script>
 </body>
 </html>
