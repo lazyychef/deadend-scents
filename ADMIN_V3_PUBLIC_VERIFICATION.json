@@ -1,0 +1,14 @@
+{
+  "public_files_unchanged": true,
+  "sha256": {
+    "index.html": "38d34ad648f7ba9360a80330b130fd65e37883bcab9dbf9f42ed1d27b5e1c2b1",
+    "styles.css": "f0294327ce441b0ab5f63d4d0b35ee3198a7a5b47968aedbd867fa48a4933a26",
+    "app.js": "52f453dd10536ac4e77b9162c420fa3a9f0130b5d6d8ad69b6966e7f58a947c5",
+    "data.js": "821e60b604994fe828046d0977e14d11d3753eb2b40a997dc82165700b2203ce",
+    "settings.json": "8515ea97b65f82639d400eb2086bb77c7762697749b428b2df2cb9885eb9d43d",
+    "fragrances.json": "020315786672731b11d3208fa01b96159c636e3cef47564d5eb9e24ebf8fd61e",
+    "catalogue-fallback.json": "8cd783a5c10a2e9e50a8539e1f81fb60d3ff7940db5492779b3f356c96d9cfb8",
+    "packs.json": "a077bb4975e169ce9138634574e9cf88c53efca7e1b857ba53edae05a73215c2",
+    "seo-pages.css": "66a61b68acd9d51c4c3c486f42a99d2d96f3839df5aaa176fb9beebaed72338e"
+  }
+}
