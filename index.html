@@ -7,7 +7,7 @@
   <meta name="description" content="Buy designer, niche, Middle Eastern and inspired fragrance samples in Australia. Browse fragrance decants, Discovery Packs, Fragrantica links and $10 express postage from Sydney.">
   <meta name="keywords" content="fragrance samples Australia, fragrance decants Australia, perfume samples Australia, cologne samples Sydney, niche fragrance samples Australia, designer fragrance samples, Middle Eastern fragrance samples, DeadEnd Scents">
   <link rel="canonical" href="https://deadendscents.com/">
-  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+  <meta name="robots" content="noindex,nofollow">
   <meta name="theme-color" content="#163f34">
   <meta property="og:site_name" content="DeadEnd Scents">
   <meta property="og:locale" content="en_AU">
@@ -61,11 +61,13 @@
         </div>
         <div class="packs-grid desktop-packs-grid"></div>
       </section>
-      <div class="hero-copy">
-        <p class="eyebrow">DeadEnd Scents</p>
-        <h1>Fragrance samples without the full-bottle spend.</h1>
-        <p>Try designer, niche, Middle Eastern and inspired scents in simple sample sizes.</p>
-      </div>
+      <nav class="explore-panel" aria-label="Explore fragrances">
+        <p class="eyebrow">Explore</p>
+        <button type="button" class="explore-link" data-explore="packs"><strong>Discovery Packs</strong><span>Curated sample packs</span><b>›</b></button>
+        <button type="button" class="explore-link" data-explore="seasons"><strong>Seasons</strong><span>Find scents for every season</span><b>›</b></button>
+        <button type="button" class="explore-link" data-explore="styles"><strong>Styles</strong><span>Explore by scent style</span><b>›</b></button>
+        <button type="button" class="explore-link" data-explore="all"><strong>View all fragrances</strong><span>Browse the full collection</span><b>›</b></button>
+      </nav>
       <div id="featuredGrid" class="featured-grid"><div class="empty">Loading fragrance of the week...</div></div>
     </section>
 
@@ -96,11 +98,12 @@
     <section id="catalogue" class="section catalogue-section">
       <div class="section-title row-title">
         <div>
-          <p class="eyebrow">Catalogue</p>
-          <h2>Fragrance samples</h2>
+          <p class="eyebrow" id="catalogueEyebrow">Selected for you</p>
+          <h2 id="catalogueTitle">New & staff picks</h2>
         </div>
-        <p><span id="resultCount">0</span> showing</p>
+        <button id="viewAllFragrances" class="text-action" type="button">View all</button>
       </div>
+      <p class="catalogue-count"><span id="resultCount">0</span> fragrances</p>
       <div id="catalogueGrid" class="grid"><div class="empty">Loading catalogue from Google Sheets...</div></div>
     </section>
 
@@ -123,6 +126,7 @@
         <div class="order-actions">
           <button id="copyOrder" type="button">copy order</button>
           <a id="sendWhatsappCart" href="https://wa.me/61434432948" target="_blank" rel="noopener">Send via WhatsApp</a>
+          <a id="sendMessengerCart" href="https://m.me/nickstreet09/" target="_blank" rel="noopener">Send via Messenger</a>
           <button id="clearCart" type="button">clear</button>
         </div>
       </div>

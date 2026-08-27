@@ -24,6 +24,8 @@
   let settings = {};
   let catalogueSource = 'live';
   let quickSpecialFilter = 'all';
+  let landingSelection = true;
+  const LANDING_CARD_LIMIT = 8;
 
   async function getJson(file, fallback){
     try { const res = await fetch(file, { cache: 'no-store' }); if(!res.ok) throw new Error(res.status); return await res.json(); }
@@ -504,13 +506,16 @@
     if(!settings.masterSheetId) settings.masterSheetId = MASTER_SHEET_ID;
     settings = await loadLiveSettings(settings);
     if(!settings.masterSheetId) settings.masterSheetId = MASTER_SHEET_ID;
-    try { data=csvToFragrances(await getCsv(settings.catalogueCsvUrl || sheetCsvUrl('Catalogue') || DEFAULT_CSV)); }
-    catch(error){ console.error(error); if(grid) grid.innerHTML='<div class="empty">Catalogue could not load from Google Sheets or the local backup.<br><small>' + escapeHtml(error.message || error) + '</small></div>'; return; }
+    try {
+      // Public V2: paint the local snapshot first so customers are not waiting on Google Sheets.
+      try { const local = await getLocalCatalogueBackup(); data = csvToFragrances(local.csv); catalogueSource = local.source; }
+      catch(localError){ data = csvToFragrances(await getCsv(settings.catalogueCsvUrl || sheetCsvUrl('Catalogue') || DEFAULT_CSV)); }
+    } catch(error){ console.error(error); if(grid) grid.innerHTML='<div class="empty">Catalogue could not load from Google Sheets or the local backup.<br><small>' + escapeHtml(error.message || error) + '</small></div>'; return; }
     if(!data.length){ if(grid) grid.innerHTML='<div class="empty">Catalogue is empty. Check the Catalogue tab headers.</div>'; return; }
     packs = await loadDiscoveryPacks();
     showCatalogueSourceNotice();
     if(statCount) statCount.textContent=data.length;
-    resetOptions(categoryFilter,'All scent styles',uniqueValues('category'));
+    resetOptions(categoryFilter,'All scent styles',[...new Set([...uniqueValues('category'),'Vanilla'])].sort((a,b)=>a.localeCompare(b)));
     resetOptions(collectionFilter,'All types',uniqueValues('collection'));
     resetOptions(occasionFilter,'All occasions',uniqueMultiValues('occasion'));
     setupContactLinks(); setupAnalytics(); injectSeoSchema(); applySearchQueryFromUrl(); renderFeatured(); renderPacks(); render(); updateCart();
@@ -655,6 +660,7 @@
   function setCollectionFilter(target){
     if(!collectionFilter) return;
     quickSpecialFilter = 'all';
+    landingSelection = false;
     const options=[...collectionFilter.options];
     const found=options.find(opt=>collectionMatches(opt.value,target));
     collectionFilter.value = found ? found.value : 'all';
@@ -665,6 +671,7 @@
 
   function setSpecialFilter(target){
     quickSpecialFilter = target || 'all';
+    landingSelection = false;
     if(collectionFilter) collectionFilter.value = 'all';
     document.querySelectorAll('.collection-buttons button').forEach(btn=>btn.classList.toggle('active', !!btn.dataset.special && String(btn.dataset.special).toLowerCase()===String(quickSpecialFilter).toLowerCase()));
     render();
@@ -672,24 +679,39 @@
   }
 
   function render(){
-    const filtered=sortFragrances(data.filter(match)); resultCount.textContent=filtered.length; grid.innerHTML='';
+    let filtered=sortFragrances(data.filter(match));
+    const searchActive = !!String(search && search.value || '').trim();
+    const filterActive = quickSpecialFilter !== 'all' || (collectionFilter && collectionFilter.value !== 'all') || (categoryFilter && categoryFilter.value !== 'all') || (occasionFilter && occasionFilter.value !== 'all');
+    if(landingSelection && !searchActive && !filterActive){
+      const preferred = filtered.filter(f => isNewArrival(f) || f.staffPick);
+      filtered = (preferred.length ? preferred : filtered).slice(0, LANDING_CARD_LIMIT);
+    }
+    if(resultCount) resultCount.textContent=filtered.length; grid.innerHTML='';
+    const title=$('catalogueTitle'), eyebrow=$('catalogueEyebrow'), viewAll=$('viewAllFragrances');
+    if(title) title.textContent = landingSelection && !searchActive && !filterActive ? 'New & staff picks' : 'Fragrance samples';
+    if(eyebrow) eyebrow.textContent = landingSelection && !searchActive && !filterActive ? 'Selected for you' : 'Catalogue';
+    if(viewAll) viewAll.textContent = landingSelection && !searchActive && !filterActive ? 'View all' : 'Show picks';
     if(!filtered.length){ grid.innerHTML='<div class="empty">No fragrances match that search. Try “fresh”, “vanilla”, “date” or “summer”.</div>'; return; }
     const frag=document.createDocumentFragment();
     filtered.forEach(f=>{
-      const card=document.createElement('article'); card.className=isNewArrival(f)?'card new-card':'card';
-      const linkLabel=f.fragranticaUrl && !f.fragranticaUrl.includes('/search/') ? 'Fragrantica page' : 'Fragrantica search';
+      const card=document.createElement('article');
+      const imageUrl=String(f.imageUrl || '').trim();
+      const hasImage=/^https?:\/\//i.test(imageUrl);
+      card.className=(isNewArrival(f)?'card new-card':'card') + (hasImage ? ' has-image' : '');
       card.innerHTML=`
         <div class="card-top">
-          <span class="badge-row">${isNewArrival(f)?'<span class="new-badge">New</span>':''}${f.staffPick?'<span class="new-badge staff">Staff Pick</span>':''}</span>
-          <span class="collection-pill ${collectionClass(f.collection)}">${escapeHtml(f.collection || 'Type')}</span>
+          <span class="collection-pill ${collectionClass(f.collection)}">${escapeHtml(String(f.collection || 'type').toLowerCase())}</span>
+          <span class="badge-row">${isNewArrival(f)?'<span class="new-badge">new</span>':''}${f.staffPick?'<span class="new-badge staff">staff pick</span>':''}</span>
         </div>
-        <div class="emoji-row">${emojiMarkup(f.emojis)}</div>
-        <p class="house">${escapeHtml(f.house || '')}</p>
-        <h3>${escapeHtml(f.name)}</h3>
-        ${shouldShowInspiration(f) ? `<p class="inspo"><span>Inspired by</span>${escapeHtml(f.inspiration)}</p>` : ''}
-        <p class="accords">${escapeHtml(f.accords || f.category || '')}</p>
+        <div class="tile-image">${hasImage?`<img src="${escapeAttr(imageUrl)}" alt="${escapeAttr((f.house ? f.house + ' ' : '') + f.name)} bottle" loading="lazy" decoding="async">`:''}</div>
+        <div class="tile-info">
+          <p class="house">${escapeHtml(f.house || '')}</p>
+          <h3>${escapeHtml(f.name)}</h3>
+          <div class="inspo-slot">${shouldShowInspiration(f) ? `<p class="inspo"><span>Inspired by</span>${escapeHtml(f.inspiration)}</p>` : '<p class="inspo original-scent"><span>Original fragrance</span>&nbsp;</p>'}</div>
+          <p class="accords">${escapeHtml(f.notes || f.accords || f.category || '')}</p>
+        </div>
         <div class="prices">${priceButton(f,'3mL',f.p3)}${priceButton(f,'5mL',f.p5)}${priceButton(f,'10mL',f.p10)}</div>
-        <div class="card-links">${f.fragranticaUrl?`<a class="mini-link" href="${escapeAttr(f.fragranticaUrl)}" target="_blank" rel="noopener">Fragrantica ↗</a>`:''}</div>`;
+        <div class="card-links">${f.fragranticaUrl?`<a class="mini-link" href="${escapeAttr(f.fragranticaUrl)}" target="_blank" rel="noopener">fragrantica</a>`:'<span></span>'}</div>`;
       frag.appendChild(card);
     });
     grid.appendChild(frag); attachCardListeners();
@@ -701,12 +723,12 @@
     const discounted = discountedPriceText(clean, f);
     const active = discounted !== clean;
     const priceMarkup = active ? `<strong><s>${escapeHtml(clean)}</s> ${escapeHtml(discounted)}</strong>` : `<strong>${escapeHtml(clean)}</strong>`;
-    return `<button class="price-add ${active?'weekly-discount':''}" type="button" data-name="${escapeAttr(f.name)}" data-house="${escapeAttr(f.house||'')}" data-size="${size}" data-price="${escapeAttr(discounted)}" data-original-price="${escapeAttr(clean)}">${priceMarkup}<span>${size}</span><small>${active ? (weeklyDiscountPercent() + '% off') : 'Add'}</small></button>`;
+    return `<button class="price-add ${active?'weekly-discount':''}" type="button" data-name="${escapeAttr(f.name)}" data-house="${escapeAttr(f.house||'')}" data-size="${size}" data-price="${escapeAttr(discounted)}" data-original-price="${escapeAttr(clean)}">${priceMarkup}<span>${size}</span></button>`;
   }
   function attachCardListeners(){
     document.querySelectorAll('[data-copy]').forEach(btn=>{ if(btn.dataset.bound) return; btn.dataset.bound='1'; btn.addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText(btn.dataset.copy); btn.textContent='Copied'; setTimeout(()=>btn.textContent='Copy name',1200); }catch(e){} }); });
     document.querySelectorAll('.mini-link').forEach(link=>{ if(link.dataset.bound) return; link.dataset.bound='1'; link.addEventListener('click',()=>trackEvent('external_fragrantica_click', { link_text: link.textContent || 'Fragrantica' })); });
-    document.querySelectorAll('.price-add').forEach(btn=>{ if(btn.dataset.bound) return; btn.dataset.bound='1'; btn.addEventListener('click',()=>{ addToCart({type:'sample',name:btn.dataset.name,house:btn.dataset.house,size:btn.dataset.size,price:btn.dataset.price}); trackEvent('add_to_cart', { fragrance_name: btn.dataset.name, house: btn.dataset.house, sample_size: btn.dataset.size, value: parseMoney(btn.dataset.price), currency: 'AUD' }); btn.classList.add('added'); const old=btn.querySelector('small').textContent; btn.querySelector('small').textContent='Added'; setTimeout(()=>{btn.classList.remove('added'); btn.querySelector('small').textContent=old;},900); }); });
+    document.querySelectorAll('.price-add').forEach(btn=>{ if(btn.dataset.bound) return; btn.dataset.bound='1'; btn.addEventListener('click',()=>{ addToCart({type:'sample',name:btn.dataset.name,house:btn.dataset.house,size:btn.dataset.size,price:btn.dataset.price}); trackEvent('add_to_cart', { fragrance_name: btn.dataset.name, house: btn.dataset.house, sample_size: btn.dataset.size, value: parseMoney(btn.dataset.price), currency: 'AUD' }); btn.classList.add('added'); const label=btn.querySelector('small'); const old=label ? label.textContent : ''; if(label) label.textContent='added'; setTimeout(()=>{btn.classList.remove('added'); if(label) label.textContent=old;},900); }); });
   }
   function findFragranceByToken(token){
     const raw = String(token || '').trim();
@@ -737,16 +759,19 @@
     return found.slice(0, desired || found.length);
   }
   function renderPacks(){
-    const packsGrid=$('packsGrid'); if(!packsGrid || !packs.length) return; packsGrid.innerHTML='';
-    packs.forEach(pack=>{
-      const items = resolvePackItems(pack);
-      if(!items.length) return;
-      const pricing = packPrice(pack, items);
-      const div=document.createElement('article'); div.className='pack-card';
-      const title = pack.title || pack.name || 'Discovery Pack';
-      const itemLines=items.map(i=>`<li><strong>${escapeHtml(i.emojis || '✨')} ${escapeHtml(i.name)}</strong><span>${escapeHtml(i.house || '')}${i.category ? ' · ' + escapeHtml(i.category) : ''}</span></li>`).join('');
-      div.innerHTML=`<span class="pack-emoji">${escapeHtml(pack.emoji || pack.emojis || '🧪')}</span><div class="pack-tag">${escapeHtml(pack.tagline || 'Curated discovery pack')}</div><h3>${escapeHtml(title)}</h3><p>${escapeHtml(pack.description || pack.desc || '')}</p><ul>${itemLines}</ul><div class="pack-price"><strong>${money(pricing.final)}</strong><span>Normally ${money(pricing.value)} · Save ${money(pricing.save)}<br>${items.length} x ${escapeHtml(pricing.size)}</span></div><button class="button primary pack-add" type="button" data-pack="${escapeAttr(title)}" data-price="${escapeAttr(money(pricing.final))}">Add pack</button>`;
-      packsGrid.appendChild(div);
+    const packGrids=[...document.querySelectorAll('.packs-grid')]; if(!packGrids.length || !packs.length) return;
+    packGrids.forEach(packsGrid=>{
+      packsGrid.innerHTML='';
+      packs.forEach(pack=>{
+        const items = resolvePackItems(pack);
+        if(!items.length) return;
+        const pricing = packPrice(pack, items);
+        const div=document.createElement('article'); div.className='pack-card';
+        const title = pack.title || pack.name || 'Discovery Pack';
+        const itemLines=items.map(i=>`<li><strong>${escapeHtml(i.name)}</strong><span>${escapeHtml(i.house || '')}${i.category ? ' · ' + escapeHtml(i.category) : ''}</span></li>`).join('');
+        div.innerHTML=`<div class="pack-tag">${escapeHtml(pack.tagline || 'Curated discovery pack')}</div><h3>${escapeHtml(title)}</h3><p>${escapeHtml(pack.description || pack.desc || '')}</p><ul>${itemLines}</ul><div class="pack-price"><strong>${money(pricing.final)}</strong><span>Normally ${money(pricing.value)} · Save ${money(pricing.save)}<br>${items.length} x ${escapeHtml(pricing.size)}</span></div><button class="button primary pack-add" type="button" data-pack="${escapeAttr(title)}" data-price="${escapeAttr(money(pricing.final))}">Add pack</button>`;
+        packsGrid.appendChild(div);
+      });
     });
     document.querySelectorAll('.pack-add').forEach(btn=>{ if(btn.dataset.bound) return; btn.dataset.bound='1'; btn.addEventListener('click',()=>{ addToCart({type:'pack',name:btn.dataset.pack,size:'Pack',price:btn.dataset.price,house:'Curated discovery pack'}); trackEvent('discovery_pack_add', { pack_name: btn.dataset.pack, value: parseMoney(btn.dataset.price), currency: 'AUD' }); btn.textContent='Added to cart'; setTimeout(()=>btn.textContent='Add pack',1000); }); });
   }
@@ -757,10 +782,10 @@
     return `Hi DeadEnd Scents, I’d like to order these samples:\n\n${lines.join('\n')}\n\nSamples total: ${formatMoney(samples)}\nExpress postage: ${formatMoney(postage)}\nEstimated total: ${formatMoney(total)}\n\nPack selections (if using a flexible pack):\n\nDelivery name/address:`;
   }
   function updateCart(){
-    const cartItems=$('cartItems'), orderText=$('orderText'), cartTotal=$('cartTotal'), sendWhatsappCart=$('sendWhatsappCart'); const postage=Number(settings.expressPostage||10); const samples=cart.reduce((sum,item)=>sum+parseMoney(item.price),0); const total=cart.length?samples+postage:0; cartTotal.textContent=formatMoney(total); if(floatingCartCount) floatingCartCount.textContent=String(cart.length); if(floatingCartTotal) floatingCartTotal.textContent=formatMoney(total); if(floatingCart) floatingCart.classList.toggle('has-items', cart.length>0);
+    const cartItems=$('cartItems'), orderText=$('orderText'), cartTotal=$('cartTotal'), sendWhatsappCart=$('sendWhatsappCart'), sendMessengerCart=$('sendMessengerCart'); const postage=Number(settings.expressPostage||10); const samples=cart.reduce((sum,item)=>sum+parseMoney(item.price),0); const total=cart.length?samples+postage:0; cartTotal.textContent=formatMoney(total); if(floatingCartCount) floatingCartCount.textContent=String(cart.length); if(floatingCartTotal) floatingCartTotal.textContent=formatMoney(total); if(floatingCart) floatingCart.classList.toggle('has-items', cart.length>0);
     if(!cart.length){ cartItems.className='cart-items empty-cart'; cartItems.innerHTML='No samples added yet.'; }
     else { cartItems.className='cart-items'; cartItems.innerHTML=cart.map((item,idx)=>`<div class="cart-line"><div><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(item.size)} · ${escapeHtml(item.price)}${item.house?` · ${escapeHtml(item.house)}`:''}</span></div><button type="button" class="remove-item" data-index="${idx}" aria-label="Remove ${escapeAttr(item.name)}">×</button></div>`).join(''); document.querySelectorAll('.remove-item').forEach(btn=>btn.addEventListener('click',()=>{ const removed=cart[Number(btn.dataset.index)]; cart.splice(Number(btn.dataset.index),1); trackEvent('remove_from_cart', { item_name: removed ? removed.name : '', sample_size: removed ? removed.size : '' }); updateCart(); })); }
-    const message=buildOrderMessage(); orderText.value=message; if(sendWhatsappCart){ const base=(settings.whatsAppUrl||'https://wa.me/61434432948').split('?')[0]; sendWhatsappCart.href=`${base}?text=${encodeURIComponent(message)}`; }
+    const message=buildOrderMessage(); orderText.value=message; if(sendWhatsappCart){ const base=(settings.whatsAppUrl||'https://wa.me/61434432948').split('?')[0]; sendWhatsappCart.href=`${base}?text=${encodeURIComponent(message)}`; } if(sendMessengerCart){ sendMessengerCart.href=(settings.facebookMessengerUrl||'https://m.me/nickstreet09/'); sendMessengerCart.dataset.orderMessage=message; }
   }
   function formatMoney(value){ return `$${Math.round(value*100)/100}`.replace('.00',''); }
   function escapeHtml(value){ return String(value).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
@@ -878,7 +903,20 @@
     return function(...args){ clearTimeout(timer); timer=setTimeout(()=>fn.apply(this,args), wait); };
   }
   const trackedSearch = debounce(()=>{ const q=search ? search.value.trim() : ''; if(q) trackEvent('site_search', { search_term: q }); }, 900);
-  if(search) search.addEventListener('input',()=>{ render(); trackedSearch(); });
+
+  const viewAllFragrances=$('viewAllFragrances');
+  if(viewAllFragrances) viewAllFragrances.addEventListener('click',()=>{ landingSelection=!landingSelection; quickSpecialFilter='all'; if(search) search.value=''; if(collectionFilter) collectionFilter.value='all'; render(); $('catalogue')?.scrollIntoView({behavior:'smooth',block:'start'}); });
+  document.querySelectorAll('[data-explore]').forEach(btn=>btn.addEventListener('click',()=>{
+    const target=btn.dataset.explore; landingSelection=false;
+    if(target==='packs'){ $('packs')?.scrollIntoView({behavior:'smooth'}); return; }
+    if(target==='all'){ render(); $('catalogue')?.scrollIntoView({behavior:'smooth'}); return; }
+    if(target==='seasons'){ if(search) search.value=currentSeasonKeyword(); render(); $('catalogue')?.scrollIntoView({behavior:'smooth'}); return; }
+    if(target==='styles'){ if(search) search.value=''; $('search')?.focus({preventScroll:true}); $('search')?.scrollIntoView({behavior:'smooth',block:'center'}); }
+  }));
+  function currentSeasonKeyword(){ const m=new Date().getMonth()+1; return [12,1,2].includes(m)?'summer':[3,4,5].includes(m)?'autumn':[6,7,8].includes(m)?'winter':'spring'; }
+  if(search) search.addEventListener('focus',()=>{ /* 16px CSS prevents iOS auto zoom */ });
+
+  if(search) search.addEventListener('input',()=>{ landingSelection=false; render(); trackedSearch(); });
   if(categoryFilter) categoryFilter.addEventListener('input',()=>{ render(); trackEvent('filter_scent_style', { filter_value: categoryFilter.value }); });
   if(collectionFilter) collectionFilter.addEventListener('input',()=>{ quickSpecialFilter='all'; document.querySelectorAll('.collection-buttons button').forEach(btn=>btn.classList.remove('active')); render(); trackEvent('filter_type', { filter_value: collectionFilter.value }); });
   if(occasionFilter) occasionFilter.addEventListener('input',()=>{ render(); trackEvent('filter_occasion', { filter_value: occasionFilter.value }); });
@@ -887,8 +925,22 @@
     if(btn.dataset.special) setSpecialFilter(btn.dataset.special);
     else setCollectionFilter(btn.dataset.collection || 'all');
   }));
-  $('copyOrder').addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText($('orderText').value); $('copyOrder').textContent='Copied'; trackEvent('copy_order_message', { cart_items: cart.length }); setTimeout(()=>$('copyOrder').textContent='Copy order message',1400); }catch(e){ $('orderText').select(); document.execCommand('copy'); } });
+  const copyOrderBtn=$('copyOrder'); if(copyOrderBtn) copyOrderBtn.addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText($('orderText').value); copyOrderBtn.textContent='Copied'; trackEvent('copy_order_message', { cart_items: cart.length }); setTimeout(()=>copyOrderBtn.textContent='Copy order',1400); }catch(e){ $('orderText').select(); document.execCommand('copy'); } });
   const clearCart=$('clearCart'); if(clearCart) clearCart.addEventListener('click',()=>{ trackEvent('clear_cart', { cart_items: cart.length }); cart.length=0; updateCart(); });
   if(floatingCart) floatingCart.addEventListener('click',()=>{ trackEvent('floating_cart_click', { cart_items: cart.length }); const order=$('order'); if(order) order.scrollIntoView({behavior:'smooth',block:'start'}); });
+
+  const hamburger=document.querySelector('.hamburger');
+  const mobileMenu=document.getElementById('mobileMenu');
+  if(hamburger && mobileMenu){
+    hamburger.addEventListener('click',()=>{
+      const open=mobileMenu.classList.toggle('open');
+      hamburger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    mobileMenu.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>{
+      mobileMenu.classList.remove('open');
+      hamburger.setAttribute('aria-expanded','false');
+    }));
+  }
+
   init();
 })();
