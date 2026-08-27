@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;600;700;800;900&display=swap');
+
+:root{
+  --de-cream:#f6efe2;
+  --de-paper:#fff9ee;
+  --de-green:#173f34;
+  --de-green-2:#275948;
+  --de-rust:#a5532d;
+  --de-wood:#8b5a34;
+  --de-gold:#c89b55;
+  --de-ink:#1c1a16;
+  --de-muted:#6f665c;
+  --de-line:#d9c9b2;
+  --de-shadow:0 10px 22px rgba(39,30,18,.10);
+  --de-serif:'Cormorant Garamond', Georgia, serif;
+  --de-sans:Inter, Arial, sans-serif;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--de-cream);color:var(--de-ink);font-family:var(--de-sans);line-height:1.45}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit}
+img{max-width:100%;display:block}
+
+.de-page-shell,
+.admin-shell,
+.wrap{width:min(100% - 1rem,1180px);margin-inline:auto}
+
+h1,h2,h3,.seo-brand,.admin-logo-title{font-family:var(--de-serif);letter-spacing:-.02em;color:var(--de-green)}
+.eyebrow{color:var(--de-rust);text-transform:uppercase;letter-spacing:.14em;font-size:.72rem;font-weight:900;margin:0 0 .35rem}
+.muted,.lead{color:var(--de-muted)}
+
+.de-card,
+.admin-panel,
+.tool-card,
+.result-hero,
+.seo-preview-card,
+.hero-page,
+.panel,
+.mini-card,
+.house-card,
+.quick-stats article,
+.result-grid article,
+.meta div,
+.price,
+.setting-row,
+.edit-row,
+.inventory-card-v52,
+.check-row,
+.settings-group,
+.image-preview-card,
+.seo-setup-details,
+.seo-health-list div{
+  background:var(--de-paper)!important;
+  border:1px solid var(--de-line)!important;
+  border-radius:0!important;
+  box-shadow:var(--de-shadow)!important;
+  color:var(--de-ink)!important;
+}
+
+.button,
+button.button,
+a.button,
+.pack-add,
+input[type="submit"],
+.form-actions .button,
+.section-actions .button,
+.bulk-actions .button{
+  border-radius:0!important;
+  border:1px solid #7b3d22!important;
+  background:var(--de-rust)!important;
+  background-image:none!important;
+  color:#fff!important;
+  font-family:'Trebuchet MS','Arial Narrow',Arial,sans-serif!important;
+  text-transform:lowercase!important;
+  font-weight:900!important;
+  letter-spacing:.01em!important;
+}
+.button.secondary,
+.button.danger{
+  background:transparent!important;
+  color:var(--de-green)!important;
+  border-color:var(--de-line)!important;
+}
+.button.primary{background:var(--de-rust)!important;color:#fff!important;border-color:#7b3d22!important}
+
+input,select,textarea{
+  border:1px solid var(--de-line)!important;
+  border-radius:0!important;
+  background:#fff!important;
+  color:var(--de-ink)!important;
+}
+input:focus,select:focus,textarea:focus{
+  outline:none!important;
+  border-color:var(--de-rust)!important;
+  box-shadow:0 0 0 3px rgba(165,83,45,.15)!important;
+}
+
+.pill,.badge,.score-chip,.inv-main small b{
+  border-radius:0!important;
+  border:1px solid var(--de-line)!important;
+  background:#eadcca!important;
+  color:var(--de-green)!important;
+  text-transform:lowercase!important;
+}
+
+@media(max-width:760px){
+  .de-page-shell,.admin-shell,.wrap{width:min(100% - .7rem,1180px)}
+}
