@@ -40,6 +40,29 @@
 
   async function getCsv(url){
     const errors = [];
+
+    // Preferred source: the same Apps Script endpoint used by Admin.
+    // This avoids relying on the separately published Google Sheets CSV URL,
+    // which can intermittently fail or be blocked even when the Sheet itself is fine.
+    const appsScriptEndpoint = settings.adminWriteEndpoint || '';
+    if(appsScriptEndpoint){
+      try {
+        const liveUrl = appsScriptEndpoint + (appsScriptEndpoint.includes('?') ? '&' : '?') + 'action=catalogue&cacheBust=' + Date.now();
+        const liveRes = await fetch(liveUrl, { cache:'no-store', redirect:'follow' });
+        if(!liveRes.ok) throw new Error('Apps Script returned ' + liveRes.status);
+        const liveJson = await liveRes.json();
+        const liveItems = liveJson && Array.isArray(liveJson.items) ? liveJson.items : [];
+        if(!liveItems.length) throw new Error('Apps Script catalogue returned no items');
+        const text = objectsToCsv(liveItems);
+        catalogueSource = 'live';
+        saveCatalogueCache(text);
+        return text;
+      } catch(appsScriptError){
+        errors.push('Apps Script: ' + (appsScriptError.message || String(appsScriptError)));
+        console.warn('Apps Script catalogue read failed, trying published Google Sheet', appsScriptError);
+      }
+    }
+
     const noCacheUrl = url + (url.includes('?') ? '&' : '?') + 'cacheBust=' + Date.now();
     try {
       const res = await fetch(noCacheUrl, { cache: 'no-store', redirect: 'follow' });
@@ -111,6 +134,20 @@
 
   function saveCatalogueCache(csv){
     try { localStorage.setItem('deadend_catalogue_csv_cache_v1', csv); } catch(e) {}
+  }
+
+  function objectsToCsv(items){
+    if(!Array.isArray(items) || !items.length) return '';
+    const headers=[];
+    const seen=new Set();
+    items.forEach(item=>Object.keys(item || {}).forEach(key=>{
+      if(!seen.has(key)){ seen.add(key); headers.push(key); }
+    }));
+    const rows=[headers.map(csvEscape).join(',')];
+    items.forEach(item=>{
+      rows.push(headers.map(h=>csvEscape(item && item[h] != null ? item[h] : '')).join(','));
+    });
+    return rows.join('\n');
   }
 
   function fragrancesToCsv(items){
