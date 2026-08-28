@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=2.2">
 </head>
 <body id="top">
   <header class="site-header">
@@ -61,13 +61,48 @@
         </div>
         <div class="packs-grid desktop-packs-grid"></div>
       </section>
-      <nav class="explore-panel" aria-label="Explore fragrances">
+      <section class="explore-panel explore-hub" aria-label="Explore fragrances">
         <p class="eyebrow">Explore</p>
-        <button type="button" class="explore-link" data-explore="packs"><strong>Discovery Packs</strong><span>Curated sample packs</span><b>›</b></button>
-        <button type="button" class="explore-link" data-explore="seasons"><strong>Seasons</strong><span>Find scents for every season</span><b>›</b></button>
-        <button type="button" class="explore-link" data-explore="styles"><strong>Styles</strong><span>Explore by scent style</span><b>›</b></button>
-        <button type="button" class="explore-link" data-explore="all"><strong>View all fragrances</strong><span>Browse the full collection</span><b>›</b></button>
-      </nav>
+
+        <div class="explore-group explore-packs">
+          <div class="explore-heading"><strong>Discovery Packs</strong><span>Curated sample sets</span></div>
+          <div id="explorePackTiles" class="explore-pack-tiles" aria-label="Featured discovery packs"></div>
+          <button type="button" class="explore-wide-action" data-explore="packs">View all packs <b>›</b></button>
+        </div>
+
+        <div class="explore-group">
+          <div class="explore-heading"><strong>Seasons</strong><span>Find scents for every season</span></div>
+          <div class="explore-chip-grid explore-season-grid">
+            <button type="button" class="explore-chip" data-season="everyday"><span class="explore-icon">☀</span><strong>Everyday</strong></button>
+            <button type="button" class="explore-chip" data-season="winter"><span class="explore-icon">❄</span><strong>Winter</strong></button>
+            <button type="button" class="explore-chip" data-season="summer"><span class="explore-icon">♨</span><strong>Summer</strong></button>
+          </div>
+        </div>
+
+        <div class="explore-group">
+          <div class="explore-heading"><strong>Styles</strong><span>Explore by scent style</span></div>
+          <div class="explore-chip-grid explore-style-grid">
+            <button type="button" class="explore-chip" data-style="Vanilla"><span class="explore-icon">✦</span><strong>Vanilla</strong></button>
+            <button type="button" class="explore-chip" data-style="Fresh"><span class="explore-icon">❧</span><strong>Fresh</strong></button>
+            <button type="button" class="explore-chip" data-style="Woody"><span class="explore-icon">◎</span><strong>Woody</strong></button>
+            <button type="button" class="explore-chip" data-style="Citrus"><span class="explore-icon">◉</span><strong>Citrus</strong></button>
+            <button type="button" class="explore-chip" data-style="Spicy"><span class="explore-icon">✷</span><strong>Spicy</strong></button>
+            <button type="button" class="explore-chip" data-style="Aromatic"><span class="explore-icon">♨</span><strong>Aromatic</strong></button>
+          </div>
+          <button type="button" class="explore-outline-action" data-explore="styles">View all styles <b>›</b></button>
+        </div>
+
+        <div class="explore-group explore-trending">
+          <div class="explore-heading"><strong>Trending now</strong><span>Popular right now</span></div>
+          <div class="explore-chip-grid explore-trending-grid">
+            <button type="button" class="explore-chip" data-trending="best"><span class="explore-icon">♨</span><strong>Best Sellers</strong></button>
+            <button type="button" class="explore-chip" data-special="new"><span class="explore-icon">✹</span><strong>New Arrivals</strong></button>
+            <button type="button" class="explore-chip" data-special="staff"><span class="explore-icon">☆</span><strong>Staff Picks</strong></button>
+            <button type="button" class="explore-chip" data-trending="gift"><span class="explore-icon">♧</span><strong>Gift Ideas</strong></button>
+          </div>
+          <button type="button" class="explore-wide-action" data-explore="all">View all fragrances <b>›</b></button>
+        </div>
+      </section>
       <div id="featuredGrid" class="featured-grid"><div class="empty">Loading fragrance of the week...</div></div>
     </section>
 
@@ -141,6 +176,6 @@
   </footer>
 
   <script src="data.js"></script>
-  <script src="app.js"></script>
+  <script src="app.js?v=2.2"></script>
 </body>
 </html>

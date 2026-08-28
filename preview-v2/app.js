@@ -558,7 +558,7 @@
     resetOptions(categoryFilter,'All scent styles',[...new Set([...uniqueValues('category'),'Vanilla'])].sort((a,b)=>a.localeCompare(b)));
     resetOptions(collectionFilter,'All types',uniqueValues('collection'));
     resetOptions(occasionFilter,'All occasions',uniqueMultiValues('occasion'));
-    setupContactLinks(); setupAnalytics(); injectSeoSchema(); applySearchQueryFromUrl(); renderFeatured(); renderPacks(); render(); updateCart();
+    setupContactLinks(); setupAnalytics(); injectSeoSchema(); applySearchQueryFromUrl(); renderFeatured(); renderPacks(); renderExploreHub(); render(); updateCart();
     trackEvent('catalogue_loaded', { fragrance_count: data.length });
     setClarityTag('fragrance_count', data.length);
 
@@ -575,6 +575,7 @@
             resetOptions(collectionFilter,'All types',uniqueValues('collection'));
             resetOptions(occasionFilter,'All occasions',uniqueMultiValues('occasion'));
             renderFeatured();
+            renderExploreHub();
             render();
           }
         } catch(e){ console.warn('Background live catalogue refresh failed; continuing with full local snapshot', e); }
@@ -807,6 +808,45 @@
     const desired = Number(pack.count || (primary.length || names.length || 3));
     return found.slice(0, desired || found.length);
   }
+  function renderExploreHub(){
+    const holder=$('explorePackTiles');
+    if(!holder) return;
+    holder.innerHTML='';
+    const featuredPacks=(packs || []).slice(0,4);
+    featuredPacks.forEach((pack,index)=>{
+      const items=resolvePackItems(pack);
+      const tile=document.createElement('button');
+      tile.type='button';
+      tile.className='explore-pack-tile';
+      tile.dataset.packTarget=String(pack.id || slugify(pack.title || pack.name || ('pack-'+index)));
+      const thumbs=items.slice(0,3).map(item=>{
+        const src=String(item.imageUrl || '').trim();
+        return /^https?:\/\//i.test(src) ? `<img src="${escapeAttr(src)}" alt="" loading="lazy" decoding="async">` : '';
+      }).join('');
+      tile.innerHTML=`<span class="explore-pack-images">${thumbs || `<span class="explore-pack-emoji">${escapeHtml(pack.emoji || '✦')}</span>`}</span><strong>${escapeHtml(pack.title || pack.name || 'Discovery Pack')}</strong>`;
+      holder.appendChild(tile);
+    });
+    holder.querySelectorAll('[data-pack-target]').forEach(btn=>btn.addEventListener('click',()=>{
+      const selector='#packsGrid [data-pack-id="'+CSS.escape(btn.dataset.packTarget)+'"]';
+      const target=document.querySelector(selector);
+      (target || $('packs'))?.scrollIntoView({behavior:'smooth',block:'center'});
+      trackEvent('explore_pack_click',{pack_id:btn.dataset.packTarget});
+    }));
+  }
+
+  function applyExploreSearch(term, eventName){
+    landingSelection=false;
+    quickSpecialFilter='all';
+    if(collectionFilter) collectionFilter.value='all';
+    if(categoryFilter) categoryFilter.value='all';
+    if(occasionFilter) occasionFilter.value='all';
+    document.querySelectorAll('.collection-buttons button').forEach(btn=>btn.classList.remove('active'));
+    if(search) search.value=term || '';
+    render();
+    $('catalogue')?.scrollIntoView({behavior:'smooth',block:'start'});
+    trackEvent(eventName || 'explore_filter',{filter_value:term || 'all'});
+  }
+
   function renderPacks(){
     const packGrids=[...document.querySelectorAll('.packs-grid')]; if(!packGrids.length || !packs.length) return;
     packGrids.forEach(packsGrid=>{
@@ -815,7 +855,7 @@
         const items = resolvePackItems(pack);
         if(!items.length) return;
         const pricing = packPrice(pack, items);
-        const div=document.createElement('article'); div.className='pack-card';
+        const div=document.createElement('article'); div.className='pack-card'; div.dataset.packId=String(pack.id || slugify(pack.title || pack.name || 'discovery-pack'));
         const title = pack.title || pack.name || 'Discovery Pack';
         const itemLines=items.map(i=>`<li><strong>${escapeHtml(i.name)}</strong><span>${escapeHtml(i.house || '')}${i.category ? ' · ' + escapeHtml(i.category) : ''}</span></li>`).join('');
         div.innerHTML=`<div class="pack-tag">${escapeHtml(pack.tagline || 'Curated discovery pack')}</div><h3>${escapeHtml(title)}</h3><p>${escapeHtml(pack.description || pack.desc || '')}</p><ul>${itemLines}</ul><div class="pack-price"><strong>${money(pricing.final)}</strong><span>Normally ${money(pricing.value)} · Save ${money(pricing.save)}<br>${items.length} x ${escapeHtml(pricing.size)}</span></div><button class="button primary pack-add" type="button" data-pack="${escapeAttr(title)}" data-price="${escapeAttr(money(pricing.final))}">Add pack</button>`;
@@ -957,10 +997,24 @@
   if(viewAllFragrances) viewAllFragrances.addEventListener('click',()=>{ landingSelection=!landingSelection; quickSpecialFilter='all'; if(search) search.value=''; if(collectionFilter) collectionFilter.value='all'; render(); $('catalogue')?.scrollIntoView({behavior:'smooth',block:'start'}); });
   document.querySelectorAll('[data-explore]').forEach(btn=>btn.addEventListener('click',()=>{
     const target=btn.dataset.explore; landingSelection=false;
-    if(target==='packs'){ $('packs')?.scrollIntoView({behavior:'smooth'}); return; }
-    if(target==='all'){ render(); $('catalogue')?.scrollIntoView({behavior:'smooth'}); return; }
-    if(target==='seasons'){ if(search) search.value=currentSeasonKeyword(); render(); $('catalogue')?.scrollIntoView({behavior:'smooth'}); return; }
-    if(target==='styles'){ if(search) search.value=''; $('search')?.focus({preventScroll:true}); $('search')?.scrollIntoView({behavior:'smooth',block:'center'}); }
+    if(target==='packs'){ $('packs')?.scrollIntoView({behavior:'smooth',block:'start'}); return; }
+    if(target==='all'){ applyExploreSearch('','explore_view_all'); return; }
+    if(target==='seasons'){ applyExploreSearch(currentSeasonKeyword(),'explore_current_season'); return; }
+    if(target==='styles'){ $('search')?.scrollIntoView({behavior:'smooth',block:'center'}); return; }
+  }));
+  document.querySelectorAll('[data-season]').forEach(btn=>btn.addEventListener('click',()=>{
+    const value=String(btn.dataset.season || '').toLowerCase();
+    applyExploreSearch(value==='everyday' ? 'daily' : value,'explore_season');
+  }));
+  document.querySelectorAll('[data-style]').forEach(btn=>btn.addEventListener('click',()=>applyExploreSearch(btn.dataset.style || '','explore_style')));
+  document.querySelectorAll('.explore-hub [data-special]').forEach(btn=>btn.addEventListener('click',()=>{
+    setSpecialFilter(btn.dataset.special || 'all');
+    $('catalogue')?.scrollIntoView({behavior:'smooth',block:'start'});
+  }));
+  document.querySelectorAll('[data-trending]').forEach(btn=>btn.addEventListener('click',()=>{
+    const target=btn.dataset.trending;
+    if(target==='best'){ setSpecialFilter('staff'); $('catalogue')?.scrollIntoView({behavior:'smooth',block:'start'}); return; }
+    if(target==='gift'){ $('packs')?.scrollIntoView({behavior:'smooth',block:'start'}); trackEvent('explore_gift_ideas'); }
   }));
   function currentSeasonKeyword(){ const m=new Date().getMonth()+1; return [12,1,2].includes(m)?'summer':[3,4,5].includes(m)?'autumn':[6,7,8].includes(m)?'winter':'spring'; }
   if(search) search.addEventListener('focus',()=>{ /* 16px CSS prevents iOS auto zoom */ });
