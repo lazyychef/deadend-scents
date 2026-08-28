@@ -763,17 +763,17 @@
       const card=document.createElement('article');
       const imageUrl=String(f.imageUrl || '').trim();
       const hasImage=/^https?:\/\//i.test(imageUrl);
-      card.className=(isNewArrival(f)?'card new-card':'card') + (hasImage ? ' has-image' : '');
+      card.className='card sketch-card' + (isNewArrival(f)?' new-card':'') + (hasImage ? ' has-image' : '');
       card.innerHTML=`
         <div class="card-top">
           <span class="collection-pill ${collectionClass(f.collection)}">${escapeHtml(String(f.collection || 'type').toLowerCase())}</span>
           <span class="badge-row">${isNewArrival(f)?'<span class="new-badge">new</span>':''}</span>
         </div>
-        <div class="tile-buy-row">
-          <div class="tile-image">${hasImage?`<img src="${escapeAttr(imageUrl)}" alt="${escapeAttr((f.house ? f.house + ' ' : '') + f.name)} bottle" loading="lazy" decoding="async">`:''}</div>
-          <div class="prices">${priceButton(f,'3mL',f.p3)}${priceButton(f,'5mL',f.p5)}${priceButton(f,'10mL',f.p10)}</div>
+        <div class="sketch-buy-row">
+          <div class="sketch-image">${hasImage?`<img src="${escapeAttr(imageUrl)}" alt="${escapeAttr((f.house ? f.house + ' ' : '') + f.name)} bottle" loading="lazy" decoding="async">`:''}</div>
+          <div class="sketch-price-stack">${priceButton(f,'3mL',f.p3)}${priceButton(f,'5mL',f.p5)}${priceButton(f,'10mL',f.p10)}</div>
         </div>
-        <div class="tile-info">
+        <div class="sketch-info">
           <p class="house">${escapeHtml(f.house || '')}</p>
           <h3>${escapeHtml(f.name)}</h3>
           <div class="inspo-slot">${shouldShowInspiration(f) ? `<p class="inspo"><span>inspired by</span> ${escapeHtml(f.inspiration)}</p>` : ''}</div>
