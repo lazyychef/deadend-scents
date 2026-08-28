@@ -1,0 +1,259 @@
+/* DeadEnd Scents Public V2.4.3 — compact sketch-card layout */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+.search-box input,
+#searchInput,
+input[type="search"] {
+  font-size: 17px !important;
+  line-height: 1.25 !important;
+  min-height: 44px !important;
+  transform: none !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+
+.grid {
+  grid-template-columns: repeat(3,minmax(0,1fr)) !important;
+  gap: 5px !important;
+  align-items: stretch !important;
+}
+
+.grid > article.sketch-card,
+.grid > article.sketch-card.has-image {
+  box-sizing: border-box !important;
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  height: 205px !important;
+  min-height: 205px !important;
+  max-height: 205px !important;
+  margin: 0 !important;
+  padding: 5px !important;
+  overflow: hidden !important;
+  background: var(--paper,#fffaf0) !important;
+  border: 1px solid var(--line,#d8c5a6) !important;
+}
+.grid > article.sketch-card::after { content:none !important; display:none !important; }
+
+.grid > .sketch-card > .card-top {
+  position: static !important;
+  display:flex !important;
+  justify-content:space-between !important;
+  align-items:flex-start !important;
+  flex:0 0 14px !important;
+  width:100% !important;
+  min-height:14px !important;
+  margin:0 0 2px !important;
+  padding:0 !important;
+  overflow:hidden !important;
+}
+.grid > .sketch-card .collection-pill {
+  display:block !important;
+  max-width:68% !important;
+  padding:0 !important;
+  margin:0 !important;
+  border:0 !important;
+  background:transparent !important;
+  color:var(--rust,#a8512a) !important;
+  font-family:'Cormorant Garamond',Georgia,serif !important;
+  font-size:8px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  text-transform:lowercase !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+}
+.grid > .sketch-card .new-badge {
+  display:inline-block !important;
+  margin:0 !important;
+  padding:2px 3px !important;
+  border:0 !important;
+  background:var(--rust,#a8512a) !important;
+  color:#fff !important;
+  font-size:6.5px !important;
+  font-weight:800 !important;
+  line-height:1 !important;
+  text-transform:lowercase !important;
+}
+
+/* Image and the three price buttons are exactly the same total height. */
+.grid > .sketch-card > .sketch-buy-row {
+  position:static !important;
+  display:grid !important;
+  grid-template-columns:minmax(0,61%) minmax(0,39%) !important;
+  grid-template-rows:82px !important;
+  gap:4px !important;
+  flex:0 0 82px !important;
+  width:100% !important;
+  height:82px !important;
+  min-height:82px !important;
+  max-height:82px !important;
+  margin:0 0 3px !important;
+  padding:0 !important;
+  overflow:hidden !important;
+}
+.grid > .sketch-card .sketch-image {
+  position:static !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:100% !important;
+  height:82px !important;
+  min-height:82px !important;
+  max-height:82px !important;
+  margin:0 !important;
+  padding:2px !important;
+  overflow:hidden !important;
+}
+.grid > .sketch-card .sketch-image img {
+  position:static !important;
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  max-width:100% !important;
+  max-height:78px !important;
+  margin:auto !important;
+  padding:0 !important;
+  object-fit:contain !important;
+  object-position:center !important;
+  transform:none !important;
+  filter:drop-shadow(0 1px 1px rgba(0,0,0,.08)) !important;
+}
+.grid > .sketch-card .sketch-price-stack {
+  position:static !important;
+  display:grid !important;
+  grid-template-columns:1fr !important;
+  grid-template-rows:repeat(3,1fr) !important;
+  gap:3px !important;
+  width:100% !important;
+  height:82px !important;
+  min-height:82px !important;
+  max-height:82px !important;
+  margin:0 !important;
+  padding:0 !important;
+  overflow:hidden !important;
+}
+.grid > .sketch-card .sketch-price-stack > .price-add,
+.grid > .sketch-card .sketch-price-stack > .price-unavailable {
+  box-sizing:border-box !important;
+  position:static !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:100% !important;
+  height:100% !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  margin:0 !important;
+  padding:1px !important;
+  border:1px solid #7e4125 !important;
+  background:var(--rust,#a8512a) !important;
+  color:#fff !important;
+}
+.grid > .sketch-card .sketch-price-stack > .price-unavailable {
+  background:#eadfce !important;
+  color:#887766 !important;
+  border-color:var(--line,#d8c5a6) !important;
+}
+.grid > .sketch-card .sketch-price-stack strong { font-size:8.5px !important; line-height:1 !important; white-space:nowrap !important; }
+.grid > .sketch-card .sketch-price-stack span { font-size:6px !important; line-height:1 !important; margin-top:1px !important; white-space:nowrap !important; }
+
+/* Compact information area: no large reserved blank blocks. */
+.grid > .sketch-card > .sketch-info {
+  position:static !important;
+  display:flex !important;
+  flex-direction:column !important;
+  flex:1 1 auto !important;
+  width:100% !important;
+  min-height:0 !important;
+  margin:0 !important;
+  padding:0 !important;
+  overflow:hidden !important;
+}
+.grid > .sketch-card .house {
+  margin:0 !important;
+  padding:0 !important;
+  font-size:7px !important;
+  line-height:1 !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+}
+.grid > .sketch-card h3 {
+  margin:1px 0 2px !important;
+  padding:0 !important;
+  font-size:10.5px !important;
+  line-height:1 !important;
+  max-height:21px !important;
+  display:-webkit-box !important;
+  -webkit-line-clamp:2 !important;
+  -webkit-box-orient:vertical !important;
+  overflow:hidden !important;
+}
+.grid > .sketch-card .inspo-slot {
+  height:auto !important;
+  min-height:0 !important;
+  max-height:23px !important;
+  margin:0 0 2px !important;
+  padding:0 !important;
+  overflow:hidden !important;
+}
+.grid > .sketch-card .inspo-slot:empty { display:none !important; margin:0 !important; }
+.grid > .sketch-card .inspo {
+  margin:0 !important;
+  padding:0 !important;
+  font-size:6.6px !important;
+  line-height:1.02 !important;
+  display:-webkit-box !important;
+  -webkit-line-clamp:3 !important;
+  -webkit-box-orient:vertical !important;
+  overflow:hidden !important;
+}
+.grid > .sketch-card .inspo span {
+  display:inline !important;
+  color:var(--rust,#a8512a) !important;
+  font-size:6.5px !important;
+  font-weight:900 !important;
+  line-height:1 !important;
+  text-transform:lowercase !important;
+}
+.grid > .sketch-card .accords {
+  height:auto !important;
+  min-height:0 !important;
+  max-height:22px !important;
+  margin:0 !important;
+  padding:0 !important;
+  font-size:6.6px !important;
+  line-height:1.05 !important;
+  display:-webkit-box !important;
+  -webkit-line-clamp:3 !important;
+  -webkit-box-orient:vertical !important;
+  overflow:hidden !important;
+}
+.grid > .sketch-card > .card-links {
+  position:static !important;
+  display:block !important;
+  flex:0 0 11px !important;
+  width:100% !important;
+  min-height:11px !important;
+  margin-top:auto !important;
+  padding:0 !important;
+  overflow:hidden !important;
+}
+.grid > .sketch-card .mini-link { font-size:7px !important; line-height:1 !important; }
+
+@media (max-width:374px) {
+  .grid { gap:3px !important; }
+  .grid > article.sketch-card,
+  .grid > article.sketch-card.has-image { height:198px !important; min-height:198px !important; max-height:198px !important; padding:4px !important; }
+  .grid > .sketch-card > .sketch-buy-row,
+  .grid > .sketch-card .sketch-image,
+  .grid > .sketch-card .sketch-price-stack { height:78px !important; min-height:78px !important; max-height:78px !important; flex-basis:78px !important; }
+  .grid > .sketch-card .sketch-image img { max-height:74px !important; }
+}
+@media (min-width:500px) and (max-width:699px){ .grid{grid-template-columns:repeat(4,minmax(0,1fr)) !important;} }
+@media (min-width:700px) and (max-width:899px){ .grid{grid-template-columns:repeat(5,minmax(0,1fr)) !important;} }
+@media (min-width:900px) and (max-width:1279px){ .grid{grid-template-columns:repeat(6,minmax(0,1fr)) !important;} }
+@media (min-width:1280px){ .grid{grid-template-columns:repeat(8,minmax(0,1fr)) !important;} }
