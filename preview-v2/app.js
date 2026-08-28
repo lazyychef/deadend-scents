@@ -324,6 +324,9 @@
         featuredStart:toIsoDate(get(row,['Featured Start','Feature Start','Featured Date','Feature Date','Fragrance of the Week Start'])),
         featuredNote:get(row,['Featured Note','Feature Note','Promo Note']),
         staffPick:truthy(get(row,['Staff Pick','StaffPick','Nick Pick'])),
+        favourite:truthy(get(row,['Favourite','Favorite'])),
+        timesFeatured:Number(get(row,['Times Featured','TimesFeatured']) || 0),
+        lastPromotionDate:toIsoDate(get(row,['Last Promotion Date','LastPromotionDate'])),
         season:get(row,['Season']),
         occasion,
         stock:get(row,['Stock']),
@@ -594,7 +597,8 @@
     const specialOk = quickSpecialFilter === 'all'
       || (quickSpecialFilter === 'women' && String(f.gender || '').toLowerCase().includes('women'))
       || (quickSpecialFilter === 'new' && isNewArrival(f))
-      || (quickSpecialFilter === 'staff' && !!f.staffPick);
+      || (quickSpecialFilter === 'staff' && !!f.staffPick)
+      || (quickSpecialFilter === 'best');
     return specialOk && fieldContains(f.category,categoryFilter.value) && fieldContains(f.collection,collectionFilter.value) && fieldContains(f.occasion,occasionFilter.value) && (!q || combined.includes(q));
   }
   function isNewArrival(f){
@@ -646,6 +650,17 @@
   }
   function firstAvailablePrice(f){ return [f.p3,f.p5,f.p10].map(parseMoney).find(n=>n>0)||0; }
   function newDateValue(f){ const date=f.addedDate?new Date(f.addedDate):null; return date&&!Number.isNaN(date.getTime())?date.getTime():0; }
+  function popularityScore(f){
+    let score=0;
+    if(f.staffPick) score+=40;
+    if(f.favourite) score+=25;
+    if(f.featured) score+=20;
+    score+=Math.min(30, Number(f.timesFeatured||0)*4);
+    if(isNewArrival(f)) score+=5;
+    const stock=String(f.stock||'').toLowerCase();
+    if(stock.includes('out')) score-=100;
+    return score;
+  }
   function sortFragrances(items){
     const mode=sortBy?sortBy.value:'newest'; const sorted=[...items];
     const byText=getter=>sorted.sort((a,b)=>String(getter(a)||'').localeCompare(String(getter(b)||''),undefined,{sensitivity:'base'}) || String(a.name||'').localeCompare(String(b.name||''),undefined,{sensitivity:'base'}));
@@ -730,6 +745,7 @@
 
   function render(){
     let filtered=sortFragrances(data.filter(match));
+    if(quickSpecialFilter==='best') filtered=[...filtered].sort((a,b)=>popularityScore(b)-popularityScore(a) || String(a.name||'').localeCompare(String(b.name||''))).slice(0,18);
     const searchActive = !!String(search && search.value || '').trim();
     const filterActive = quickSpecialFilter !== 'all' || (collectionFilter && collectionFilter.value !== 'all') || (categoryFilter && categoryFilter.value !== 'all') || (occasionFilter && occasionFilter.value !== 'all');
     if(landingSelection && !searchActive && !filterActive){
@@ -819,11 +835,7 @@
       tile.type='button';
       tile.className='explore-pack-tile';
       tile.dataset.packTarget=String(pack.id || slugify(pack.title || pack.name || ('pack-'+index)));
-      const thumbs=items.slice(0,3).map(item=>{
-        const src=String(item.imageUrl || '').trim();
-        return /^https?:\/\//i.test(src) ? `<img src="${escapeAttr(src)}" alt="" loading="lazy" decoding="async">` : '';
-      }).join('');
-      tile.innerHTML=`<span class="explore-pack-images">${thumbs || `<span class="explore-pack-emoji">${escapeHtml(pack.emoji || '✦')}</span>`}</span><strong>${escapeHtml(pack.title || pack.name || 'Discovery Pack')}</strong>`;
+      tile.innerHTML=`<span class="explore-pack-vial" aria-hidden="true"><svg viewBox="0 0 24 32"><path d="M8 2h8M9 2v5l-3 3v17c0 2 1 3 3 3h6c2 0 3-1 3-3V10l-3-3V2"/><path d="M7 13h10M8 22h8"/></svg></span><strong>${escapeHtml(pack.title || pack.name || 'Discovery Pack')}</strong>`;
       holder.appendChild(tile);
     });
     holder.querySelectorAll('[data-pack-target]').forEach(btn=>btn.addEventListener('click',()=>{
@@ -1013,8 +1025,19 @@
   }));
   document.querySelectorAll('[data-trending]').forEach(btn=>btn.addEventListener('click',()=>{
     const target=btn.dataset.trending;
-    if(target==='best'){ setSpecialFilter('staff'); $('catalogue')?.scrollIntoView({behavior:'smooth',block:'start'}); return; }
-    if(target==='gift'){ $('packs')?.scrollIntoView({behavior:'smooth',block:'start'}); trackEvent('explore_gift_ideas'); }
+    if(target==='best'){
+      setSpecialFilter('best');
+      $('catalogue')?.scrollIntoView({behavior:'smooth',block:'start'});
+      trackEvent('explore_best_sellers');
+      return;
+    }
+    if(target==='gift'){
+      $('packs')?.scrollIntoView({behavior:'smooth',block:'start'});
+      document.querySelectorAll('.pack-card').forEach(card=>card.classList.add('pack-highlight'));
+      setTimeout(()=>document.querySelectorAll('.pack-card').forEach(card=>card.classList.remove('pack-highlight')),1600);
+      trackEvent('explore_gift_ideas');
+      return;
+    }
   }));
   function currentSeasonKeyword(){ const m=new Date().getMonth()+1; return [12,1,2].includes(m)?'summer':[3,4,5].includes(m)?'autumn':[6,7,8].includes(m)?'winter':'spring'; }
   if(search) search.addEventListener('focus',()=>{ /* 16px CSS prevents iOS auto zoom */ });
