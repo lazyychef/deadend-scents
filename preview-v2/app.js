@@ -767,16 +767,18 @@
       card.innerHTML=`
         <div class="card-top">
           <span class="collection-pill ${collectionClass(f.collection)}">${escapeHtml(String(f.collection || 'type').toLowerCase())}</span>
-          <span class="badge-row">${isNewArrival(f)?'<span class="new-badge">new</span>':''}${f.staffPick?'<span class="new-badge staff">staff pick</span>':''}</span>
+          <span class="badge-row">${isNewArrival(f)?'<span class="new-badge">new</span>':''}</span>
         </div>
-        <div class="tile-image">${hasImage?`<img src="${escapeAttr(imageUrl)}" alt="${escapeAttr((f.house ? f.house + ' ' : '') + f.name)} bottle" loading="lazy" decoding="async">`:''}</div>
+        <div class="tile-buy-row">
+          <div class="tile-image">${hasImage?`<img src="${escapeAttr(imageUrl)}" alt="${escapeAttr((f.house ? f.house + ' ' : '') + f.name)} bottle" loading="lazy" decoding="async">`:''}</div>
+          <div class="prices">${priceButton(f,'3mL',f.p3)}${priceButton(f,'5mL',f.p5)}${priceButton(f,'10mL',f.p10)}</div>
+        </div>
         <div class="tile-info">
           <p class="house">${escapeHtml(f.house || '')}</p>
           <h3>${escapeHtml(f.name)}</h3>
-          <div class="inspo-slot">${shouldShowInspiration(f) ? `<p class="inspo"><span>Inspired by</span>${escapeHtml(f.inspiration)}</p>` : '<p class="inspo original-scent"><span>Original fragrance</span>&nbsp;</p>'}</div>
+          <div class="inspo-slot">${shouldShowInspiration(f) ? `<p class="inspo"><span>inspired by</span> ${escapeHtml(f.inspiration)}</p>` : ''}</div>
           <p class="accords">${escapeHtml(f.notes || f.accords || f.category || '')}</p>
         </div>
-        <div class="prices">${priceButton(f,'3mL',f.p3)}${priceButton(f,'5mL',f.p5)}${priceButton(f,'10mL',f.p10)}</div>
         <div class="card-links">${f.fragranticaUrl?`<a class="mini-link" href="${escapeAttr(f.fragranticaUrl)}" target="_blank" rel="noopener">fragrantica</a>`:'<span></span>'}</div>`;
       frag.appendChild(card);
     });
