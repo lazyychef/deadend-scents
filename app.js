@@ -338,7 +338,19 @@
         seoInternalLinks:get(row,['SEO Internal Links','Internal Links']),
         seoScore:get(row,['SEO Score'])
       };
-    }).filter(f => f.name);
+    }).filter(f => {
+      if(!f.name) return false;
+      const stockState = String(f.stock || '').trim().toLowerCase();
+      const statusState = String(f.status || '').trim().toLowerCase();
+      // Archived/hidden bottles stay in the admin and spreadsheet history,
+      // but must never appear on the public storefront (including search).
+      const isArchivedOrHidden = (value) =>
+        value === 'archive' || value === 'archived' ||
+        value === 'hidden' || value === 'hide' ||
+        value.startsWith('archive');
+      if(isArchivedOrHidden(stockState) || isArchivedOrHidden(statusState)) return false;
+      return true;
+    });
   }
 
 
