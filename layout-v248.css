@@ -1,0 +1,134 @@
+/* DeadEnd Scents Public V2.4.8 — responsive catalogue density + card information polish.
+   Loaded last so it safely overrides previous preview styles. */
+
+/* Category treatment: visible at a glance without turning the cards into a rainbow. */
+.grid > .sketch-card { border-top-width: 3px !important; }
+.grid > .sketch-card.category-designer { border-top-color: #556b2f !important; }
+.grid > .sketch-card.category-niche { border-top-color: #9a7b3f !important; }
+.grid > .sketch-card.category-middle { border-top-color: #b35a2f !important; }
+.grid > .sketch-card.category-inspired { border-top-color: #9b6657 !important; }
+.grid > .sketch-card.category-other { border-top-color: #897e6d !important; }
+
+.grid > .sketch-card .collection-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  width: fit-content !important;
+  padding: 2px 5px !important;
+  border-radius: 2px !important;
+  font-weight: 700 !important;
+  line-height: 1.05 !important;
+  background: rgba(255,255,255,.52) !important;
+  border: 1px solid currentColor !important;
+}
+.grid > .sketch-card.category-designer .collection-pill { color: #43582a !important; }
+.grid > .sketch-card.category-niche .collection-pill { color: #80642d !important; }
+.grid > .sketch-card.category-middle .collection-pill { color: #9f4726 !important; }
+.grid > .sketch-card.category-inspired .collection-pill { color: #8c5143 !important; }
+.grid > .sketch-card.category-other .collection-pill { color: #6e665b !important; }
+
+/* Information rhythm. Inspiration and concentration have their own tiny slots. */
+.grid > .sketch-card .inspo-slot {
+  margin-top: 4px !important;
+  margin-bottom: 5px !important;
+}
+.grid > .sketch-card .concentration-slot {
+  min-height: 13px !important;
+  height: 13px !important;
+  margin: 0 0 4px !important;
+  line-height: 13px !important;
+}
+.grid > .sketch-card .concentration-slot span {
+  display: inline-block !important;
+  font-family: Inter, sans-serif !important;
+  font-size: 9px !important;
+  line-height: 1 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .06em !important;
+  font-weight: 800 !important;
+  color: #174a3b !important;
+}
+
+/* Keep price controls unmistakably interactive without adding another text label. */
+.grid > .sketch-card .price-add {
+  position: relative !important;
+  cursor: pointer !important;
+  transition: transform .12s ease, filter .12s ease !important;
+}
+.grid > .sketch-card .price-add .add-cue {
+  position: absolute !important;
+  top: 3px !important;
+  right: 5px !important;
+  font-style: normal !important;
+  font-family: Inter, sans-serif !important;
+  font-weight: 800 !important;
+  font-size: 10px !important;
+  line-height: 1 !important;
+  opacity: .72 !important;
+}
+.grid > .sketch-card .price-add:active { transform: scale(.97) !important; filter: brightness(.94) !important; }
+@media (hover:hover) {
+  .grid > .sketch-card .price-add:hover { transform: translateY(-1px) !important; filter: brightness(1.05) !important; }
+}
+
+/* Mobile: retain the approved three-column design, only tighten information spacing. */
+@media (max-width: 899px) {
+  .grid > .sketch-card .inspo-slot { margin-bottom: 4px !important; }
+  .grid > .sketch-card .concentration-slot { min-height: 11px !important; height: 11px !important; line-height: 11px !important; margin-bottom: 3px !important; }
+  .grid > .sketch-card .concentration-slot span { font-size: 8px !important; }
+  .grid > .sketch-card .collection-pill { padding: 1px 3px !important; }
+}
+
+/* Desktop/tablet catalogue density.
+   4 columns on ordinary desktop screens, 5 on wider screens. */
+@media (min-width: 900px) {
+  .grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 10px !important; }
+
+  .grid > article.sketch-card,
+  .grid > article.sketch-card.has-image {
+    height: 284px !important;
+    min-height: 284px !important;
+    max-height: 284px !important;
+    padding: 9px !important;
+  }
+
+  .grid > .sketch-card > .sketch-buy-row {
+    grid-template-columns: minmax(0, 64%) minmax(0, 36%) !important;
+    grid-template-rows: 108px !important;
+    flex-basis: 108px !important;
+    height: 108px !important;
+    min-height: 108px !important;
+    max-height: 108px !important;
+  }
+  .grid > .sketch-card .sketch-image,
+  .grid > .sketch-card .sketch-price-stack {
+    height: 108px !important;
+    min-height: 108px !important;
+    max-height: 108px !important;
+  }
+  .grid > .sketch-card .sketch-image img { max-height: 103px !important; max-width: 96% !important; }
+  .grid > .sketch-card .sketch-price-stack { gap: 4px !important; }
+  .grid > .sketch-card .sketch-price-stack strong { font-size: 14px !important; }
+  .grid > .sketch-card .sketch-price-stack span { font-size: 9px !important; }
+
+  .grid > .sketch-card .house { font-size: 10px !important; }
+  .grid > .sketch-card h3 { font-size: 18px !important; max-height: 37px !important; margin-bottom: 3px !important; }
+  .grid > .sketch-card .inspo,
+  .grid > .sketch-card .accords { font-size: 10px !important; line-height: 1.14 !important; }
+  .grid > .sketch-card .inspo span { font-size: 10px !important; }
+  .grid > .sketch-card .inspo-slot { max-height: 30px !important; margin-top: 3px !important; margin-bottom: 4px !important; }
+  .grid > .sketch-card .concentration-slot { min-height: 12px !important; height: 12px !important; line-height: 12px !important; margin-bottom: 3px !important; }
+  .grid > .sketch-card .concentration-slot span { font-size: 8px !important; }
+  .grid > .sketch-card .accords { max-height: 25px !important; }
+  .grid > .sketch-card .mini-link { font-size: 10px !important; }
+}
+
+@media (min-width: 1500px) {
+  .grid { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; gap: 9px !important; }
+  .grid > article.sketch-card,
+  .grid > article.sketch-card.has-image {
+    height: 286px !important;
+    min-height: 286px !important;
+    max-height: 286px !important;
+  }
+  .grid > .sketch-card h3 { font-size: 18px !important; }
+}

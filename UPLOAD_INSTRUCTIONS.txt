@@ -1,0 +1,34 @@
+DeadEnd Scents Public V2 — Promote Preview to Live
+===================================================
+
+Upload the files in this ZIP to the ROOT of your GitHub repository.
+They replace/add ONLY the public storefront code.
+
+REPLACE:
+- /index.html
+- /app.js
+- /styles.css
+
+ADD OR REPLACE:
+- /sketch-tiles-v244.css
+- /layout-v245.css
+- /layout-v247.css
+- /layout-v248.css
+- /layout-v254.css
+- /layout-v255.css
+
+DO NOT TOUCH:
+- /admin/
+- /google-apps-script/
+- /preview-v2/
+- /assets/
+- /fragrances/
+- /houses/
+- /packs/
+- catalogue/data JSON files
+
+Before uploading, download the current GitHub repository ZIP or create a Git branch/tag as a rollback.
+Commit these files together as one commit, e.g. "Promote Public V2 to live".
+
+After GitHub Pages deploys, test deadendscents.com on mobile Safari and desktop Safari/Chrome.
+The production index.html in this package is set to robots=index,follow (not the preview noindex setting).

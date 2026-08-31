@@ -1,0 +1,106 @@
+/* DeadEnd Scents Public V2.4.5
+   Desktop follows the same structure as the approved mobile layout.
+   Loaded LAST so legacy desktop rules cannot rearrange the page. */
+
+@media (min-width:700px){
+  /* Keep the mobile header pattern on larger screens. */
+  .site-header{
+    grid-template-columns:1fr auto !important;
+    gap:8px !important;
+    padding:8px 10px !important;
+    align-items:center !important;
+  }
+  .brand{min-height:0 !important;gap:8px !important;justify-content:flex-start !important;}
+  .brand-logo{width:52px !important;height:52px !important;}
+  .brand-text{
+    position:static !important;
+    transform:none !important;
+    max-width:calc(100vw - 150px) !important;
+    font-size:30px !important;
+    line-height:1 !important;
+  }
+  .hamburger{display:grid !important;}
+  .mobile-menu{
+    grid-column:1/-1 !important;
+    display:none !important;
+    background:#0f3128 !important;
+    border:1px solid rgba(255,255,255,.2) !important;
+  }
+  .mobile-menu.open{display:grid !important;}
+  .mobile-menu a{padding:12px !important;border-bottom:1px solid rgba(255,255,255,.12) !important;}
+  .contact-buttons{
+    grid-column:1/-1 !important;
+    display:grid !important;
+    grid-template-columns:repeat(3,1fr) !important;
+    gap:6px !important;
+    justify-content:stretch !important;
+  }
+  .contact-buttons a{min-width:0 !important;padding:7px 5px !important;font-size:12px !important;}
+
+  /* Centre a mobile/tablet-width storefront instead of exploding across desktop. */
+  main{max-width:900px !important;margin:0 auto !important;padding:8px !important;}
+
+  .quick-stats{gap:4px !important;margin-bottom:6px !important;}
+  .quick-stats div{min-height:40px !important;padding:5px 2px !important;}
+  .quick-stats strong{font-size:14px !important;}
+  .quick-stats span{font-size:8.5px !important;}
+
+  /* This rogue desktop-only Discovery Pack panel caused the broken two-row layout. */
+  .desktop-packs-panel{display:none !important;}
+  #packs{display:block !important;}
+
+  /* Same Explore + FOW pairing as mobile. */
+  .featured-section{
+    display:grid !important;
+    grid-template-columns:.9fr 1.1fr !important;
+    gap:8px !important;
+    align-items:stretch !important;
+    margin-bottom:10px !important;
+  }
+  .explore-panel.explore-hub{padding:7px !important;}
+  .featured-card{padding:8px !important;min-height:0 !important;}
+  .featured-main{grid-template-columns:48% 52% !important;gap:2px !important;min-height:0 !important;}
+  .featured-bottle-wrap{min-height:225px !important;overflow:hidden !important;}
+  .featured-bottle-wrap img{
+    display:block !important;
+    width:100% !important;
+    height:225px !important;
+    max-width:100% !important;
+    max-height:225px !important;
+    object-fit:contain !important;
+    object-position:center !important;
+    transform:none !important;
+  }
+  .featured-card h3{font-size:20px !important;}
+  .featured-house{font-size:12px !important;}
+  .featured-inspo,.featured-desc{font-size:11px !important;}
+  .featured-actions{gap:4px !important;margin-top:6px !important;}
+  .featured-actions .price-add{min-height:42px !important;}
+  .featured-actions .price-add strong{font-size:13px !important;}
+  .featured-actions .price-add span{font-size:9px !important;}
+
+  /* Same search layout as mobile: 4 buttons x 2 rows. */
+  .search-section{max-width:none !important;margin:0 0 8px !important;padding:6px !important;}
+  .search-box input{padding:8px !important;font-size:17px !important;}
+  .collection-buttons{grid-template-columns:repeat(4,1fr) !important;gap:4px !important;margin-top:6px !important;}
+  .collection-buttons button{min-height:28px !important;font-size:10px !important;padding:2px !important;}
+
+  /* Keep the approved three-card catalogue rhythm on desktop too. */
+  .grid{grid-template-columns:repeat(3,minmax(0,1fr)) !important;gap:5px !important;}
+
+  .section{margin-top:10px !important;}
+  .section-title h2{font-size:22px !important;}
+
+  /* Packs below catalogue behave as a horizontal strip, exactly like mobile. */
+  .packs-grid{display:flex !important;gap:8px !important;overflow-x:auto !important;scroll-snap-type:x mandatory !important;}
+  .pack-card{flex:0 0 78% !important;min-width:0 !important;}
+}
+
+@media (min-width:900px){
+  /* Neutralise legacy desktop card-count overrides. */
+  .grid{grid-template-columns:repeat(3,minmax(0,1fr)) !important;}
+}
+
+@media (min-width:1280px){
+  .grid{grid-template-columns:repeat(3,minmax(0,1fr)) !important;}
+}

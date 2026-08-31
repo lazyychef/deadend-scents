@@ -1,0 +1,184 @@
+/* DeadEnd Scents Public V2.5.4 — CLEAN CONSOLIDATED TILE/FOW PATCH
+   This file replaces the experimental v249-v253 CSS layers.
+*/
+
+/* ---------- Featured row: Explore determines the height ---------- */
+.featured-section{
+  display:grid !important;
+  grid-template-columns:minmax(0, 44%) minmax(0, 56%) !important;
+  gap:8px !important;
+  align-items:stretch !important;
+  overflow:visible !important;
+  height:auto !important;
+  min-height:0 !important;
+  max-height:none !important;
+}
+.featured-section > .explore-panel.explore-hub{
+  height:auto !important;
+  min-height:0 !important;
+  max-height:none !important;
+  overflow:visible !important;
+  box-sizing:border-box !important;
+}
+/* Important: FOW content must NOT determine row height. Explore does. */
+.featured-section > .featured-grid{
+  position:relative !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  height:auto !important;
+  overflow:visible !important;
+}
+.featured-section > .featured-grid > .featured-card{
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  min-height:0 !important;
+  max-height:none !important;
+  box-sizing:border-box !important;
+  overflow:hidden !important;
+  display:flex !important;
+  flex-direction:column !important;
+}
+.featured-card .featured-main{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  display:grid !important;
+  grid-template-columns:52% 48% !important;
+  gap:7px !important;
+  align-items:center !important;
+  padding:10px 8px 4px !important;
+  overflow:hidden !important;
+}
+.featured-card .featured-bottle-wrap{
+  min-height:0 !important;
+  height:100% !important;
+  max-height:210px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  overflow:hidden !important;
+}
+.featured-card .featured-bottle-wrap img{
+  width:100% !important;
+  height:100% !important;
+  max-height:210px !important;
+  object-fit:contain !important;
+  object-position:center !important;
+}
+.featured-card .featured-label{font-size:11px !important;line-height:1.05 !important;margin:0 0 4px !important;}
+.featured-card h3{font-size:29px !important;line-height:.94 !important;margin:2px 0 4px !important;overflow-wrap:normal !important;word-break:normal !important;hyphens:none !important;}
+.featured-card .featured-house{font-size:16px !important;line-height:1.05 !important;margin:0 0 5px !important;}
+.featured-card .collection-pill{font-size:9px !important;line-height:1 !important;padding:4px 5px !important;}
+.featured-card .featured-inspo,.featured-card .featured-desc{font-size:12px !important;line-height:1.15 !important;margin:6px 0 !important;}
+.featured-card .weekly-offer{flex:0 0 auto !important;padding:4px 7px 7px !important;margin:0 !important;}
+.featured-card .offer-kicker{font-size:10px !important;line-height:1.1 !important;}
+.featured-card .offer-main{font-size:12px !important;line-height:1.1 !important;}
+.featured-card .offer-ends{font-size:10px !important;line-height:1.1 !important;}
+.featured-card .featured-actions{gap:4px !important;margin-top:5px !important;}
+.featured-card .price-add{min-height:42px !important;height:42px !important;padding:3px 2px !important;}
+.featured-card .price-add strong{font-size:14px !important;}
+.featured-card .price-add span{font-size:9px !important;}
+
+/* Explore: natural height, everything visible. */
+.explore-panel.explore-hub{padding:9px 10px !important;}
+.explore-panel.explore-hub .eyebrow{font-size:14px !important;line-height:1 !important;margin:0 0 5px !important;}
+.explore-group{padding:5px 0 !important;margin:0 !important;}
+.explore-group + .explore-group{border-top:1px solid var(--line) !important;}
+.explore-heading{font-size:11px !important;line-height:1 !important;margin:0 0 1px !important;}
+.explore-sub{font-size:8px !important;line-height:1.1 !important;margin:0 0 4px !important;}
+.explore-pack-grid{gap:4px !important;margin:3px 0 4px !important;}
+.explore-pack-card{min-height:48px !important;padding:4px 2px !important;}
+.explore-pack-card .pack-icon{height:19px !important;margin-bottom:2px !important;}
+.explore-pack-card strong{font-size:7.5px !important;line-height:1 !important;}
+.explore-mini-grid{gap:4px !important;margin:3px 0 4px !important;}
+.explore-mini-btn{min-height:36px !important;padding:3px !important;}
+.explore-mini-btn svg,.explore-mini-btn .explore-icon{width:16px !important;height:16px !important;margin-bottom:1px !important;}
+.explore-mini-btn span,.explore-mini-btn strong{font-size:7.5px !important;line-height:1 !important;}
+.explore-wide-btn{min-height:27px !important;padding:4px 5px !important;font-size:8px !important;line-height:1 !important;margin-top:3px !important;}
+
+/* ---------- Cards ---------- */
+.grid > article.sketch-card,
+.grid > article.sketch-card.has-image{
+  position:relative !important;
+}
+/* Remove EVERY legacy floating plus cue from cards, badges and buttons. */
+.grid > .sketch-card::before,
+.grid > .sketch-card::after,
+.grid > .sketch-card .new-badge::before,
+.grid > .sketch-card .new-badge::after,
+.grid > .sketch-card .price-add::before,
+.grid > .sketch-card .price-add::after{
+  content:none !important;
+  display:none !important;
+}
+.grid > .sketch-card .price-add .add-cue{display:none !important;}
+
+/* Category more visible without clutter. */
+.grid > .sketch-card .collection-pill{
+  border-width:1px !important;
+  border-style:solid !important;
+  background:rgba(255,253,244,.84) !important;
+  font-weight:700 !important;
+}
+.grid > .sketch-card.category-designer{border-top:2px solid #60764f !important;}
+.grid > .sketch-card.category-niche{border-top:2px solid #9a7632 !important;}
+.grid > .sketch-card.category-middle-eastern{border-top:2px solid #b4562f !important;}
+.grid > .sketch-card.category-inspired{border-top:2px solid #9d5144 !important;}
+
+/* Inspiration / Extrait / notes spacing. */
+.grid > .sketch-card .inspo-slot{margin-top:5px !important;margin-bottom:5px !important;min-height:0 !important;overflow:visible !important;}
+.grid > .sketch-card .inspo{margin:0 !important;line-height:1.08 !important;display:block !important;overflow:visible !important;max-height:none !important;-webkit-line-clamp:unset !important;}
+.grid > .sketch-card .concentration-slot{min-height:12px !important;margin:1px 0 4px !important;}
+.grid > .sketch-card .concentration-slot:empty{min-height:0 !important;margin:0 !important;}
+.grid > .sketch-card .accords{margin-top:4px !important;}
+
+/* 3 / 5 / 10 have a permanent light -> medium -> dark progression. */
+.grid > .sketch-card .sketch-price-stack > .price-add:nth-child(1){background:linear-gradient(145deg,#c87549 0%,#b86138 100%) !important;border-color:#95492a !important;}
+.grid > .sketch-card .sketch-price-stack > .price-add:nth-child(2){background:linear-gradient(145deg,#b45b35 0%,#9f4929 100%) !important;border-color:#7f3b22 !important;}
+.grid > .sketch-card .sketch-price-stack > .price-add:nth-child(3){background:linear-gradient(145deg,#98452a 0%,#79351f 100%) !important;border-color:#642d1b !important;}
+.grid > .sketch-card .price-add{position:relative !important;overflow:hidden !important;cursor:pointer !important;}
+/* This is an ACTUAL DOM element, not hover/pseudo content. */
+.grid > .sketch-card .price-add > .button-plus{
+  display:block !important;
+  position:absolute !important;
+  right:4px !important;
+  bottom:3px !important;
+  top:auto !important;
+  left:auto !important;
+  width:10px !important;
+  height:10px !important;
+  color:#fff !important;
+  opacity:1 !important;
+  visibility:visible !important;
+  background:transparent !important;
+  border:0 !important;
+  margin:0 !important;
+  padding:0 !important;
+  font-family:Inter,Arial,sans-serif !important;
+  font-size:11px !important;
+  font-weight:900 !important;
+  line-height:10px !important;
+  text-align:center !important;
+  pointer-events:none !important;
+  z-index:99 !important;
+}
+
+/* Desktop density: responsive 4 / 5 columns. */
+@media (min-width:900px){
+  .grid{grid-template-columns:repeat(4,minmax(0,1fr)) !important;gap:10px !important;}
+  .grid > .sketch-card .price-add > .button-plus{right:6px !important;bottom:5px !important;font-size:13px !important;}
+  .featured-card h3{font-size:34px !important;}
+  .featured-card .featured-bottle-wrap{max-height:260px !important;}
+  .featured-card .featured-bottle-wrap img{max-height:260px !important;}
+}
+@media (min-width:1450px){.grid{grid-template-columns:repeat(5,minmax(0,1fr)) !important;}}
+
+/* Mobile: keep 3 columns and prevent FOW text from blowing out the equal-height pair. */
+@media (max-width:899px){
+  .featured-card h3{font-size:21px !important;line-height:.96 !important;}
+  .featured-card .featured-house{font-size:12px !important;}
+  .featured-card .featured-inspo,.featured-card .featured-desc{font-size:9.5px !important;line-height:1.12 !important;}
+  .featured-card .featured-bottle-wrap{max-height:175px !important;}
+  .featured-card .featured-bottle-wrap img{max-height:175px !important;}
+}

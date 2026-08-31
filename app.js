@@ -24,6 +24,8 @@
   let settings = {};
   let catalogueSource = 'live';
   let quickSpecialFilter = 'all';
+  let landingSelection = true;
+  const LANDING_CARD_LIMIT = 8;
 
   async function getJson(file, fallback){
     try { const res = await fetch(file, { cache: 'no-store' }); if(!res.ok) throw new Error(res.status); return await res.json(); }
@@ -41,9 +43,8 @@
   async function getCsv(url){
     const errors = [];
 
-    // Preferred source: the same Apps Script endpoint used by Admin.
-    // This avoids relying on the separately published Google Sheets CSV URL,
-    // which can intermittently fail or be blocked even when the Sheet itself is fine.
+    // Preferred live source: the same Apps Script catalogue endpoint used by Admin.
+    // If unavailable, continue to published Google Sheets, then local fallback/cache.
     const appsScriptEndpoint = settings.adminWriteEndpoint || '';
     if(appsScriptEndpoint){
       try {
@@ -62,7 +63,6 @@
         console.warn('Apps Script catalogue read failed, trying published Google Sheet', appsScriptError);
       }
     }
-
     const noCacheUrl = url + (url.includes('?') ? '&' : '?') + 'cacheBust=' + Date.now();
     try {
       const res = await fetch(noCacheUrl, { cache: 'no-store', redirect: 'follow' });
@@ -153,7 +153,7 @@
   }
 
   function fragrancesToCsv(items){
-    const headers=['ID','House','Fragrance','Collection','Scent Style','Gender','Main Accords','Emojis','Inspiration House','Inspired By','3mL','5mL','10mL','Fragrantica','Added Date','Featured','Featured Start','Featured Note','Staff Pick','Season','Occasion','Stock','Status'];
+    const headers=['ID','House','Fragrance','Collection','Scent Style','Gender','Main Accords','Emojis','Inspiration House','Inspired By','3mL','5mL','10mL','Fragrantica','Added Date','Featured','Featured Start','Featured Note','Staff Pick','Season','Occasion','Stock','Status','Concentration'];
     const rows=[headers];
     items.forEach(item=>{
       rows.push(headers.map(h=>{
@@ -310,10 +310,13 @@
       const occasion=get(row,['Occasion']) || get(row,['Season']) || 'Anytime';
       const concentration=get(row,['Concentration']);
       const desc=get(row,['Description','Notes']);
-      const notes=[desc, concentration ? `${concentration} concentration.` : '', gender && gender.toLowerCase()==='women' ? `Women's scent.` : ''].filter(Boolean).join(' ');
+      // Gender is used for filtering only; don't repeat "Women's scent" on the card.
+      // Concentration gets its own compact slot and only displays when it is an Extrait.
+      const notes=[desc].filter(Boolean).join(' ');
+      const concentrationLabel=/extrait/i.test(String(concentration || '')) ? 'Extrait' : '';
       return {
         id:get(row,['ID','Id','SKU','Code']),
-        name, house, inspiration, inspirationHouse, collection, category, gender, notes,
+        name, house, inspiration, inspirationHouse, collection, category, gender, notes, concentrationLabel,
         accords:get(row,['Main Accords','Accords','Main accords','Scent Notes','Notes']) || category,
         emojis:get(row,['Emojis','Emoji']) || '✨',
         imageUrl:get(row,['Image','Image URL','Bottle Image URL','Bottle Image','BottleImageURL','Photo','Photo URL']),
@@ -326,6 +329,9 @@
         featuredStart:toIsoDate(get(row,['Featured Start','Feature Start','Featured Date','Feature Date','Fragrance of the Week Start'])),
         featuredNote:get(row,['Featured Note','Feature Note','Promo Note']),
         staffPick:truthy(get(row,['Staff Pick','StaffPick','Nick Pick'])),
+        favourite:truthy(get(row,['Favourite','Favorite'])),
+        timesFeatured:Number(get(row,['Times Featured','TimesFeatured']) || 0),
+        lastPromotionDate:toIsoDate(get(row,['Last Promotion Date','LastPromotionDate'])),
         season:get(row,['Season']),
         occasion,
         stock:get(row,['Stock']),
@@ -340,19 +346,7 @@
         seoInternalLinks:get(row,['SEO Internal Links','Internal Links']),
         seoScore:get(row,['SEO Score'])
       };
-    }).filter(f => {
-      if(!f.name) return false;
-      const stockState = String(f.stock || '').trim().toLowerCase();
-      const statusState = String(f.status || '').trim().toLowerCase();
-      // Archived/hidden bottles stay in the admin and spreadsheet history,
-      // but must never appear on the public storefront (including search).
-      const isArchivedOrHidden = (value) =>
-        value === 'archive' || value === 'archived' ||
-        value === 'hidden' || value === 'hide' ||
-        value.startsWith('archive');
-      if(isArchivedOrHidden(stockState) || isArchivedOrHidden(statusState)) return false;
-      return true;
-    });
+    }).filter(f => f.name && isPublicVisible(f));
   }
 
 
@@ -387,8 +381,8 @@
     objects.forEach((row, idx)=>{
       const active = get(row,['Active','Visible','Show','Enabled']);
       const status = get(row,['Status']);
-      if(active && ['no','false','0','hide','hidden','off'].includes(active.toLowerCase())) return;
-      if(status && ['inactive','hidden','hide','off','no'].includes(status.toLowerCase())) return;
+      if(active && ['no','false','0','hide','hidden','archive','archived','off'].includes(active.toLowerCase())) return;
+      if(status && ['inactive','hidden','hide','archive','archived','off','no'].includes(status.toLowerCase())) return;
       const id = get(row,['Pack ID','PackID','ID','Pack Code']) || slugify(get(row,['Pack Name','Name','Title']) || ('pack-' + idx));
       if(!id) return;
       const key = id.toLowerCase();
@@ -555,42 +549,54 @@
     if(!settings.masterSheetId) settings.masterSheetId = MASTER_SHEET_ID;
     settings = await loadLiveSettings(settings);
     if(!settings.masterSheetId) settings.masterSheetId = MASTER_SHEET_ID;
-    try { data=csvToFragrances(await getCsv(settings.catalogueCsvUrl || sheetCsvUrl('Catalogue') || DEFAULT_CSV)); }
-    catch(error){ console.error(error); if(grid) grid.innerHTML='<div class="empty">Catalogue could not load from Google Sheets or the local backup.<br><small>' + escapeHtml(error.message || error) + '</small></div>'; return; }
-    if(!data.length){ if(grid) grid.innerHTML='<div class="empty">Catalogue is empty. Check the Catalogue tab headers.</div>'; return; }
+
+    // Stable-load mode: choose one catalogue source first, then render once.
+    // This prevents the page visibly swapping between packaged backup, Sheets and
+    // Apps Script data (different counts / different Fragrance of the Week).
+    try {
+      data = csvToFragrances(await getCsv(settings.catalogueCsvUrl || sheetCsvUrl('Catalogue') || DEFAULT_CSV));
+    } catch(error){
+      console.error(error);
+      if(grid) grid.innerHTML='<div class="empty">Catalogue could not load.<br><small>' + escapeHtml(error.message || error) + '</small></div>';
+      return;
+    }
+    if(!data.length){
+      if(grid) grid.innerHTML='<div class="empty">Catalogue is empty. Check the Catalogue tab headers.</div>';
+      return;
+    }
     packs = await loadDiscoveryPacks();
     showCatalogueSourceNotice();
     if(statCount) statCount.textContent=data.length;
     resetOptions(categoryFilter,'All scent styles',[...new Set([...uniqueValues('category'),'Vanilla'])].sort((a,b)=>a.localeCompare(b)));
     resetOptions(collectionFilter,'All types',uniqueValues('collection'));
     resetOptions(occasionFilter,'All occasions',uniqueMultiValues('occasion'));
-    setupContactLinks(); setupAnalytics(); injectSeoSchema(); applySearchQueryFromUrl(); renderFeatured(); renderPacks(); render(); updateCart();
-    trackEvent('catalogue_loaded', { fragrance_count: data.length });
+    setupContactLinks(); setupAnalytics(); injectSeoSchema(); applySearchQueryFromUrl(); renderFeatured(); renderPacks(); renderExploreHub(); render(); updateCart();
+    trackEvent('catalogue_loaded', { fragrance_count: data.length, source: catalogueSource });
     setClarityTag('fragrance_count', data.length);
   }
 
   function uniqueValues(key){ return [...new Set(data.map(x=>x[key]).filter(Boolean))].sort(); }
   function uniqueMultiValues(key){ const values=new Set(); data.forEach(x=>String(x[key]||'').split(',').map(v=>v.trim()).filter(Boolean).forEach(v=>values.add(v))); return [...values].sort(); }
   function resetOptions(select, allLabel, values){ if(!select) return; select.innerHTML=`<option value="all">${allLabel}</option>`; values.forEach(v=>{ const opt=document.createElement('option'); opt.value=v; opt.textContent=v; select.appendChild(opt); }); }
-  function showCatalogueSourceNotice(){
-    if(catalogueSource === 'live' || catalogueSource === 'jsonp') return;
-    const target = document.querySelector('.controls-wrap') || document.querySelector('main');
-    if(!target || document.querySelector('.backup-notice')) return;
-    const notice = document.createElement('div');
-    notice.className = 'backup-notice';
-    notice.innerHTML = catalogueSource === 'browser-cache'
-      ? '<strong>Catalogue loaded from browser backup.</strong> Live Google Sheets may be blocked on this network. Prices and stock may not be current.'
-      : '<strong>Catalogue loaded from backup.</strong> Live Google Sheets may be blocked on this network. Prices and stock may not be current.';
-    target.insertAdjacentElement('beforebegin', notice);
-  }
+  function showCatalogueSourceNotice(){ /* V2 intentionally renders its full local snapshot first; no customer-facing error banner. */ }
   function fieldContains(value, selected){ if(selected==='all') return true; return String(value||'').split(',').map(v=>v.trim()).includes(selected) || String(value||'')===selected; }
+  function isPublicVisible(f){
+    const stock = String((f && f.stock) || '').trim().toLowerCase();
+    const status = String((f && f.status) || '').trim().toLowerCase();
+    const blocked = (value) => !value || !(
+      value === 'archive' || value === 'archived' || value.startsWith('archive') ||
+      value === 'hidden' || value === 'hide' || value === 'inactive' || value === 'off'
+    );
+    return blocked(stock) && blocked(status);
+  }
   function match(f){
     const q=search.value.trim().toLowerCase();
     const combined=[f.name,f.house,f.inspiration,f.collection,f.category,f.occasion,f.season,f.notes,f.emojis,f.gender].join(' ').toLowerCase();
     const specialOk = quickSpecialFilter === 'all'
       || (quickSpecialFilter === 'women' && String(f.gender || '').toLowerCase().includes('women'))
       || (quickSpecialFilter === 'new' && isNewArrival(f))
-      || (quickSpecialFilter === 'staff' && !!f.staffPick);
+      || (quickSpecialFilter === 'staff' && !!f.staffPick)
+      || (quickSpecialFilter === 'best');
     return specialOk && fieldContains(f.category,categoryFilter.value) && fieldContains(f.collection,collectionFilter.value) && fieldContains(f.occasion,occasionFilter.value) && (!q || combined.includes(q));
   }
   function isNewArrival(f){
@@ -642,6 +648,17 @@
   }
   function firstAvailablePrice(f){ return [f.p3,f.p5,f.p10].map(parseMoney).find(n=>n>0)||0; }
   function newDateValue(f){ const date=f.addedDate?new Date(f.addedDate):null; return date&&!Number.isNaN(date.getTime())?date.getTime():0; }
+  function popularityScore(f){
+    let score=0;
+    if(f.staffPick) score+=40;
+    if(f.favourite) score+=25;
+    if(f.featured) score+=20;
+    score+=Math.min(30, Number(f.timesFeatured||0)*4);
+    if(isNewArrival(f)) score+=5;
+    const stock=String(f.stock||'').toLowerCase();
+    if(stock.includes('out')) score-=100;
+    return score;
+  }
   function sortFragrances(items){
     const mode=sortBy?sortBy.value:'newest'; const sorted=[...items];
     const byText=getter=>sorted.sort((a,b)=>String(getter(a)||'').localeCompare(String(getter(b)||''),undefined,{sensitivity:'base'}) || String(a.name||'').localeCompare(String(b.name||''),undefined,{sensitivity:'base'}));
@@ -706,6 +723,7 @@
   function setCollectionFilter(target){
     if(!collectionFilter) return;
     quickSpecialFilter = 'all';
+    landingSelection = false;
     const options=[...collectionFilter.options];
     const found=options.find(opt=>collectionMatches(opt.value,target));
     collectionFilter.value = found ? found.value : 'all';
@@ -716,6 +734,7 @@
 
   function setSpecialFilter(target){
     quickSpecialFilter = target || 'all';
+    landingSelection = false;
     if(collectionFilter) collectionFilter.value = 'all';
     document.querySelectorAll('.collection-buttons button').forEach(btn=>btn.classList.toggle('active', !!btn.dataset.special && String(btn.dataset.special).toLowerCase()===String(quickSpecialFilter).toLowerCase()));
     render();
@@ -723,26 +742,45 @@
   }
 
   function render(){
-    const filtered=sortFragrances(data.filter(match)); resultCount.textContent=filtered.length; grid.innerHTML='';
+    let filtered=sortFragrances(data.filter(isPublicVisible).filter(match));
+    if(quickSpecialFilter==='best') filtered=[...filtered].sort((a,b)=>popularityScore(b)-popularityScore(a) || String(a.name||'').localeCompare(String(b.name||''))).slice(0,18);
+    const searchActive = !!String(search && search.value || '').trim();
+    const filterActive = quickSpecialFilter !== 'all' || (collectionFilter && collectionFilter.value !== 'all') || (categoryFilter && categoryFilter.value !== 'all') || (occasionFilter && occasionFilter.value !== 'all');
+    if(landingSelection && !searchActive && !filterActive){
+      const preferred = filtered.filter(f => isNewArrival(f) || f.staffPick);
+      filtered = (preferred.length ? preferred : filtered).slice(0, LANDING_CARD_LIMIT);
+    }
+    if(resultCount) resultCount.textContent=filtered.length; grid.innerHTML='';
+    const title=$('catalogueTitle'), eyebrow=$('catalogueEyebrow'), viewAll=$('viewAllFragrances');
+    if(title) title.textContent = landingSelection && !searchActive && !filterActive ? 'New & staff picks' : 'Fragrance samples';
+    if(eyebrow) eyebrow.textContent = landingSelection && !searchActive && !filterActive ? 'Selected for you' : 'Catalogue';
+    if(viewAll) viewAll.textContent = landingSelection && !searchActive && !filterActive ? 'View all' : 'Show picks';
     if(!filtered.length){ grid.innerHTML='<div class="empty">No fragrances match that search. Try “fresh”, “vanilla”, “date” or “summer”.</div>'; return; }
     const frag=document.createDocumentFragment();
     filtered.forEach(f=>{
       const card=document.createElement('article');
       const imageUrl=String(f.imageUrl || '').trim();
       const hasImage=/^https?:\/\//i.test(imageUrl);
-      card.className=(isNewArrival(f)?'card new-card':'card') + (hasImage ? ' has-image' : '');
-      if(hasImage) card.style.setProperty('--image-url', `url("${imageUrl.replace(/"/g, '%22')}")`);
+      const detailLength = String(f.inspiration || '').length + String(f.notes || f.accords || f.category || '').length + String(f.name || '').length;
+      const densityClass = detailLength > 150 ? ' detail-long' : (detailLength > 95 ? ' detail-medium' : ' detail-short');
+      card.className='card sketch-card category-' + collectionClass(f.collection) + (isNewArrival(f)?' new-card':'') + (hasImage ? ' has-image' : '') + densityClass;
       card.innerHTML=`
         <div class="card-top">
           <span class="collection-pill ${collectionClass(f.collection)}">${escapeHtml(String(f.collection || 'type').toLowerCase())}</span>
-          <span class="badge-row">${isNewArrival(f)?'<span class="new-badge">new</span>':''}${f.staffPick?'<span class="new-badge staff">staff pick</span>':''}</span>
+          <span class="top-concentration">${f.concentrationLabel ? escapeHtml(f.concentrationLabel) : ''}</span>
+          <span class="badge-row">${isNewArrival(f)?'<span class="new-badge">new</span>':''}</span>
         </div>
-        <p class="house">${escapeHtml(f.house || '')}</p>
-        <h3>${escapeHtml(f.name)}</h3>
-        ${shouldShowInspiration(f) ? `<p class="inspo"><span>Inspired by</span>${escapeHtml(f.inspiration)}</p>` : ''}
-        <p class="accords">${escapeHtml(f.notes || f.accords || f.category || '')}</p>
-        <div class="prices">${priceButton(f,'3mL',f.p3)}${priceButton(f,'5mL',f.p5)}${priceButton(f,'10mL',f.p10)}</div>
-        <div class="card-links">${f.fragranticaUrl?`<a class="mini-link" href="${escapeAttr(f.fragranticaUrl)}" target="_blank" rel="noopener">fragrantica</a>`:''}</div>`;
+        <div class="sketch-buy-row">
+          <div class="sketch-image">${hasImage?`<img src="${escapeAttr(imageUrl)}" alt="${escapeAttr((f.house ? f.house + ' ' : '') + f.name)} bottle" loading="lazy" decoding="async">`:''}</div>
+          <div class="sketch-price-stack">${priceButton(f,'3mL',f.p3)}${priceButton(f,'5mL',f.p5)}${priceButton(f,'10mL',f.p10)}</div>
+        </div>
+        <div class="sketch-info">
+          <p class="house">${escapeHtml(f.house || '')}</p>
+          <h3>${escapeHtml(f.name)}</h3>
+          <div class="inspo-slot">${shouldShowInspiration(f) ? `<p class="inspo"><span>inspired by</span> ${escapeHtml(f.inspiration)}</p>` : ''}</div>
+          <p class="accords">${escapeHtml(f.notes || f.accords || f.category || '')}</p>
+        </div>
+        <div class="card-links">${f.fragranticaUrl?`<a class="mini-link" href="${escapeAttr(f.fragranticaUrl)}" target="_blank" rel="noopener">fragrantica</a>`:'<span></span>'}</div>`;
       frag.appendChild(card);
     });
     grid.appendChild(frag); attachCardListeners();
@@ -754,7 +792,7 @@
     const discounted = discountedPriceText(clean, f);
     const active = discounted !== clean;
     const priceMarkup = active ? `<strong><s>${escapeHtml(clean)}</s> ${escapeHtml(discounted)}</strong>` : `<strong>${escapeHtml(clean)}</strong>`;
-    return `<button class="price-add ${active?'weekly-discount':''}" type="button" data-name="${escapeAttr(f.name)}" data-house="${escapeAttr(f.house||'')}" data-size="${size}" data-price="${escapeAttr(discounted)}" data-original-price="${escapeAttr(clean)}">${priceMarkup}<span>${size}</span></button>`;
+    return `<button class="price-add ${active?'weekly-discount':''}" type="button" aria-label="Add ${escapeAttr(size)} of ${escapeAttr(f.name)} to cart for ${escapeAttr(discounted)}" title="Add ${escapeAttr(size)} to cart" data-name="${escapeAttr(f.name)}" data-house="${escapeAttr(f.house||'')}" data-size="${size}" data-price="${escapeAttr(discounted)}" data-original-price="${escapeAttr(clean)}">${priceMarkup}<span class="size-plus-line"><span class="size-text">${size}</span><b class="button-plus-inline" aria-hidden="true">+</b></span></button>`;
   }
   function attachCardListeners(){
     document.querySelectorAll('[data-copy]').forEach(btn=>{ if(btn.dataset.bound) return; btn.dataset.bound='1'; btn.addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText(btn.dataset.copy); btn.textContent='Copied'; setTimeout(()=>btn.textContent='Copy name',1200); }catch(e){} }); });
@@ -789,6 +827,41 @@
     const desired = Number(pack.count || (primary.length || names.length || 3));
     return found.slice(0, desired || found.length);
   }
+  function renderExploreHub(){
+    const holder=$('explorePackTiles');
+    if(!holder) return;
+    holder.innerHTML='';
+    const featuredPacks=(packs || []).slice(0,4);
+    featuredPacks.forEach((pack,index)=>{
+      const items=resolvePackItems(pack);
+      const tile=document.createElement('button');
+      tile.type='button';
+      tile.className='explore-pack-tile';
+      tile.dataset.packTarget=String(pack.id || slugify(pack.title || pack.name || ('pack-'+index)));
+      tile.innerHTML=`<span class="explore-pack-vial" aria-hidden="true"><svg viewBox="0 0 24 32"><path d="M8 2h8M9 2v5l-3 3v17c0 2 1 3 3 3h6c2 0 3-1 3-3V10l-3-3V2"/><path d="M7 13h10M8 22h8"/></svg></span><strong>${escapeHtml(pack.title || pack.name || 'Discovery Pack')}</strong>`;
+      holder.appendChild(tile);
+    });
+    holder.querySelectorAll('[data-pack-target]').forEach(btn=>btn.addEventListener('click',()=>{
+      const selector='#packsGrid [data-pack-id="'+CSS.escape(btn.dataset.packTarget)+'"]';
+      const target=document.querySelector(selector);
+      (target || $('packs'))?.scrollIntoView({behavior:'smooth',block:'center'});
+      trackEvent('explore_pack_click',{pack_id:btn.dataset.packTarget});
+    }));
+  }
+
+  function applyExploreSearch(term, eventName){
+    landingSelection=false;
+    quickSpecialFilter='all';
+    if(collectionFilter) collectionFilter.value='all';
+    if(categoryFilter) categoryFilter.value='all';
+    if(occasionFilter) occasionFilter.value='all';
+    document.querySelectorAll('.collection-buttons button').forEach(btn=>btn.classList.remove('active'));
+    if(search) search.value=term || '';
+    render();
+    $('catalogue')?.scrollIntoView({behavior:'smooth',block:'start'});
+    trackEvent(eventName || 'explore_filter',{filter_value:term || 'all'});
+  }
+
   function renderPacks(){
     const packGrids=[...document.querySelectorAll('.packs-grid')]; if(!packGrids.length || !packs.length) return;
     packGrids.forEach(packsGrid=>{
@@ -797,7 +870,7 @@
         const items = resolvePackItems(pack);
         if(!items.length) return;
         const pricing = packPrice(pack, items);
-        const div=document.createElement('article'); div.className='pack-card';
+        const div=document.createElement('article'); div.className='pack-card'; div.dataset.packId=String(pack.id || slugify(pack.title || pack.name || 'discovery-pack'));
         const title = pack.title || pack.name || 'Discovery Pack';
         const itemLines=items.map(i=>`<li><strong>${escapeHtml(i.name)}</strong><span>${escapeHtml(i.house || '')}${i.category ? ' · ' + escapeHtml(i.category) : ''}</span></li>`).join('');
         div.innerHTML=`<div class="pack-tag">${escapeHtml(pack.tagline || 'Curated discovery pack')}</div><h3>${escapeHtml(title)}</h3><p>${escapeHtml(pack.description || pack.desc || '')}</p><ul>${itemLines}</ul><div class="pack-price"><strong>${money(pricing.final)}</strong><span>Normally ${money(pricing.value)} · Save ${money(pricing.save)}<br>${items.length} x ${escapeHtml(pricing.size)}</span></div><button class="button primary pack-add" type="button" data-pack="${escapeAttr(title)}" data-price="${escapeAttr(money(pricing.final))}">Add pack</button>`;
@@ -813,10 +886,10 @@
     return `Hi DeadEnd Scents, I’d like to order these samples:\n\n${lines.join('\n')}\n\nSamples total: ${formatMoney(samples)}\nExpress postage: ${formatMoney(postage)}\nEstimated total: ${formatMoney(total)}\n\nPack selections (if using a flexible pack):\n\nDelivery name/address:`;
   }
   function updateCart(){
-    const cartItems=$('cartItems'), orderText=$('orderText'), cartTotal=$('cartTotal'), sendWhatsappCart=$('sendWhatsappCart'); const postage=Number(settings.expressPostage||10); const samples=cart.reduce((sum,item)=>sum+parseMoney(item.price),0); const total=cart.length?samples+postage:0; cartTotal.textContent=formatMoney(total); if(floatingCartCount) floatingCartCount.textContent=String(cart.length); if(floatingCartTotal) floatingCartTotal.textContent=formatMoney(total); if(floatingCart) floatingCart.classList.toggle('has-items', cart.length>0);
+    const cartItems=$('cartItems'), orderText=$('orderText'), cartTotal=$('cartTotal'), sendWhatsappCart=$('sendWhatsappCart'), sendMessengerCart=$('sendMessengerCart'); const postage=Number(settings.expressPostage||10); const samples=cart.reduce((sum,item)=>sum+parseMoney(item.price),0); const total=cart.length?samples+postage:0; cartTotal.textContent=formatMoney(total); if(floatingCartCount) floatingCartCount.textContent=String(cart.length); if(floatingCartTotal) floatingCartTotal.textContent=formatMoney(total); if(floatingCart) floatingCart.classList.toggle('has-items', cart.length>0);
     if(!cart.length){ cartItems.className='cart-items empty-cart'; cartItems.innerHTML='No samples added yet.'; }
     else { cartItems.className='cart-items'; cartItems.innerHTML=cart.map((item,idx)=>`<div class="cart-line"><div><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(item.size)} · ${escapeHtml(item.price)}${item.house?` · ${escapeHtml(item.house)}`:''}</span></div><button type="button" class="remove-item" data-index="${idx}" aria-label="Remove ${escapeAttr(item.name)}">×</button></div>`).join(''); document.querySelectorAll('.remove-item').forEach(btn=>btn.addEventListener('click',()=>{ const removed=cart[Number(btn.dataset.index)]; cart.splice(Number(btn.dataset.index),1); trackEvent('remove_from_cart', { item_name: removed ? removed.name : '', sample_size: removed ? removed.size : '' }); updateCart(); })); }
-    const message=buildOrderMessage(); orderText.value=message; if(sendWhatsappCart){ const base=(settings.whatsAppUrl||'https://wa.me/61434432948').split('?')[0]; sendWhatsappCart.href=`${base}?text=${encodeURIComponent(message)}`; }
+    const message=buildOrderMessage(); orderText.value=message; if(sendWhatsappCart){ const base=(settings.whatsAppUrl||'https://wa.me/61434432948').split('?')[0]; sendWhatsappCart.href=`${base}?text=${encodeURIComponent(message)}`; } if(sendMessengerCart){ sendMessengerCart.href=(settings.facebookMessengerUrl||'https://m.me/nickstreet09/'); sendMessengerCart.dataset.orderMessage=message; }
   }
   function formatMoney(value){ return `$${Math.round(value*100)/100}`.replace('.00',''); }
   function escapeHtml(value){ return String(value).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
@@ -934,7 +1007,45 @@
     return function(...args){ clearTimeout(timer); timer=setTimeout(()=>fn.apply(this,args), wait); };
   }
   const trackedSearch = debounce(()=>{ const q=search ? search.value.trim() : ''; if(q) trackEvent('site_search', { search_term: q }); }, 900);
-  if(search) search.addEventListener('input',()=>{ render(); trackedSearch(); });
+
+  const viewAllFragrances=$('viewAllFragrances');
+  if(viewAllFragrances) viewAllFragrances.addEventListener('click',()=>{ landingSelection=!landingSelection; quickSpecialFilter='all'; if(search) search.value=''; if(collectionFilter) collectionFilter.value='all'; render(); $('catalogue')?.scrollIntoView({behavior:'smooth',block:'start'}); });
+  document.querySelectorAll('[data-explore]').forEach(btn=>btn.addEventListener('click',()=>{
+    const target=btn.dataset.explore; landingSelection=false;
+    if(target==='packs'){ $('packs')?.scrollIntoView({behavior:'smooth',block:'start'}); return; }
+    if(target==='all'){ applyExploreSearch('','explore_view_all'); return; }
+    if(target==='seasons'){ applyExploreSearch(currentSeasonKeyword(),'explore_current_season'); return; }
+    if(target==='styles'){ $('search')?.scrollIntoView({behavior:'smooth',block:'center'}); return; }
+  }));
+  document.querySelectorAll('[data-season]').forEach(btn=>btn.addEventListener('click',()=>{
+    const value=String(btn.dataset.season || '').toLowerCase();
+    applyExploreSearch(value==='everyday' ? 'daily' : value,'explore_season');
+  }));
+  document.querySelectorAll('[data-style]').forEach(btn=>btn.addEventListener('click',()=>applyExploreSearch(btn.dataset.style || '','explore_style')));
+  document.querySelectorAll('.explore-hub [data-special]').forEach(btn=>btn.addEventListener('click',()=>{
+    setSpecialFilter(btn.dataset.special || 'all');
+    $('catalogue')?.scrollIntoView({behavior:'smooth',block:'start'});
+  }));
+  document.querySelectorAll('[data-trending]').forEach(btn=>btn.addEventListener('click',()=>{
+    const target=btn.dataset.trending;
+    if(target==='best'){
+      setSpecialFilter('best');
+      $('catalogue')?.scrollIntoView({behavior:'smooth',block:'start'});
+      trackEvent('explore_best_sellers');
+      return;
+    }
+    if(target==='gift'){
+      $('packs')?.scrollIntoView({behavior:'smooth',block:'start'});
+      document.querySelectorAll('.pack-card').forEach(card=>card.classList.add('pack-highlight'));
+      setTimeout(()=>document.querySelectorAll('.pack-card').forEach(card=>card.classList.remove('pack-highlight')),1600);
+      trackEvent('explore_gift_ideas');
+      return;
+    }
+  }));
+  function currentSeasonKeyword(){ const m=new Date().getMonth()+1; return [12,1,2].includes(m)?'summer':[3,4,5].includes(m)?'autumn':[6,7,8].includes(m)?'winter':'spring'; }
+  if(search) search.addEventListener('focus',()=>{ /* 16px CSS prevents iOS auto zoom */ });
+
+  if(search) search.addEventListener('input',()=>{ landingSelection=false; render(); trackedSearch(); });
   if(categoryFilter) categoryFilter.addEventListener('input',()=>{ render(); trackEvent('filter_scent_style', { filter_value: categoryFilter.value }); });
   if(collectionFilter) collectionFilter.addEventListener('input',()=>{ quickSpecialFilter='all'; document.querySelectorAll('.collection-buttons button').forEach(btn=>btn.classList.remove('active')); render(); trackEvent('filter_type', { filter_value: collectionFilter.value }); });
   if(occasionFilter) occasionFilter.addEventListener('input',()=>{ render(); trackEvent('filter_occasion', { filter_value: occasionFilter.value }); });

@@ -7,7 +7,7 @@
   <meta name="description" content="Buy designer, niche, Middle Eastern and inspired fragrance samples in Australia. Browse fragrance decants, Discovery Packs, Fragrantica links and $10 express postage from Sydney.">
   <meta name="keywords" content="fragrance samples Australia, fragrance decants Australia, perfume samples Australia, cologne samples Sydney, niche fragrance samples Australia, designer fragrance samples, Middle Eastern fragrance samples, DeadEnd Scents">
   <link rel="canonical" href="https://deadendscents.com/">
-  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+  <meta name="robots" content="index,follow">
   <meta name="theme-color" content="#163f34">
   <meta property="og:site_name" content="DeadEnd Scents">
   <meta property="og:locale" content="en_AU">
@@ -17,12 +17,18 @@
   <meta property="og:description" content="Designer, niche, Middle Eastern and inspired fragrance decants in 3mL, 5mL and 10mL sizes.">
   <meta name="twitter:card" content="summary">
   <script type="application/ld+json" id="siteSchema">
-  {"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://deadendscents.com/#organization","name":"DeadEnd Scents","url":"https://deadendscents.com/","sameAs":["https://instagram.com/deadendscents","https://m.me/nickstreet09/"]},{"@type":"WebSite","@id":"https://deadendscents.com/#website","url":"https://deadendscents.com/","name":"DeadEnd Scents","publisher":{"@id":"https://deadendscents.com/#organization"},"potentialAction":{"@type":"SearchAction","target":"https://deadendscents.com/?q={search_term_string}#catalogue","query-input":"required name=search_term_string"}},{"@type":"Store","@id":"https://deadendscents.com/#store","name":"DeadEnd Scents","url":"https://deadendscents.com/","description":"Premium fragrance decants and discovery samples in Australia.","areaServed":"AU","priceRange":"$","currenciesAccepted":"AUD","paymentAccepted":"Bank transfer, PayID, PayPal"}]}
+  {"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://deadendscents.com/#organization","name":"DeadEnd Scents","url":"https://deadendscents.com/","sameAs":["https://www.tiktok.com/@deadendscents","https://m.me/nickstreet09/"]},{"@type":"WebSite","@id":"https://deadendscents.com/#website","url":"https://deadendscents.com/","name":"DeadEnd Scents","publisher":{"@id":"https://deadendscents.com/#organization"},"potentialAction":{"@type":"SearchAction","target":"https://deadendscents.com/?q={search_term_string}#catalogue","query-input":"required name=search_term_string"}},{"@type":"Store","@id":"https://deadendscents.com/#store","name":"DeadEnd Scents","url":"https://deadendscents.com/","description":"Premium fragrance decants and discovery samples in Australia.","areaServed":"AU","priceRange":"$","currenciesAccepted":"AUD","paymentAccepted":"Bank transfer, PayID, PayPal"}]}
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=2.4.4">
+  <link rel="stylesheet" href="sketch-tiles-v244.css?v=1">
+  <link rel="stylesheet" href="layout-v245.css?v=1">
+  <link rel="stylesheet" href="layout-v247.css?v=1">
+  <link rel="stylesheet" href="layout-v248.css?v=1">
+  <link rel="stylesheet" href="layout-v254.css?v=1">
+  <link rel="stylesheet" href="layout-v255.css?v=1">
 </head>
 <body id="top">
   <header class="site-header">
@@ -40,7 +46,7 @@
     <div class="contact-buttons" aria-label="Contact links">
       <a id="navMessengerLink" href="https://m.me/nickstreet09/" target="_blank" rel="noopener">Messenger</a>
       <a id="navWhatsappLink" href="https://wa.me/61434432948" target="_blank" rel="noopener">WhatsApp</a>
-      <a id="navInstagramLink" href="https://instagram.com/deadendscents" target="_blank" rel="noopener">Instagram</a>
+      <a id="navTikTokLink" href="https://www.tiktok.com/@deadendscents" target="_blank" rel="noopener">TikTok</a>
     </div>
   </header>
 
@@ -61,11 +67,48 @@
         </div>
         <div class="packs-grid desktop-packs-grid"></div>
       </section>
-      <div class="hero-copy">
-        <p class="eyebrow">DeadEnd Scents</p>
-        <h1>Fragrance samples without the full-bottle spend.</h1>
-        <p>Try designer, niche, Middle Eastern and inspired scents in simple sample sizes.</p>
-      </div>
+      <section class="explore-panel explore-hub" aria-label="Explore fragrances">
+        <p class="eyebrow">Explore</p>
+
+        <div class="explore-group explore-packs">
+          <div class="explore-heading"><strong>Discovery Packs</strong><span>Curated sample sets</span></div>
+          <div id="explorePackTiles" class="explore-pack-tiles" aria-label="Featured discovery packs"></div>
+          <button type="button" class="explore-wide-action" data-explore="packs">View all packs <b>›</b></button>
+        </div>
+
+        <div class="explore-group">
+          <div class="explore-heading"><strong>Seasons</strong><span>Find scents for every season</span></div>
+          <div class="explore-chip-grid explore-season-grid">
+            <button type="button" class="explore-chip" data-season="everyday"><span class="explore-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.9 4.9 7 7M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></svg></span><strong>Everyday</strong></button>
+            <button type="button" class="explore-chip" data-season="winter"><span class="explore-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2v20M4 7l16 10M20 7 4 17M9 4l3 2 3-2M9 20l3-2 3 2M3.5 10l3 .2 1.5-2.6M20.5 14l-3-.2-1.5 2.6M20.5 10l-3 .2-1.5-2.6M3.5 14l3-.2L8 16.4"/></svg></span><strong>Winter</strong></button>
+            <button type="button" class="explore-chip" data-season="summer"><span class="explore-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 18c4-1 7-4 9-9 2 4 1 8-2 11M5 18c3 1 6 .8 9-1M5 18c1-5 5-9 12-11"/></svg></span><strong>Summer</strong></button>
+          </div>
+        </div>
+
+        <div class="explore-group">
+          <div class="explore-heading"><strong>Styles</strong><span>Explore by scent style</span></div>
+          <div class="explore-chip-grid explore-style-grid">
+            <button type="button" class="explore-chip" data-style="Vanilla"><span class="explore-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 18c3-6 6-10 12-12M8 16c-3-1-4-4-2-7 3 0 5 2 5 5M13 11c0-3 2-5 5-5 1 3 0 5-3 7"/></svg></span><strong>Vanilla</strong></button>
+            <button type="button" class="explore-chip" data-style="Fresh"><span class="explore-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 16c5 0 9-3 13-9 1 6-2 11-8 12M5 16c3-2 6-4 10-5"/></svg></span><strong>Fresh</strong></button>
+            <button type="button" class="explore-chip" data-style="Woody"><span class="explore-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><path d="M12 4c2 2 2 4 0 6M6 14c2-1 4 0 5 2"/></svg></span><strong>Woody</strong></button>
+            <button type="button" class="explore-chip" data-style="Citrus"><span class="explore-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 4v16M4 12h16M6.3 6.3l11.4 11.4M17.7 6.3 6.3 17.7"/></svg></span><strong>Citrus</strong></button>
+            <button type="button" class="explore-chip" data-style="Spicy"><span class="explore-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l1.5 5 4.5-2.5-2.5 4.5 5 1.5-5 1.5 2.5 4.5-4.5-2.5L12 21l-1.5-5-4.5 2.5 2.5-4.5-5-1.5 5-1.5L6 6.5 10.5 9z"/></svg></span><strong>Spicy</strong></button>
+            <button type="button" class="explore-chip" data-style="Aromatic"><span class="explore-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20V8M12 12c-4 0-6-2-7-5 4-1 7 1 7 5ZM12 15c4 0 6-2 7-5-4-1-7 1-7 5Z"/></svg></span><strong>Aromatic</strong></button>
+          </div>
+          <button type="button" class="explore-outline-action" data-explore="styles">View all styles <b>›</b></button>
+        </div>
+
+        <div class="explore-group explore-trending">
+          <div class="explore-heading"><strong>Trending now</strong><span>Popular right now</span></div>
+          <div class="explore-chip-grid explore-trending-grid">
+            <button type="button" class="explore-chip" data-trending="best"><span class="explore-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3c1 4 5 5 5 9a5 5 0 1 1-10 0c0-2 1-4 3-6 0 3 1 4 2 5 2-3 1-5 0-8Z"/></svg></span><strong>Best Sellers</strong></button>
+            <button type="button" class="explore-chip" data-special="new"><span class="explore-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l2.1 5.1L19 6l-2.1 4.9L22 13l-5.1 2.1L19 20l-4.9-2.1L12 23l-2.1-5.1L5 20l2.1-4.9L2 13l5.1-2.1L5 6l4.9 2.1Z"/></svg></span><strong>New Arrivals</strong></button>
+            <button type="button" class="explore-chip" data-special="staff"><span class="explore-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-2.9-5.6 2.9 1.1-6.2L3 9.6l6.2-.9Z"/></svg></span><strong>Staff Picks</strong></button>
+            <button type="button" class="explore-chip" data-trending="gift"><span class="explore-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 10h16v10H4zM3 7h18v3H3zM12 7v13M8 7c-2 0-3-1-3-2.5S6 2 7.5 2C10 2 12 7 12 7M16 7c2 0 3-1 3-2.5S18 2 16.5 2C14 2 12 7 12 7"/></svg></span><strong>Gift Ideas</strong></button>
+          </div>
+          <button type="button" class="explore-wide-action" data-explore="all">View all fragrances <b>›</b></button>
+        </div>
+      </section>
       <div id="featuredGrid" class="featured-grid"><div class="empty">Loading fragrance of the week...</div></div>
     </section>
 
@@ -96,11 +139,12 @@
     <section id="catalogue" class="section catalogue-section">
       <div class="section-title row-title">
         <div>
-          <p class="eyebrow">Catalogue</p>
-          <h2>Fragrance samples</h2>
+          <p class="eyebrow" id="catalogueEyebrow">Selected for you</p>
+          <h2 id="catalogueTitle">New & staff picks</h2>
         </div>
-        <p><span id="resultCount">0</span> showing</p>
+        <button id="viewAllFragrances" class="text-action" type="button">View all</button>
       </div>
+      <p class="catalogue-count"><span id="resultCount">0</span> fragrances</p>
       <div id="catalogueGrid" class="grid"><div class="empty">Loading catalogue from Google Sheets...</div></div>
     </section>
 
@@ -123,6 +167,7 @@
         <div class="order-actions">
           <button id="copyOrder" type="button">copy order</button>
           <a id="sendWhatsappCart" href="https://wa.me/61434432948" target="_blank" rel="noopener">Send via WhatsApp</a>
+          <a id="sendMessengerCart" href="https://m.me/nickstreet09/" target="_blank" rel="noopener">Send via Messenger</a>
           <button id="clearCart" type="button">clear</button>
         </div>
       </div>
@@ -137,6 +182,6 @@
   </footer>
 
   <script src="data.js"></script>
-  <script src="app.js?v=stable-20260831"></script>
+  <script src="app.js?v=2.5.5-live1"></script>
 </body>
 </html>

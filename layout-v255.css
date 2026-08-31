@@ -1,0 +1,176 @@
+/* DeadEnd Scents Public V2.5.5 — compact adaptive cards, Extrait badge, no clipped copy */
+
+/* Make the top line useful: category | optional Extrait | optional new. */
+.grid > .sketch-card > .card-top{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) !important;
+  align-items:center !important;
+  column-gap:3px !important;
+}
+.grid > .sketch-card .collection-pill{justify-self:start !important;}
+.grid > .sketch-card .badge-row{justify-self:end !important;}
+.grid > .sketch-card .top-concentration{
+  justify-self:center !important;
+  color:#174b3d !important;
+  font-family:Inter,Arial,sans-serif !important;
+  font-size:6.2px !important;
+  line-height:1 !important;
+  font-weight:800 !important;
+  letter-spacing:.055em !important;
+  text-transform:uppercase !important;
+  white-space:nowrap !important;
+}
+.grid > .sketch-card .top-concentration:empty{display:block !important;}
+.grid > .sketch-card .concentration-slot{display:none !important;}
+
+/* Equal cards, but use the space instead of clipping it. */
+.grid > article.sketch-card,
+.grid > article.sketch-card.has-image{
+  height:194px !important;
+  min-height:194px !important;
+  max-height:194px !important;
+  padding:4px !important;
+  display:grid !important;
+  grid-template-rows:14px 66px minmax(0,1fr) 10px !important;
+  overflow:hidden !important;
+}
+.grid > .sketch-card > .sketch-buy-row{
+  height:66px !important;
+  min-height:66px !important;
+  max-height:66px !important;
+  margin:1px 0 2px !important;
+}
+.grid > .sketch-card .sketch-image,
+.grid > .sketch-card .sketch-price-stack{
+  height:66px !important;
+  min-height:66px !important;
+  max-height:66px !important;
+}
+.grid > .sketch-card .sketch-image img{
+  max-height:64px !important;
+  max-width:94% !important;
+  object-fit:contain !important;
+}
+.grid > .sketch-card > .sketch-info{
+  min-height:0 !important;
+  height:auto !important;
+  display:flex !important;
+  flex-direction:column !important;
+  overflow:visible !important;
+}
+.grid > .sketch-card .house{
+  margin:1px 0 0 !important;
+  line-height:1 !important;
+}
+.grid > .sketch-card h3{
+  margin:0 0 2px !important;
+  line-height:.96 !important;
+  overflow:visible !important;
+  display:block !important;
+  max-height:none !important;
+  -webkit-line-clamp:unset !important;
+}
+.grid > .sketch-card .inspo-slot{
+  margin:3px 0 2px !important;
+  min-height:0 !important;
+  overflow:visible !important;
+}
+.grid > .sketch-card .inspo{
+  margin:0 !important;
+  line-height:1.02 !important;
+  overflow:visible !important;
+  display:block !important;
+  max-height:none !important;
+  -webkit-line-clamp:unset !important;
+}
+.grid > .sketch-card .accords{
+  margin:3px 0 0 !important;
+  line-height:1.03 !important;
+  overflow:visible !important;
+  display:block !important;
+  max-height:none !important;
+  -webkit-line-clamp:unset !important;
+}
+.grid > .sketch-card > .card-links{
+  min-height:10px !important;
+  height:10px !important;
+  align-self:end !important;
+  overflow:visible !important;
+}
+.grid > .sketch-card .mini-link{line-height:1 !important;}
+
+/* Adaptive type density: all copy remains present; text shrinks only on information-heavy cards. */
+.grid > .sketch-card.detail-short .house{font-size:7px !important;}
+.grid > .sketch-card.detail-short h3{font-size:11px !important;}
+.grid > .sketch-card.detail-short .inspo,
+.grid > .sketch-card.detail-short .accords{font-size:6.8px !important;}
+.grid > .sketch-card.detail-medium .house{font-size:6.6px !important;}
+.grid > .sketch-card.detail-medium h3{font-size:10px !important;}
+.grid > .sketch-card.detail-medium .inspo,
+.grid > .sketch-card.detail-medium .accords{font-size:6.2px !important;line-height:1 !important;}
+.grid > .sketch-card.detail-long .house{font-size:6.2px !important;}
+.grid > .sketch-card.detail-long h3{font-size:9.2px !important;line-height:.94 !important;}
+.grid > .sketch-card.detail-long .inspo,
+.grid > .sketch-card.detail-long .accords{font-size:5.7px !important;line-height:.98 !important;}
+.grid > .sketch-card.detail-long .inspo-slot{margin:2px 0 1px !important;}
+.grid > .sketch-card.detail-long .accords{margin-top:2px !important;}
+
+/* Real permanent + in the lower-right of each available size button.
+   It is part of the normal button layout, not hover/absolute/pseudo content. */
+.grid > .sketch-card .price-add{
+  position:relative !important;
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:center !important;
+  align-items:stretch !important;
+  overflow:hidden !important;
+}
+.grid > .sketch-card .price-add::before,
+.grid > .sketch-card .price-add::after,
+.grid > .sketch-card::after{content:none !important;display:none !important;}
+.grid > .sketch-card .price-add > .button-plus{display:none !important;}
+.grid > .sketch-card .price-add > .size-plus-line{
+  display:grid !important;
+  grid-template-columns:1fr auto 1fr !important;
+  align-items:end !important;
+  width:100% !important;
+  margin:1px 0 0 !important;
+  padding:0 2px !important;
+  box-sizing:border-box !important;
+  color:#fff !important;
+  font-family:Inter,Arial,sans-serif !important;
+  font-size:5.8px !important;
+  line-height:1 !important;
+}
+.grid > .sketch-card .price-add > .size-plus-line::before{content:"" !important;}
+.grid > .sketch-card .price-add .size-text{grid-column:2 !important;margin:0 !important;font-size:5.8px !important;line-height:1 !important;color:#fff !important;}
+.grid > .sketch-card .price-add .button-plus-inline{
+  grid-column:3 !important;
+  justify-self:end !important;
+  align-self:end !important;
+  margin:0 !important;
+  padding:0 !important;
+  color:#fff !important;
+  font-size:8px !important;
+  font-weight:900 !important;
+  line-height:.8 !important;
+  opacity:1 !important;
+  visibility:visible !important;
+}
+
+/* Keep current light -> medium -> dark 3/5/10 progression. */
+.grid > .sketch-card .sketch-price-stack > .price-add:nth-child(1){background:linear-gradient(145deg,#c87549,#b86138) !important;}
+.grid > .sketch-card .sketch-price-stack > .price-add:nth-child(2){background:linear-gradient(145deg,#b45b35,#9f4929) !important;}
+.grid > .sketch-card .sketch-price-stack > .price-add:nth-child(3){background:linear-gradient(145deg,#98452a,#79351f) !important;}
+
+/* Desktop gets larger type but keeps the same compact card logic. */
+@media (min-width:900px){
+  .grid > article.sketch-card,.grid > article.sketch-card.has-image{height:230px !important;min-height:230px !important;max-height:230px !important;grid-template-rows:18px 92px minmax(0,1fr) 14px !important;padding:7px !important;}
+  .grid > .sketch-card > .sketch-buy-row,.grid > .sketch-card .sketch-image,.grid > .sketch-card .sketch-price-stack{height:92px !important;min-height:92px !important;max-height:92px !important;}
+  .grid > .sketch-card .sketch-image img{max-height:88px !important;}
+  .grid > .sketch-card .top-concentration{font-size:9px !important;}
+  .grid > .sketch-card.detail-short .house{font-size:10px !important}.grid > .sketch-card.detail-short h3{font-size:16px !important}.grid > .sketch-card.detail-short .inspo,.grid > .sketch-card.detail-short .accords{font-size:9.5px !important}
+  .grid > .sketch-card.detail-medium .house{font-size:9.5px !important}.grid > .sketch-card.detail-medium h3{font-size:15px !important}.grid > .sketch-card.detail-medium .inspo,.grid > .sketch-card.detail-medium .accords{font-size:8.8px !important}
+  .grid > .sketch-card.detail-long .house{font-size:9px !important}.grid > .sketch-card.detail-long h3{font-size:14px !important}.grid > .sketch-card.detail-long .inspo,.grid > .sketch-card.detail-long .accords{font-size:8.1px !important;line-height:1.02 !important}
+  .grid > .sketch-card .price-add > .size-plus-line,.grid > .sketch-card .price-add .size-text{font-size:8px !important}.grid > .sketch-card .price-add .button-plus-inline{font-size:11px !important}
+}
