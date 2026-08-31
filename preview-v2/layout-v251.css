@@ -1,0 +1,181 @@
+/* DeadEnd Scents Public V2.5.1
+   Final test pass for:
+   1) Explore + FOW equal outer height, with larger FOW content INSIDE the card
+   2) Price-button colour progression from fragrance tile to fragrance tile
+   3) Clear + cue in bottom-right of every available 3/5/10mL add button
+*/
+
+/* --- FOW: equal outer height to Explore; fill the existing space only --- */
+.featured-section{
+  align-items:stretch !important;
+}
+.featured-section > .explore-panel,
+.featured-section > .featured-grid{
+  align-self:stretch !important;
+}
+.featured-grid,
+.featured-grid > .featured-card{
+  height:100% !important;
+  min-height:0 !important;
+}
+.featured-grid > .featured-card{
+  display:flex !important;
+  flex-direction:column !important;
+}
+.featured-card .featured-main{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  height:auto !important;
+}
+.featured-card .weekly-offer{
+  flex:0 0 auto !important;
+  margin-top:auto !important;
+}
+
+/* Use more of the available FOW space without increasing the card itself. */
+@media (max-width:899px){
+  .featured-card .featured-main{
+    grid-template-columns:55% 45% !important;
+    gap:2px !important;
+    padding:12px 6px 4px !important;
+    align-items:center !important;
+  }
+  .featured-card .featured-bottle-wrap{
+    height:100% !important;
+    min-height:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    overflow:hidden !important;
+  }
+  .featured-card .featured-bottle-wrap img{
+    width:112% !important;
+    height:auto !important;
+    max-width:112% !important;
+    max-height:390px !important;
+    object-fit:contain !important;
+    transform:none !important;
+  }
+  .featured-card h3{
+    font-size:29px !important;
+    line-height:.94 !important;
+    margin:3px 0 5px !important;
+  }
+  .featured-card .featured-house{
+    font-size:18px !important;
+    line-height:1.05 !important;
+    margin-bottom:7px !important;
+  }
+  .featured-card .featured-inspo,
+  .featured-card .featured-desc{
+    font-size:15.5px !important;
+    line-height:1.23 !important;
+    margin:8px 0 !important;
+  }
+}
+
+@media (min-width:900px){
+  .featured-card .featured-main{
+    grid-template-columns:49% 51% !important;
+    gap:12px !important;
+    padding:12px 16px 6px !important;
+    align-items:center !important;
+  }
+  .featured-card .featured-bottle-wrap{
+    height:100% !important;
+    min-height:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    overflow:hidden !important;
+  }
+  .featured-card .featured-bottle-wrap img{
+    width:108% !important;
+    height:auto !important;
+    max-width:108% !important;
+    max-height:430px !important;
+    object-fit:contain !important;
+    transform:none !important;
+  }
+  .featured-card h3{font-size:42px !important;line-height:.95 !important;margin:4px 0 7px !important;}
+  .featured-card .featured-house{font-size:22px !important;margin-bottom:9px !important;}
+  .featured-card .featured-inspo,
+  .featured-card .featured-desc{font-size:17px !important;line-height:1.28 !important;margin:9px 0 !important;}
+}
+
+/* --- PRICE BUTTONS: one colour per fragrance tile, flowing across the grid ---
+   All 3 buttons inside a fragrance share the same colour. Adjacent cards step
+   through the DeadEnd terracotta/rust palette. */
+.grid > .sketch-card .price-add{
+  position:relative !important;
+  overflow:hidden !important;
+  color:#fff !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12), inset 0 -1px 0 rgba(66,24,10,.16) !important;
+}
+.grid > .sketch-card:nth-child(5n+1) .price-add{
+  background:linear-gradient(145deg,#bf673d 0%,#ad562f 100%) !important;
+  border-color:#8e4527 !important;
+}
+.grid > .sketch-card:nth-child(5n+2) .price-add{
+  background:linear-gradient(145deg,#b85c35 0%,#a24b29 100%) !important;
+  border-color:#853d22 !important;
+}
+.grid > .sketch-card:nth-child(5n+3) .price-add{
+  background:linear-gradient(145deg,#aa4f2d 0%,#913e22 100%) !important;
+  border-color:#76351e !important;
+}
+.grid > .sketch-card:nth-child(5n+4) .price-add{
+  background:linear-gradient(145deg,#995038 0%,#81412d 100%) !important;
+  border-color:#6e3727 !important;
+}
+.grid > .sketch-card:nth-child(5n+5) .price-add{
+  background:linear-gradient(145deg,#8e5945 0%,#734536 100%) !important;
+  border-color:#603a2d !important;
+}
+
+/* Weekly-discount class must not wipe out the tile-to-tile colour progression. */
+.grid > .sketch-card .price-add.weekly-discount{
+  filter:none !important;
+}
+
+/* --- Explicit + on every available size button --- */
+.grid > .sketch-card .price-add::after{
+  content:'+' !important;
+  display:block !important;
+  position:absolute !important;
+  right:4px !important;
+  bottom:3px !important;
+  top:auto !important;
+  left:auto !important;
+  width:auto !important;
+  height:auto !important;
+  padding:0 !important;
+  margin:0 !important;
+  border:0 !important;
+  background:transparent !important;
+  color:#fff !important;
+  opacity:.95 !important;
+  font-family:Inter,Arial,sans-serif !important;
+  font-size:10px !important;
+  font-weight:800 !important;
+  line-height:1 !important;
+  pointer-events:none !important;
+  z-index:3 !important;
+}
+.grid > .sketch-card .price-unavailable::after{
+  content:none !important;
+}
+
+@media (min-width:900px){
+  .grid > .sketch-card .price-add::after{
+    right:6px !important;
+    bottom:5px !important;
+    font-size:13px !important;
+  }
+}
+
+@media (hover:hover){
+  .grid > .sketch-card .price-add:hover{
+    filter:brightness(1.07) !important;
+  }
+}
