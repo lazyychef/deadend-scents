@@ -153,7 +153,7 @@
   }
 
   function fragrancesToCsv(items){
-    const headers=['ID','House','Fragrance','Collection','Scent Style','Gender','Main Accords','Emojis','Inspiration House','Inspired By','3mL','5mL','10mL','Fragrantica','Added Date','Featured','Featured Start','Featured Note','Staff Pick','Season','Occasion','Stock','Status'];
+    const headers=['ID','House','Fragrance','Collection','Scent Style','Gender','Main Accords','Emojis','Inspiration House','Inspired By','3mL','5mL','10mL','Fragrantica','Added Date','Featured','Featured Start','Featured Note','Staff Pick','Season','Occasion','Stock','Status','Concentration'];
     const rows=[headers];
     items.forEach(item=>{
       rows.push(headers.map(h=>{
@@ -310,10 +310,13 @@
       const occasion=get(row,['Occasion']) || get(row,['Season']) || 'Anytime';
       const concentration=get(row,['Concentration']);
       const desc=get(row,['Description','Notes']);
-      const notes=[desc, concentration ? `${concentration} concentration.` : '', gender && gender.toLowerCase()==='women' ? `Women's scent.` : ''].filter(Boolean).join(' ');
+      // Gender is used for filtering only; don't repeat "Women's scent" on the card.
+      // Concentration gets its own compact slot and only displays when it is an Extrait.
+      const notes=[desc].filter(Boolean).join(' ');
+      const concentrationLabel=/extrait/i.test(String(concentration || '')) ? 'Extrait' : '';
       return {
         id:get(row,['ID','Id','SKU','Code']),
-        name, house, inspiration, inspirationHouse, collection, category, gender, notes,
+        name, house, inspiration, inspirationHouse, collection, category, gender, notes, concentrationLabel,
         accords:get(row,['Main Accords','Accords','Main accords','Scent Notes','Notes']) || category,
         emojis:get(row,['Emojis','Emoji']) || '✨',
         imageUrl:get(row,['Image','Image URL','Bottle Image URL','Bottle Image','BottleImageURL','Photo','Photo URL']),
@@ -758,7 +761,7 @@
       const card=document.createElement('article');
       const imageUrl=String(f.imageUrl || '').trim();
       const hasImage=/^https?:\/\//i.test(imageUrl);
-      card.className='card sketch-card' + (isNewArrival(f)?' new-card':'') + (hasImage ? ' has-image' : '');
+      card.className='card sketch-card category-' + collectionClass(f.collection) + (isNewArrival(f)?' new-card':'') + (hasImage ? ' has-image' : '');
       card.innerHTML=`
         <div class="card-top">
           <span class="collection-pill ${collectionClass(f.collection)}">${escapeHtml(String(f.collection || 'type').toLowerCase())}</span>
@@ -772,6 +775,7 @@
           <p class="house">${escapeHtml(f.house || '')}</p>
           <h3>${escapeHtml(f.name)}</h3>
           <div class="inspo-slot">${shouldShowInspiration(f) ? `<p class="inspo"><span>inspired by</span> ${escapeHtml(f.inspiration)}</p>` : ''}</div>
+          <div class="concentration-slot">${f.concentrationLabel ? `<span>${escapeHtml(f.concentrationLabel)}</span>` : ''}</div>
           <p class="accords">${escapeHtml(f.notes || f.accords || f.category || '')}</p>
         </div>
         <div class="card-links">${f.fragranticaUrl?`<a class="mini-link" href="${escapeAttr(f.fragranticaUrl)}" target="_blank" rel="noopener">fragrantica</a>`:'<span></span>'}</div>`;
@@ -786,7 +790,7 @@
     const discounted = discountedPriceText(clean, f);
     const active = discounted !== clean;
     const priceMarkup = active ? `<strong><s>${escapeHtml(clean)}</s> ${escapeHtml(discounted)}</strong>` : `<strong>${escapeHtml(clean)}</strong>`;
-    return `<button class="price-add ${active?'weekly-discount':''}" type="button" data-name="${escapeAttr(f.name)}" data-house="${escapeAttr(f.house||'')}" data-size="${size}" data-price="${escapeAttr(discounted)}" data-original-price="${escapeAttr(clean)}">${priceMarkup}<span>${size}</span></button>`;
+    return `<button class="price-add ${active?'weekly-discount':''}" type="button" aria-label="Add ${escapeAttr(size)} of ${escapeAttr(f.name)} to cart for ${escapeAttr(discounted)}" title="Add ${escapeAttr(size)} to cart" data-name="${escapeAttr(f.name)}" data-house="${escapeAttr(f.house||'')}" data-size="${size}" data-price="${escapeAttr(discounted)}" data-original-price="${escapeAttr(clean)}">${priceMarkup}<span>${size}</span><i class="add-cue" aria-hidden="true">+</i></button>`;
   }
   function attachCardListeners(){
     document.querySelectorAll('[data-copy]').forEach(btn=>{ if(btn.dataset.bound) return; btn.dataset.bound='1'; btn.addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText(btn.dataset.copy); btn.textContent='Copied'; setTimeout(()=>btn.textContent='Copy name',1200); }catch(e){} }); });
