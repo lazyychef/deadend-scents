@@ -1,0 +1,168 @@
+/* DeadEnd Scents Public V2.5.3
+   - Lock Explore + FOW to the compact pre-load height on mobile
+   - Compress Explore internals so loaded pack tiles do not enlarge the pair
+   - Keep FOW content inside that fixed height with sane proportions
+   - Permanent visible + inside every available 3/5/10mL button
+*/
+
+/* Kill every older add cue / pseudo cue path. The real .button-plus is emitted by app.js. */
+.grid > .sketch-card .price-add::after,
+.grid > .sketch-card .price-add::before,
+.grid > .sketch-card .new-badge::after,
+.grid > .sketch-card .new-badge::before {
+  content:none !important;
+  display:none !important;
+}
+.grid > .sketch-card .price-add .add-cue { display:none !important; }
+.grid > .sketch-card .price-add { position:relative !important; overflow:hidden !important; }
+.grid > .sketch-card .price-add .button-plus {
+  display:block !important;
+  position:absolute !important;
+  right:4px !important;
+  bottom:3px !important;
+  top:auto !important;
+  left:auto !important;
+  color:#fff !important;
+  opacity:1 !important;
+  visibility:visible !important;
+  z-index:20 !important;
+  width:auto !important;
+  height:auto !important;
+  margin:0 !important;
+  padding:0 !important;
+  background:none !important;
+  border:0 !important;
+  font-family:Inter,Arial,sans-serif !important;
+  font-size:11px !important;
+  font-weight:900 !important;
+  line-height:1 !important;
+  pointer-events:none !important;
+}
+
+/* Keep the approved light -> medium -> dark size progression. */
+.grid > .sketch-card .sketch-price-stack > .price-add:nth-child(1){
+  background:linear-gradient(145deg,#c87549 0%,#b86138 100%) !important;
+  border-color:#95492a !important;
+}
+.grid > .sketch-card .sketch-price-stack > .price-add:nth-child(2){
+  background:linear-gradient(145deg,#b45b35 0%,#9f4929 100%) !important;
+  border-color:#7f3b22 !important;
+}
+.grid > .sketch-card .sketch-price-stack > .price-add:nth-child(3){
+  background:linear-gradient(145deg,#98452a 0%,#79351f 100%) !important;
+  border-color:#642d1b !important;
+}
+
+/* MOBILE/TABLET: exact compact featured pair. This stops loaded FOW data from
+   changing the row height. The Explore panel is compressed to fit the same box. */
+@media (max-width:899px){
+  .featured-section{
+    height:340px !important;
+    min-height:340px !important;
+    max-height:340px !important;
+    align-items:stretch !important;
+    overflow:hidden !important;
+  }
+  .featured-section > .explore-panel.explore-hub,
+  .featured-section > .featured-grid{
+    height:340px !important;
+    min-height:340px !important;
+    max-height:340px !important;
+    box-sizing:border-box !important;
+    overflow:hidden !important;
+  }
+  .featured-grid > .featured-card{
+    height:340px !important;
+    min-height:340px !important;
+    max-height:340px !important;
+    box-sizing:border-box !important;
+    padding:6px !important;
+    overflow:hidden !important;
+    display:flex !important;
+    flex-direction:column !important;
+  }
+
+  /* Compact Explore while keeping every requested control visible. */
+  .explore-panel.explore-hub{padding:6px 8px !important;}
+  .explore-panel.explore-hub .eyebrow{font-size:12px !important;line-height:1 !important;margin:0 0 4px !important;}
+  .explore-group{padding:3px 0 !important;margin:0 !important;}
+  .explore-group + .explore-group{border-top:1px solid var(--line) !important;}
+  .explore-heading{font-size:9px !important;line-height:1 !important;margin:0 0 1px !important;}
+  .explore-sub{font-size:7px !important;line-height:1.05 !important;margin:0 0 3px !important;}
+  .explore-pack-grid{gap:3px !important;margin:2px 0 3px !important;}
+  .explore-pack-card{min-height:42px !important;padding:3px 2px !important;}
+  .explore-pack-card .pack-icon{height:17px !important;margin-bottom:1px !important;}
+  .explore-pack-card strong{font-size:6.8px !important;line-height:.95 !important;}
+  .explore-mini-grid{gap:3px !important;margin:2px 0 3px !important;}
+  .explore-mini-btn{min-height:31px !important;padding:2px !important;}
+  .explore-mini-btn svg,.explore-mini-btn .explore-icon{width:14px !important;height:14px !important;margin-bottom:0 !important;}
+  .explore-mini-btn span,.explore-mini-btn strong{font-size:6.8px !important;line-height:1 !important;}
+  .explore-wide-btn{min-height:24px !important;padding:3px 5px !important;font-size:7px !important;line-height:1 !important;margin-top:2px !important;}
+
+  /* FOW: fit naturally in the fixed 340px card. */
+  .featured-card .featured-main{
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    height:auto !important;
+    display:grid !important;
+    grid-template-columns:53% 47% !important;
+    gap:5px !important;
+    padding:9px 6px 3px !important;
+    align-items:center !important;
+    align-content:center !important;
+    overflow:hidden !important;
+  }
+  .featured-card .featured-bottle-wrap{
+    height:190px !important;
+    max-height:190px !important;
+    min-height:0 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    overflow:hidden !important;
+  }
+  .featured-card .featured-bottle-wrap img{
+    width:100% !important;
+    height:100% !important;
+    max-width:100% !important;
+    max-height:190px !important;
+    object-fit:contain !important;
+    object-position:center !important;
+    transform:none !important;
+  }
+  .featured-card .featured-copy{min-width:0 !important;overflow:hidden !important;}
+  .featured-card .featured-label{font-size:9px !important;line-height:1.05 !important;margin:0 0 3px !important;}
+  .featured-card h3{
+    font-size:22px !important;
+    line-height:.95 !important;
+    margin:2px 0 3px !important;
+    overflow-wrap:normal !important;
+    word-break:normal !important;
+    hyphens:none !important;
+  }
+  .featured-card .featured-house{font-size:13px !important;line-height:1.05 !important;margin:0 0 5px !important;}
+  .featured-card .collection-pill{font-size:7.5px !important;line-height:1 !important;padding:3px 4px !important;}
+  .featured-card .featured-inspo,
+  .featured-card .featured-desc{
+    font-size:10.5px !important;
+    line-height:1.15 !important;
+    margin:5px 0 !important;
+    overflow-wrap:break-word !important;
+  }
+  .featured-card .weekly-offer{
+    flex:0 0 auto !important;
+    margin-top:0 !important;
+    padding:4px 4px 3px !important;
+  }
+  .featured-card .weekly-copy{font-size:8px !important;line-height:1.05 !important;}
+  .featured-card .weekly-copy strong{font-size:9px !important;line-height:1.05 !important;}
+  .featured-card .prices{gap:4px !important;margin-top:4px !important;}
+  .featured-card .price-add{min-height:39px !important;height:39px !important;padding:3px 1px !important;}
+  .featured-card .price-add strong{font-size:12px !important;}
+  .featured-card .price-add span{font-size:8px !important;}
+}
+
+/* A little more room for the + cue on desktop without changing card density. */
+@media (min-width:900px){
+  .grid > .sketch-card .price-add .button-plus{right:6px !important;bottom:5px !important;font-size:13px !important;}
+}
