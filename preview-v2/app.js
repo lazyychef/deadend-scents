@@ -111,6 +111,12 @@
   }
 
   async function getLocalCatalogueBackup(){
+    // Prefer the last successful live catalogue in this browser over the packaged
+    // snapshot. This avoids bringing back stale stock/archive states after a network hiccup.
+    try {
+      const cached = localStorage.getItem('deadend_catalogue_csv_cache_v1');
+      if(cached && cached.trim()) return { source: 'browser-cache', csv: cached };
+    } catch(e) {}
     const backupFile = settings.catalogueFallbackFile || 'catalogue-fallback.json';
     try {
       const raw = await getText(backupFile);
@@ -125,10 +131,6 @@
     } catch(fileError){
       console.warn('Local catalogue backup file failed', fileError);
     }
-    try {
-      const cached = localStorage.getItem('deadend_catalogue_csv_cache_v1');
-      if(cached && cached.trim()) return { source: 'browser-cache', csv: cached };
-    } catch(e) {}
     throw new Error('No usable local catalogue backup found');
   }
 
@@ -544,17 +546,21 @@
     if(!settings.masterSheetId) settings.masterSheetId = MASTER_SHEET_ID;
     settings = await loadLiveSettings(settings);
     if(!settings.masterSheetId) settings.masterSheetId = MASTER_SHEET_ID;
+
+    // Stable-load mode: choose one catalogue source first, then render once.
+    // This prevents the page visibly swapping between packaged backup, Sheets and
+    // Apps Script data (different counts / different Fragrance of the Week).
     try {
-      // Public V2: render the full 111-item local snapshot immediately, then refresh live data silently.
-      try {
-        const local = await getLocalCatalogueBackup();
-        data = csvToFragrances(local.csv);
-        catalogueSource = local.source;
-      } catch(localError){
-        data = csvToFragrances(await getCsv(settings.catalogueCsvUrl || sheetCsvUrl('Catalogue') || DEFAULT_CSV));
-      }
-    } catch(error){ console.error(error); if(grid) grid.innerHTML='<div class="empty">Catalogue could not load.<br><small>' + escapeHtml(error.message || error) + '</small></div>'; return; }
-    if(!data.length){ if(grid) grid.innerHTML='<div class="empty">Catalogue is empty. Check the Catalogue tab headers.</div>'; return; }
+      data = csvToFragrances(await getCsv(settings.catalogueCsvUrl || sheetCsvUrl('Catalogue') || DEFAULT_CSV));
+    } catch(error){
+      console.error(error);
+      if(grid) grid.innerHTML='<div class="empty">Catalogue could not load.<br><small>' + escapeHtml(error.message || error) + '</small></div>';
+      return;
+    }
+    if(!data.length){
+      if(grid) grid.innerHTML='<div class="empty">Catalogue is empty. Check the Catalogue tab headers.</div>';
+      return;
+    }
     packs = await loadDiscoveryPacks();
     showCatalogueSourceNotice();
     if(statCount) statCount.textContent=data.length;
@@ -562,28 +568,8 @@
     resetOptions(collectionFilter,'All types',uniqueValues('collection'));
     resetOptions(occasionFilter,'All occasions',uniqueMultiValues('occasion'));
     setupContactLinks(); setupAnalytics(); injectSeoSchema(); applySearchQueryFromUrl(); renderFeatured(); renderPacks(); renderExploreHub(); render(); updateCart();
-    trackEvent('catalogue_loaded', { fragrance_count: data.length });
+    trackEvent('catalogue_loaded', { fragrance_count: data.length, source: catalogueSource });
     setClarityTag('fragrance_count', data.length);
-
-    // Refresh live prices/stock after the page is already usable.
-    if(catalogueSource !== 'live'){
-      setTimeout(async()=>{
-        try {
-          const liveText = await getCsv(settings.catalogueCsvUrl || sheetCsvUrl('Catalogue') || DEFAULT_CSV);
-          const liveData = csvToFragrances(liveText);
-          if(liveData.length){
-            data = liveData;
-            if(statCount) statCount.textContent=data.length;
-            resetOptions(categoryFilter,'All scent styles',[...new Set([...uniqueValues('category'),'Vanilla'])].sort((a,b)=>a.localeCompare(b)));
-            resetOptions(collectionFilter,'All types',uniqueValues('collection'));
-            resetOptions(occasionFilter,'All occasions',uniqueMultiValues('occasion'));
-            renderFeatured();
-            renderExploreHub();
-            render();
-          }
-        } catch(e){ console.warn('Background live catalogue refresh failed; continuing with full local snapshot', e); }
-      }, 50);
-    }
   }
 
   function uniqueValues(key){ return [...new Set(data.map(x=>x[key]).filter(Boolean))].sort(); }
@@ -592,10 +578,13 @@
   function showCatalogueSourceNotice(){ /* V2 intentionally renders its full local snapshot first; no customer-facing error banner. */ }
   function fieldContains(value, selected){ if(selected==='all') return true; return String(value||'').split(',').map(v=>v.trim()).includes(selected) || String(value||'')===selected; }
   function isPublicVisible(f){
-    const blocked = ['archive','archived','hidden','hide','inactive','off'];
     const stock = String((f && f.stock) || '').trim().toLowerCase();
     const status = String((f && f.status) || '').trim().toLowerCase();
-    return !blocked.includes(stock) && !blocked.includes(status);
+    const blocked = (value) => !value || !(
+      value === 'archive' || value === 'archived' || value.startsWith('archive') ||
+      value === 'hidden' || value === 'hide' || value === 'inactive' || value === 'off'
+    );
+    return blocked(stock) && blocked(status);
   }
   function match(f){
     const q=search.value.trim().toLowerCase();
