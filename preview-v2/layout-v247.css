@@ -1,0 +1,139 @@
+/* DeadEnd Scents Public V2.4.7 — desktop width/readability polish.
+   Loaded after layout-v245.css. Mobile layout remains unchanged. */
+
+@media (min-width: 900px) {
+  /* Use the desktop canvas instead of shrinking the mobile page into the centre. */
+  main {
+    width: 94vw !important;
+    max-width: 1600px !important;
+    margin: 0 auto !important;
+    padding: 12px 0 28px !important;
+  }
+
+  /* Keep header visually aligned with the wider storefront and stop title truncation. */
+  .site-header {
+    padding: 10px max(18px, 3vw) !important;
+  }
+  .brand-text {
+    max-width: none !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: nowrap !important;
+    font-size: 34px !important;
+  }
+  .brand-logo { width: 58px !important; height: 58px !important; }
+  .contact-buttons a { font-size: 15px !important; padding: 10px 8px !important; }
+
+  /* Desktop gets the same layout, simply larger and easier to read. */
+  .quick-stats { gap: 8px !important; margin-bottom: 10px !important; }
+  .quick-stats div { min-height: 54px !important; padding: 8px 5px !important; }
+  .quick-stats strong { font-size: 20px !important; }
+  .quick-stats span { font-size: 11px !important; }
+
+  .featured-section {
+    grid-template-columns: 0.92fr 1.08fr !important;
+    gap: 12px !important;
+    margin-bottom: 14px !important;
+  }
+  .explore-panel.explore-hub { padding: 12px !important; }
+  .explore-panel .eyebrow { font-size: 14px !important; }
+  .explore-heading strong { font-size: 15px !important; }
+  .explore-heading span { font-size: 12px !important; }
+  .explore-chip { min-height: 52px !important; font-size: 12px !important; }
+  .explore-chip strong { font-size: 12px !important; }
+  .explore-wide-action,
+  .explore-outline-action { min-height: 36px !important; font-size: 12px !important; }
+
+  .featured-card { padding: 12px !important; }
+  .featured-main { grid-template-columns: 46% 54% !important; gap: 10px !important; }
+  .featured-bottle-wrap { min-height: 300px !important; }
+  .featured-bottle-wrap img { height: 300px !important; max-height: 300px !important; }
+  .featured-card .eyebrow { font-size: 13px !important; }
+  .featured-card h3 { font-size: 34px !important; line-height: .95 !important; }
+  .featured-house { font-size: 17px !important; }
+  .featured-inspo, .featured-desc { font-size: 15px !important; line-height: 1.3 !important; }
+  .featured-actions .price-add { min-height: 58px !important; }
+  .featured-actions .price-add strong { font-size: 19px !important; }
+  .featured-actions .price-add span { font-size: 11px !important; }
+
+  .search-section { padding: 10px !important; margin-bottom: 12px !important; }
+  .search-section > label,
+  .search-section label { font-size: 13px !important; }
+  .search-box input, #search, input[type="search"] {
+    font-size: 18px !important;
+    min-height: 50px !important;
+    padding: 10px 13px !important;
+  }
+  .collection-buttons { gap: 7px !important; }
+  .collection-buttons button { min-height: 38px !important; font-size: 14px !important; padding: 5px !important; }
+
+  .section { margin-top: 16px !important; }
+  .section-title .eyebrow { font-size: 13px !important; }
+  .section-title h2 { font-size: 34px !important; }
+  .catalogue-count { font-size: 13px !important; }
+  .text-action { font-size: 15px !important; padding: 7px 14px !important; }
+
+  /* Same 3-card rhythm as mobile, but make use of the desktop width and readable type. */
+  .grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 10px !important; }
+  .grid > article.sketch-card,
+  .grid > article.sketch-card.has-image {
+    height: 300px !important;
+    min-height: 300px !important;
+    max-height: 300px !important;
+    padding: 10px !important;
+  }
+  .grid > .sketch-card > .card-top { flex-basis: 20px !important; min-height: 20px !important; margin-bottom: 5px !important; }
+  .grid > .sketch-card .collection-pill { font-size: 12px !important; }
+  .grid > .sketch-card .new-badge { font-size: 10px !important; padding: 3px 5px !important; }
+
+  .grid > .sketch-card > .sketch-buy-row {
+    grid-template-columns: minmax(0, 66%) minmax(0, 34%) !important;
+    grid-template-rows: 122px !important;
+    flex-basis: 122px !important;
+    height: 122px !important;
+    min-height: 122px !important;
+    max-height: 122px !important;
+    gap: 8px !important;
+    margin-bottom: 6px !important;
+  }
+  .grid > .sketch-card .sketch-image,
+  .grid > .sketch-card .sketch-price-stack {
+    height: 122px !important;
+    min-height: 122px !important;
+    max-height: 122px !important;
+  }
+  .grid > .sketch-card .sketch-image img { max-height: 116px !important; }
+  .grid > .sketch-card .sketch-price-stack { gap: 5px !important; }
+  .grid > .sketch-card .sketch-price-stack strong { font-size: 15px !important; }
+  .grid > .sketch-card .sketch-price-stack span { font-size: 10px !important; }
+
+  .grid > .sketch-card .house { font-size: 11px !important; }
+  .grid > .sketch-card h3 { font-size: 19px !important; line-height: 1 !important; max-height: 39px !important; margin: 2px 0 5px !important; }
+  .grid > .sketch-card .inspo-slot { max-height: 34px !important; margin-bottom: 4px !important; }
+  .grid > .sketch-card .inspo,
+  .grid > .sketch-card .accords { font-size: 11px !important; line-height: 1.15 !important; }
+  .grid > .sketch-card .inspo span { font-size: 11px !important; }
+  .grid > .sketch-card .accords { max-height: 27px !important; -webkit-line-clamp: 2 !important; }
+  .grid > .sketch-card > .card-links { flex-basis: 18px !important; min-height: 18px !important; padding-bottom: 2px !important; }
+  .grid > .sketch-card .mini-link { font-size: 11px !important; }
+
+  .packs-grid { gap: 12px !important; }
+  .pack-card { flex: 0 0 48% !important; }
+  .pack-card h3 { font-size: 25px !important; }
+  .pack-card p, .pack-card li { font-size: 14px !important; }
+
+  .order-card h2 { font-size: 30px !important; }
+  .order-card, .cart-items, #orderText, .order-actions button, .order-actions a { font-size: 14px !important; }
+}
+
+@media (min-width: 1400px) {
+  main { width: 92vw !important; max-width: 1680px !important; }
+  .grid > article.sketch-card,
+  .grid > article.sketch-card.has-image { height: 318px !important; min-height: 318px !important; max-height: 318px !important; }
+  .grid > .sketch-card h3 { font-size: 21px !important; }
+  .grid > .sketch-card .house,
+  .grid > .sketch-card .inspo,
+  .grid > .sketch-card .inspo span,
+  .grid > .sketch-card .accords,
+  .grid > .sketch-card .mini-link { font-size: 12px !important; }
+}
