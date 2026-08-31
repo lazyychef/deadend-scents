@@ -111,6 +111,12 @@
   }
 
   async function getLocalCatalogueBackup(){
+    // Prefer the last successful live catalogue in this browser over the packaged
+    // snapshot. This avoids bringing back stale stock/archive states after a network hiccup.
+    try {
+      const cached = localStorage.getItem('deadend_catalogue_csv_cache_v1');
+      if(cached && cached.trim()) return { source: 'browser-cache', csv: cached };
+    } catch(e) {}
     const backupFile = settings.catalogueFallbackFile || 'catalogue-fallback.json';
     try {
       const raw = await getText(backupFile);
@@ -125,10 +131,6 @@
     } catch(fileError){
       console.warn('Local catalogue backup file failed', fileError);
     }
-    try {
-      const cached = localStorage.getItem('deadend_catalogue_csv_cache_v1');
-      if(cached && cached.trim()) return { source: 'browser-cache', csv: cached };
-    } catch(e) {}
     throw new Error('No usable local catalogue backup found');
   }
 
