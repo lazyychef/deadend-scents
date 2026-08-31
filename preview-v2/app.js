@@ -376,8 +376,8 @@
     objects.forEach((row, idx)=>{
       const active = get(row,['Active','Visible','Show','Enabled']);
       const status = get(row,['Status']);
-      if(active && ['no','false','0','hide','hidden','off'].includes(active.toLowerCase())) return;
-      if(status && ['inactive','hidden','hide','off','no'].includes(status.toLowerCase())) return;
+      if(active && ['no','false','0','hide','hidden','archive','archived','off'].includes(active.toLowerCase())) return;
+      if(status && ['inactive','hidden','hide','archive','archived','off','no'].includes(status.toLowerCase())) return;
       const id = get(row,['Pack ID','PackID','ID','Pack Code']) || slugify(get(row,['Pack Name','Name','Title']) || ('pack-' + idx));
       if(!id) return;
       const key = id.toLowerCase();
