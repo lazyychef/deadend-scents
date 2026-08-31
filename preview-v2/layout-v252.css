@@ -1,0 +1,64 @@
+/* DeadEnd Scents Public V2.5.2
+   1) FOW content compact again so Explore determines the shared row height
+   2) 3/5/10 buttons step light -> medium -> dark on every card
+   3) permanent visible + is real markup, not hover/pseudo-element behaviour
+*/
+
+/* Let the Explore panel determine the row height. FOW stretches to match it. */
+.featured-section{align-items:stretch!important;}
+.featured-section>.explore-panel,
+.featured-section>.featured-grid{align-self:stretch!important;min-height:0!important;}
+.featured-grid,.featured-grid>.featured-card{height:100%!important;min-height:0!important;}
+.featured-grid>.featured-card{display:flex!important;flex-direction:column!important;overflow:hidden!important;}
+.featured-card .featured-main{flex:1 1 auto!important;min-height:0!important;height:auto!important;align-items:center!important;}
+.featured-card .weekly-offer{flex:0 0 auto!important;margin-top:auto!important;}
+
+/* Mobile: return FOW visual proportions closer to the earlier version. */
+@media (max-width:899px){
+  .featured-card{padding:8px!important;}
+  .featured-card .featured-main{grid-template-columns:54% 46%!important;gap:4px!important;padding:10px 7px 3px!important;align-content:center!important;}
+  .featured-card .featured-bottle-wrap{height:auto!important;min-height:0!important;align-self:center!important;display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important;}
+  .featured-card .featured-bottle-wrap img{width:100%!important;max-width:100%!important;height:auto!important;max-height:275px!important;object-fit:contain!important;transform:none!important;}
+  .featured-card .featured-label{font-size:11px!important;line-height:1.08!important;}
+  .featured-card h3{font-size:24px!important;line-height:.98!important;margin:4px 0 5px!important;overflow-wrap:anywhere!important;}
+  .featured-card .featured-house{font-size:15px!important;line-height:1.08!important;margin:0 0 7px!important;}
+  .featured-card .collection-pill{font-size:9px!important;padding:3px 5px!important;}
+  .featured-card .featured-inspo,.featured-card .featured-desc{font-size:13.5px!important;line-height:1.22!important;margin:7px 0!important;}
+}
+
+@media (min-width:900px){
+  .featured-card .featured-main{grid-template-columns:48% 52%!important;gap:12px!important;padding:12px 16px 5px!important;align-content:center!important;}
+  .featured-card .featured-bottle-wrap{height:auto!important;min-height:0!important;align-self:center!important;overflow:hidden!important;}
+  .featured-card .featured-bottle-wrap img{width:100%!important;max-width:100%!important;height:auto!important;max-height:330px!important;object-fit:contain!important;transform:none!important;}
+  .featured-card .featured-label{font-size:13px!important;}
+  .featured-card h3{font-size:34px!important;line-height:.98!important;margin:5px 0 6px!important;}
+  .featured-card .featured-house{font-size:19px!important;margin-bottom:8px!important;}
+  .featured-card .collection-pill{font-size:10px!important;padding:4px 6px!important;}
+  .featured-card .featured-inspo,.featured-card .featured-desc{font-size:15px!important;line-height:1.26!important;margin:8px 0!important;}
+}
+
+/* Same three-button colour progression on EVERY fragrance card. */
+.grid>.sketch-card .sketch-price-stack>*:nth-child(1).price-add{
+  background:linear-gradient(145deg,#c87549 0%,#b86138 100%)!important;border-color:#95492a!important;
+}
+.grid>.sketch-card .sketch-price-stack>*:nth-child(2).price-add{
+  background:linear-gradient(145deg,#b45b35 0%,#9f4929 100%)!important;border-color:#7f3b22!important;
+}
+.grid>.sketch-card .sketch-price-stack>*:nth-child(3).price-add{
+  background:linear-gradient(145deg,#98452a 0%,#79351f 100%)!important;border-color:#642d1b!important;
+}
+.grid>.sketch-card .price-add{position:relative!important;overflow:hidden!important;color:#fff!important;}
+/* Disable the older pseudo + completely; V2.5.2 uses a real element. */
+.grid>.sketch-card .price-add::after{content:none!important;display:none!important;}
+.grid>.sketch-card .price-add .add-cue{
+  display:block!important;position:absolute!important;right:4px!important;bottom:3px!important;
+  width:auto!important;height:auto!important;margin:0!important;padding:0!important;
+  color:#fff!important;opacity:1!important;background:transparent!important;
+  font-family:Inter,Arial,sans-serif!important;font-size:11px!important;font-weight:900!important;line-height:1!important;
+  pointer-events:none!important;visibility:visible!important;z-index:5!important;
+}
+.grid>.sketch-card .price-add:hover .add-cue,
+.grid>.sketch-card .price-add:focus .add-cue,
+.grid>.sketch-card .price-add:active .add-cue,
+.grid>.sketch-card .price-add.added .add-cue{display:block!important;visibility:visible!important;opacity:1!important;}
+@media (min-width:900px){.grid>.sketch-card .price-add .add-cue{right:6px!important;bottom:5px!important;font-size:13px!important;}}
