@@ -761,10 +761,13 @@
       const card=document.createElement('article');
       const imageUrl=String(f.imageUrl || '').trim();
       const hasImage=/^https?:\/\//i.test(imageUrl);
-      card.className='card sketch-card category-' + collectionClass(f.collection) + (isNewArrival(f)?' new-card':'') + (hasImage ? ' has-image' : '');
+      const detailLength = String(f.inspiration || '').length + String(f.notes || f.accords || f.category || '').length + String(f.name || '').length;
+      const densityClass = detailLength > 150 ? ' detail-long' : (detailLength > 95 ? ' detail-medium' : ' detail-short');
+      card.className='card sketch-card category-' + collectionClass(f.collection) + (isNewArrival(f)?' new-card':'') + (hasImage ? ' has-image' : '') + densityClass;
       card.innerHTML=`
         <div class="card-top">
           <span class="collection-pill ${collectionClass(f.collection)}">${escapeHtml(String(f.collection || 'type').toLowerCase())}</span>
+          <span class="top-concentration">${f.concentrationLabel ? escapeHtml(f.concentrationLabel) : ''}</span>
           <span class="badge-row">${isNewArrival(f)?'<span class="new-badge">new</span>':''}</span>
         </div>
         <div class="sketch-buy-row">
@@ -775,7 +778,6 @@
           <p class="house">${escapeHtml(f.house || '')}</p>
           <h3>${escapeHtml(f.name)}</h3>
           <div class="inspo-slot">${shouldShowInspiration(f) ? `<p class="inspo"><span>inspired by</span> ${escapeHtml(f.inspiration)}</p>` : ''}</div>
-          <div class="concentration-slot">${f.concentrationLabel ? `<span>${escapeHtml(f.concentrationLabel)}</span>` : ''}</div>
           <p class="accords">${escapeHtml(f.notes || f.accords || f.category || '')}</p>
         </div>
         <div class="card-links">${f.fragranticaUrl?`<a class="mini-link" href="${escapeAttr(f.fragranticaUrl)}" target="_blank" rel="noopener">fragrantica</a>`:'<span></span>'}</div>`;
@@ -790,7 +792,7 @@
     const discounted = discountedPriceText(clean, f);
     const active = discounted !== clean;
     const priceMarkup = active ? `<strong><s>${escapeHtml(clean)}</s> ${escapeHtml(discounted)}</strong>` : `<strong>${escapeHtml(clean)}</strong>`;
-    return `<button class="price-add ${active?'weekly-discount':''}" type="button" aria-label="Add ${escapeAttr(size)} of ${escapeAttr(f.name)} to cart for ${escapeAttr(discounted)}" title="Add ${escapeAttr(size)} to cart" data-name="${escapeAttr(f.name)}" data-house="${escapeAttr(f.house||'')}" data-size="${size}" data-price="${escapeAttr(discounted)}" data-original-price="${escapeAttr(clean)}">${priceMarkup}<span>${size}</span><span class="button-plus" aria-hidden="true" style="display:block!important;position:absolute!important;right:4px!important;bottom:3px!important;top:auto!important;left:auto!important;color:#fff!important;opacity:1!important;font:900 11px/1 Inter,Arial,sans-serif!important;pointer-events:none!important;visibility:visible!important;z-index:20!important;">+</span></button>`;
+    return `<button class="price-add ${active?'weekly-discount':''}" type="button" aria-label="Add ${escapeAttr(size)} of ${escapeAttr(f.name)} to cart for ${escapeAttr(discounted)}" title="Add ${escapeAttr(size)} to cart" data-name="${escapeAttr(f.name)}" data-house="${escapeAttr(f.house||'')}" data-size="${size}" data-price="${escapeAttr(discounted)}" data-original-price="${escapeAttr(clean)}">${priceMarkup}<span class="size-plus-line"><span class="size-text">${size}</span><b class="button-plus-inline" aria-hidden="true">+</b></span></button>`;
   }
   function attachCardListeners(){
     document.querySelectorAll('[data-copy]').forEach(btn=>{ if(btn.dataset.bound) return; btn.dataset.bound='1'; btn.addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText(btn.dataset.copy); btn.textContent='Copied'; setTimeout(()=>btn.textContent='Copy name',1200); }catch(e){} }); });
