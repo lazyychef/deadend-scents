@@ -341,7 +341,7 @@
         seoInternalLinks:get(row,['SEO Internal Links','Internal Links']),
         seoScore:get(row,['SEO Score'])
       };
-    }).filter(f => f.name);
+    }).filter(f => f.name && isPublicVisible(f));
   }
 
 
@@ -591,6 +591,12 @@
   function resetOptions(select, allLabel, values){ if(!select) return; select.innerHTML=`<option value="all">${allLabel}</option>`; values.forEach(v=>{ const opt=document.createElement('option'); opt.value=v; opt.textContent=v; select.appendChild(opt); }); }
   function showCatalogueSourceNotice(){ /* V2 intentionally renders its full local snapshot first; no customer-facing error banner. */ }
   function fieldContains(value, selected){ if(selected==='all') return true; return String(value||'').split(',').map(v=>v.trim()).includes(selected) || String(value||'')===selected; }
+  function isPublicVisible(f){
+    const blocked = ['archive','archived','hidden','hide','inactive','off'];
+    const stock = String((f && f.stock) || '').trim().toLowerCase();
+    const status = String((f && f.status) || '').trim().toLowerCase();
+    return !blocked.includes(stock) && !blocked.includes(status);
+  }
   function match(f){
     const q=search.value.trim().toLowerCase();
     const combined=[f.name,f.house,f.inspiration,f.collection,f.category,f.occasion,f.season,f.notes,f.emojis,f.gender].join(' ').toLowerCase();
@@ -744,7 +750,7 @@
   }
 
   function render(){
-    let filtered=sortFragrances(data.filter(match));
+    let filtered=sortFragrances(data.filter(isPublicVisible).filter(match));
     if(quickSpecialFilter==='best') filtered=[...filtered].sort((a,b)=>popularityScore(b)-popularityScore(a) || String(a.name||'').localeCompare(String(b.name||''))).slice(0,18);
     const searchActive = !!String(search && search.value || '').trim();
     const filterActive = quickSpecialFilter !== 'all' || (collectionFilter && collectionFilter.value !== 'all') || (categoryFilter && categoryFilter.value !== 'all') || (occasionFilter && occasionFilter.value !== 'all');
