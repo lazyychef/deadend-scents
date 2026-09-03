@@ -1,0 +1,27 @@
+DeadEnd Scents Admin V3.2 — Multi-Retailer Buy Scout
+
+WHAT'S NEW
+- Adds Perfumes Dubai Australia, WITR and Chemist Warehouse to Buy Scout.
+- Keeps Fordgate Pharmacy and Private Blends.
+- Retailer checkboxes: scan any combination of sources.
+- In-stock-only toggle.
+- Duplicate bottle matching across retailers.
+- Best-price selection and savings comparison.
+- Expandable retailer-price comparison on matching products.
+- Retailer health/status pills so one failed source does not break the scan.
+- Scoring now uses cheapest matched price, bottle size where available, collection gap, uniqueness, value and Discovery Pack fit.
+- Improved Designer / Niche / Middle Eastern classification.
+- Analyse Deeper passes best current price/source into Acquisition Advisor.
+
+UPLOAD TO GITHUB
+Replace/add:
+- /admin/buy-scout.html
+- /admin/buy-scout.js
+- /admin/admin.css
+
+APPS SCRIPT
+Replace your Apps Script Code.gs with either Code.gs included in this ZIP (both copies are identical), then Deploy > Manage deployments > Edit > New version > Deploy.
+
+IMPORTANT
+Retailer websites can change markup or block automated requests. V3.2 isolates each source and reports source availability rather than failing the whole search.
+Amazon Australia remains an external research link rather than a scraped source.

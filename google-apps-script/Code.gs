@@ -91,6 +91,7 @@ function doGet(e) {
   if (action === 'orderSummary') return json_(getOrderSummary_(ss));
   if (action === 'wishlist') return json_(getWishlist_(ss));
   if (action === 'stockAdjustments') return json_(getStockAdjustments_(ss));
+  if (action === 'buyScout') return json_(buyScout_(e));
   return json_({ok:true, app:'DeadEnd Scents Admin V2.1', status:'ready'});
 }
 
@@ -1152,3 +1153,43 @@ function getStockAdjustments_(ss){
   var items=vals.map(function(r){var o={};h.forEach(function(k,i){o[k]=r[i]||''});return o;}).reverse().slice(0,100);
   return {ok:true,items:items};
 }
+
+
+/* DeadEnd Intelligence V3.2 — Multi-Retailer Buy Scout.
+ * Retailer page structures can change. Each source is isolated and returns health status.
+ * Shopify retailers use collection products.json where available; other retailers use HTML text fallbacks.
+ */
+function buyScout_(e) {
+  var p=(e&&e.parameter)||{}, min=Number(p.min)||30, max=Number(p.max)||50;
+  var requested=String(p.sources||p.source||'fordgate,privateblends,perfumesdubai,witr,chemistwarehouse').split(',').map(function(x){return x.trim();}).filter(String);
+  if(requested.indexOf('all')>=0) requested=['fordgate','privateblends','perfumesdubai','witr','chemistwarehouse'];
+  var inStock=String(p.inStock||'1')!=='0', raw=[], statuses=[];
+  var defs={
+    fordgate:{label:'Fordgate',fn:function(){return scoutFordgateV32_(min,max);}},
+    privateblends:{label:'Private Blends',fn:function(){return scoutPrivateBlendsV32_(min,max);}},
+    perfumesdubai:{label:'Perfumes Dubai',fn:function(){return scoutPerfumesDubaiV32_(min,max);}},
+    witr:{label:'WITR',fn:function(){return scoutWitrV32_(min,max);}},
+    chemistwarehouse:{label:'Chemist Warehouse',fn:function(){return scoutChemistWarehouseV32_(min,max);}}
+  };
+  requested.forEach(function(key){var d=defs[key];if(!d)return;try{var got=d.fn()||[];raw=raw.concat(got);statuses.push({source:key,label:d.label,ok:true,count:got.length});}catch(err){statuses.push({source:key,label:d.label,ok:false,count:0,error:String(err&&err.message||err)});}});
+  var filtered=raw.filter(function(x){return Number(x.price)>=min&&Number(x.price)<=max&&(!inStock||x.available!==false);});
+  var groups={}; filtered.forEach(function(x){var key=scoutProductKey_(x);if(!groups[key])groups[key]=[];groups[key].push(x);});
+  var merged=Object.keys(groups).map(function(key){var offers=groups[key].sort(function(a,b){return Number(a.price)-Number(b.price);}),best=offers[0];return {key:key,name:best.name,house:best.house||'',inspiredBy:best.inspiredBy||'',category:best.category||'',size:best.size||'',sizeMl:Number(best.sizeMl)||scoutSizeMl_(best.name+' '+best.size),tags:best.tags||'',description:best.description||'',bestPrice:Number(best.price),highestPrice:Math.max.apply(null,offers.map(function(o){return Number(o.price)||0;})),bestSource:best.source,bestUrl:best.url,offerCount:offers.length,offers:offers.map(function(o){return {source:o.source,price:Number(o.price),url:o.url,available:o.available!==false};})};});
+  merged.sort(function(a,b){return a.bestPrice-b.bestPrice;});
+  return {ok:true,items:merged.slice(0,100),rawCount:filtered.length,sources:statuses,scannedAt:new Date().toISOString()};
+}
+function scoutFetchV32_(url){var r=UrlFetchApp.fetch(url,{muteHttpExceptions:true,followRedirects:true,headers:{'User-Agent':'Mozilla/5.0 (compatible; DeadEndScentsBuyScout/3.2; +https://deadendscents.com)'}}),code=r.getResponseCode();if(code<200||code>=400)throw new Error('HTTP '+code);return r.getContentText();}
+function scoutTextV32_(html){return String(html||'').replace(/<script[\s\S]*?<\/script>/gi,' ').replace(/<style[\s\S]*?<\/style>/gi,' ').replace(/<[^>]+>/g,' ').replace(/&amp;/g,'&').replace(/&#8217;|&rsquo;|&#39;/g,"'").replace(/&quot;/g,'"').replace(/&nbsp;/g,' ').replace(/\s+/g,' ');}
+function scoutSizeMl_(v){var m=String(v||'').match(/(\d+(?:\.\d+)?)\s*m[lL]\b/);return m?Number(m[1]):0;}
+function scoutCleanName_(v){return String(v||'').replace(/\b(?:eau de parfum|eau de toilette|parfum|perfume|edp|edt|exdp|extrait)\b/ig,' ').replace(/\b\d+(?:\.\d+)?\s*ml\b/ig,' ').replace(/\s+/g,' ').trim();}
+function scoutProductKey_(x){var s=scoutCleanName_((x.house||'')+' '+(x.name||'')).toLowerCase().replace(/\b(?:for men|for women|unisex|by)\b/g,' ').replace(/[^a-z0-9]+/g,' ').replace(/\s+/g,' ').trim();return s||String(x.source+' '+x.name).toLowerCase();}
+function scoutHouseFromTitle_(title,vendor){if(vendor)return String(vendor).trim();var m=String(title||'').match(/\bby\s+([^|,]+)$/i);return m?m[1].trim():'';}
+function scoutMiddleEasternHouse_(house,title){var t=(String(house||'')+' '+String(title||'')).toLowerCase();return /lattafa|afnan|armaf|fragrance world|french avenue|paris corner|maison alhambra|khadlaj|rasasi|al haramain|ahmed al maghribi|arabiyat|swiss arabian|rayhaan|zimaya|ard al zaafaran|al rehab|gulf orchid|naseem|ajmal|junaid|ibrahim al qurashi|reef perfumes/.test(t);}
+function scoutCategoryV32_(house,title,source){var t=(String(house||'')+' '+String(title||'')).toLowerCase();if(source==='Chemist Warehouse')return 'Designer';if(/mancera|montale|xerjoff|nishane|amouage|creed|parfums de marly|initio|memo paris|maison francis kurkdjian|byredo|le labo|diptyque|penhaligon|roja|clive christian/.test(t))return 'Niche';if(/dior|armani|boss|issey miyake|azzaro|valentino|versace|dolce|gabbana|rabanne|givenchy|gucci|burberry|coach|calvin klein|ralph lauren|montblanc|davidoff|marc jacobs|jean paul gaultier|yves saint laurent|ysl|hermes|chanel|prada|mugler|lacoste|jimmy choo/.test(t))return 'Designer';return scoutMiddleEasternHouse_(house,title)?'Middle Eastern':'';}
+function scoutShopifyCollectionV32_(base,collection,source,maxPages){var out=[],pages=Math.max(1,maxPages||2);for(var page=1;page<=pages;page++){var url=base.replace(/\/$/,'')+'/collections/'+collection+'/products.json?limit=250&page='+page,data=JSON.parse(scoutFetchV32_(url)),products=data.products||[];if(!products.length)break;products.forEach(function(p){var variants=p.variants||[],available=variants.filter(function(v){return v.available!==false;}),pool=available.length?available:variants;if(!pool.length)return;var best=pool.slice().sort(function(a,b){return Number(a.price)-Number(b.price);})[0],title=String(p.title||''),house=scoutHouseFromTitle_(title,p.vendor),sizeMl=scoutSizeMl_(title+' '+(best.title||''));out.push({source:source,name:scoutCleanName_(title),house:house,price:Number(best.price)||0,size:sizeMl?sizeMl+'mL':'',sizeMl:sizeMl,inspiredBy:'',category:scoutCategoryV32_(house,title,source),url:base.replace(/\/$/,'')+'/products/'+p.handle,available:available.length>0,tags:Array.isArray(p.tags)?p.tags.join(' '):String(p.tags||''),description:scoutTextV32_(p.body_html||'').slice(0,500)});});if(products.length<250)break;}return out;}
+function scoutFordgateV32_(){var out=[];for(var page=1;page<=4;page++){var url='https://fordgatepharmacy.com.au/dubai-fragrances/page/'+page+'/?orderby=price',text=scoutTextV32_(scoutFetchV32_(url)),re=/([^$]{4,120}?)\s+\$([0-9]+(?:\.[0-9]{2})?)/g,m;while((m=re.exec(text))!==null){var raw=String(m[1]||'').trim().split(' ').slice(-18).join(' ');if(raw.length<4||/shipping|cart|subtotal|search|login|checkout/i.test(raw))continue;var sold=/out of stock|sold out/i.test(raw),sizeMl=scoutSizeMl_(raw),house=scoutHouseFromTitle_(raw,'');out.push({source:'Fordgate Pharmacy',name:scoutCleanName_(raw.replace(/^(sale|out of stock|sold out)\s*/i,'')),house:house,price:Number(m[2]),size:sizeMl?sizeMl+'mL':'',sizeMl:sizeMl,inspiredBy:'',category:'Middle Eastern',url:url,available:!sold});}}return out;}
+function scoutPrivateBlendsV32_(){try{return scoutShopifyCollectionV32_('https://privateblends.com.au','all','Private Blends',2);}catch(err){var url='https://privateblends.com.au/collections/all',text=scoutTextV32_(scoutFetchV32_(url)),out=[],re=/([^$]{4,120}?)\s+\$([0-9]+(?:\.[0-9]{2})?)/g,m;while((m=re.exec(text))!==null){var raw=String(m[1]||'').trim().split(' ').slice(-16).join(' ');if(/shipping|cart|subtotal|gift card/i.test(raw))continue;var sizeMl=scoutSizeMl_(raw);out.push({source:'Private Blends',name:scoutCleanName_(raw),house:'',price:Number(m[2]),size:sizeMl?sizeMl+'mL':'',sizeMl:sizeMl,category:'Middle Eastern',url:url,available:!/sold out|out of stock/i.test(raw)});}return out;}}
+function scoutPerfumesDubaiV32_(){return scoutShopifyCollectionV32_('https://perfumesdubai.com.au','all','Perfumes Dubai',3);}
+function scoutWitrV32_(){return scoutShopifyCollectionV32_('https://witr.com.au','all','WITR',3);}
+function scoutChemistWarehouseV32_(){var urls=['https://www.chemistwarehouse.com.au/shop-online/542/fragrances','https://www.chemistwarehouse.com.au/shop-online/343/mens-fragrances','https://www.chemistwarehouse.com.au/shop-online/344/womens-fragrances'],out=[];urls.forEach(function(url){var text=scoutTextV32_(scoutFetchV32_(url)),re=/([A-Z][A-Za-z0-9&'’ .\-]{3,90}?(?:Eau de Parfum|Eau de Toilette|Parfum|EDP|EDT)?\s*\d+\s*m[lL])\s+\$([0-9]+(?:\.[0-9]{2})?)/g,m;while((m=re.exec(text))!==null){var raw=String(m[1]||'').trim();if(/save|rrp|shipping|gift|chemist/i.test(raw))continue;var sizeMl=scoutSizeMl_(raw);out.push({source:'Chemist Warehouse',name:scoutCleanName_(raw),house:'',price:Number(m[2]),size:sizeMl?sizeMl+'mL':'',sizeMl:sizeMl,inspiredBy:'',category:'Designer',url:url,available:true});}});return out;}
+

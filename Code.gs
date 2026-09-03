@@ -1,53 +1,103 @@
 /**
- * DeadEnd Scents Admin V6.0.3 consolidation endpoint.
- * Copy this file into the Apps Script project attached to the master Google Sheet.
- * Deploy as Web App: Execute as Me, Access Anyone with the link.
+ * DeadEnd Scents Admin V2.1 write engine.
+ * Copy this complete file into the Apps Script project attached to the master Google Sheet.
+ * Deploy as Web App: Execute as Me, Access Anyone.
  */
 function doPost(e) {
+  var payload = {};
+  var requestId = '';
   try {
     var payloadText = '';
-    if (e && e.postData && e.postData.contents) payloadText = e.postData.contents;
     if (e && e.parameter && e.parameter.payload) payloadText = e.parameter.payload;
-    var payload = JSON.parse(payloadText || '{}');
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    else if (e && e.postData && e.postData.contents) payloadText = e.postData.contents;
+    payload = JSON.parse(payloadText || '{}');
+    requestId = String(payload.requestId || '');
+    if (requestId) setWriteReceipt_(requestId, { ok:true, status:'processing', requestId:requestId });
 
-    if (payload.action === 'updateBottle') return json_({ ok:true, result:updateBottle_(ss, payload) });
-    if (payload.action === 'setFeatured') return json_({ ok:true, result:setFeatured_(ss, payload) });
-    if (payload.action === 'setStaffPicks') return json_({ ok:true, result:setStaffPicks_(ss, payload) });
-    if (payload.action === 'updateSettings') return json_({ ok:true, result:updateSettings_(ss, payload) });
-    if (payload.action === 'addPurchase') return json_(addPurchase_(ss, payload));
-    if (payload.action === 'addBottle') return json_(addBottle_(ss, payload));
-    if (payload.action === 'duplicateBottle') return json_(duplicateBottle_(ss, payload));
-    if (payload.action === 'deleteBottle') return json_(deleteBottle_(ss, payload));
-    if (payload.action === 'setupSEOColumns') return json_(setupSEOColumns_(ss));
-    if (payload.action === 'generateFragranceSEO') return json_(generateFragranceSEO_(ss, payload));
-    if (payload.action === 'saveFragranceSEO') return json_(saveFragranceSEO_(ss, payload));
-    if (payload.action === 'generateBulkFragranceSEO') return json_(generateBulkFragranceSEO_(ss, payload));
-    if (payload.action === 'setupOrderSheets') return json_(setupOrderSheets_(ss));
-    if (payload.action === 'createOrder') return json_(createOrder_(ss, payload));
-    if (payload.action === 'updateOrderStatus') return json_(updateOrderStatus_(ss, payload));
-
-    return json_({ ok:false, error:'Unknown action: ' + payload.action });
+    var ss = SpreadsheetApp.openById('1GSW1Bytauoi53o4orbojoZl9K-ixL4Y4Mj6NyehzCrc');
+    var result = dispatchWrite_(ss, payload);
+    var response = result && typeof result === 'object' ? result : { ok:true, result:result };
+    if (response.ok === undefined) response.ok = true;
+    response.status = response.ok === false ? 'error' : 'complete';
+    response.requestId = requestId;
+    if (requestId) setWriteReceipt_(requestId, response);
+    return json_(response);
   } catch (err) {
-    return json_({ ok:false, error:String(err && err.message ? err.message : err) });
+    var failure = {
+      ok:false,
+      status:'error',
+      requestId:requestId,
+      error:String(err && err.message ? err.message : err)
+    };
+    if (requestId) setWriteReceipt_(requestId, failure);
+    return json_(failure);
   }
+}
+
+function dispatchWrite_(ss, payload) {
+  if (payload.action === 'updateBottle') return { ok:true, result:updateBottle_(ss, payload) };
+  if (payload.action === 'setupOperationsColumns') return { ok:true, result:setupOperationsColumns_(ss) };
+  if (payload.action === 'bulkStocktake') return { ok:true, result:bulkStocktake_(ss, payload) };
+  if (payload.action === 'setFeatured') return { ok:true, result:setFeatured_(ss, payload) };
+  if (payload.action === 'setStaffPicks') return { ok:true, result:setStaffPicks_(ss, payload) };
+  if (payload.action === 'updateSettings') return { ok:true, result:updateSettings_(ss, payload) };
+  if (payload.action === 'addPurchase') return addPurchase_(ss, payload);
+  if (payload.action === 'addBottle') return addBottle_(ss, payload);
+  if (payload.action === 'duplicateBottle') return duplicateBottle_(ss, payload);
+  if (payload.action === 'deleteBottle') return deleteBottle_(ss, payload);
+  if (payload.action === 'setupSEOColumns') return setupSEOColumns_(ss);
+  if (payload.action === 'generateFragranceSEO') return generateFragranceSEO_(ss, payload);
+  if (payload.action === 'saveFragranceSEO') return saveFragranceSEO_(ss, payload);
+  if (payload.action === 'generateBulkFragranceSEO') return generateBulkFragranceSEO_(ss, payload);
+  if (payload.action === 'setupOrderSheets') return setupOrderSheets_(ss);
+  if (payload.action === 'createOrder') return createOrder_(ss, payload);
+  if (payload.action === 'updateOrderStatus') return updateOrderStatus_(ss, payload);
+  if (payload.action === 'updateOrder') return updateOrder_(ss, payload);
+  if (payload.action === 'duplicateOrder') return duplicateOrder_(ss, payload);
+  if (payload.action === 'updateCustomer') return updateCustomer_(ss, payload);
+  if (payload.action === 'saveWishlist') return saveWishlist_(ss, payload);
+  if (payload.action === 'deleteWishlist') return deleteWishlist_(ss, payload);
+  throw new Error('Unknown action: ' + payload.action);
+}
+
+function writeReceiptKey_(requestId) {
+  return 'adminWrite:' + String(requestId || '').replace(/[^a-zA-Z0-9_-]/g, '');
+}
+function setWriteReceipt_(requestId, receipt) {
+  if (!requestId) return;
+  var value = JSON.stringify(receipt);
+  CacheService.getScriptCache().put(writeReceiptKey_(requestId), value, 600);
+  PropertiesService.getScriptProperties().setProperty(writeReceiptKey_(requestId), value);
+}
+function getWriteReceipt_(requestId) {
+  if (!requestId) return null;
+  var key = writeReceiptKey_(requestId);
+  var value = CacheService.getScriptCache().get(key) || PropertiesService.getScriptProperties().getProperty(key);
+  return value ? JSON.parse(value) : null;
 }
 
 function doGet(e) {
   var action = e && e.parameter && e.parameter.action;
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  if (action === 'settings') return json_({ ok:true, settings:getSettings_(ss) });
+  if (action === 'writeStatus') {
+    var requestId = String((e && e.parameter && e.parameter.requestId) || '');
+    return json_(getWriteReceipt_(requestId) || { ok:true, status:'waiting', requestId:requestId });
+  }
+  var ss = SpreadsheetApp.openById('1GSW1Bytauoi53o4orbojoZl9K-ixL4Y4Mj6NyehzCrc');
+  if (action === 'settings') return json_({ok:true, settings:getSettings_(ss)});
   if (action === 'catalogue') return json_(getCatalogue_(ss));
   if (action === 'orders') return json_(getOrders_(ss));
+  if (action === 'orderItems') return json_(getOrderItems_(ss));
   if (action === 'customers') return json_(getCustomers_(ss));
   if (action === 'orderSummary') return json_(getOrderSummary_(ss));
-  return json_({ ok:true, app:'DeadEnd Scents Admin V6.0.3', status:'ready' });
+  if (action === 'wishlist') return json_(getWishlist_(ss));
+  if (action === 'stockAdjustments') return json_(getStockAdjustments_(ss));
+  if (action === 'buyScout') return json_(buyScout_(e));
+  return json_({ok:true, app:'DeadEnd Scents Admin V2.1', status:'ready'});
 }
 
 function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
 }
-
 
 function normaliseSettingKey_(label) {
   var k = String(label || '').toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -217,7 +267,7 @@ function norm_(value) {
   return String(value || '').toLowerCase().replace(/[^a-z0-9]/g,'');
 }
 
-function headerMap_(sheet) {
+function sheetHeaderMap_(sheet) {
   var headers = sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0];
   var map = {};
   headers.forEach(function(h,i){ if (h) map[norm_(h)] = i + 1; });
@@ -238,7 +288,7 @@ function setByAnyHeader_(sheet, rowNumber, map, names, value) {
 }
 
 function findRowById_(sheet, id) {
-  var map = headerMap_(sheet);
+  var map = sheetHeaderMap_(sheet);
   var idCol = getColumn_(map, ['ID','Fragrance ID']);
   if (!idCol) throw new Error('No ID column found in Catalogue sheet.');
   var last = sheet.getLastRow();
@@ -254,7 +304,7 @@ function updateBottle_(ss, payload) {
   var sheet = catalogueSheet_(ss);
   var row = findRowById_(sheet, payload.id);
   if (!row) throw new Error('Bottle ID not found: ' + payload.id);
-  var map = headerMap_(sheet);
+  var map = sheetHeaderMap_(sheet);
   var fields = payload.fields || {};
 
   // V5.2.3 writes by actual spreadsheet column name first, with aliases for older fields.
@@ -279,7 +329,7 @@ function updateBottle_(ss, payload) {
 
 function setFeatured_(ss, payload) {
   var sheet = catalogueSheet_(ss);
-  var map = headerMap_(sheet);
+  var map = sheetHeaderMap_(sheet);
   var featuredCol = getColumn_(map, ['Featured','Fragrance of the Week','FOTW']);
   if (!featuredCol) throw new Error('No Featured column found in Catalogue sheet.');
   var last = sheet.getLastRow();
@@ -299,7 +349,7 @@ function setStaffPicks_(ss, payload) {
   var lookup = {};
   ids.forEach(function(id){ lookup[String(id)] = true; });
   var sheet = catalogueSheet_(ss);
-  var map = headerMap_(sheet);
+  var map = sheetHeaderMap_(sheet);
   var idCol = getColumn_(map, ['ID','Fragrance ID']);
   var staffCol = getColumn_(map, ['Staff Pick','Staff Picks','StaffPick']);
   if (!idCol) throw new Error('No ID column found in Catalogue sheet.');
@@ -330,7 +380,7 @@ function addPurchase_(ss, payload) {
     itemSheet.appendRow([p.purchaseId, fragranceId, item.fragrance, item.bottleSize, item.fullness + '% full', item.allocatedCost, item.currentMl, item.mode === 'new' ? 'New bottle from Admin' : 'Restock from Admin']);
     var row = findRowById_(catalogue, fragranceId);
     if (row) {
-      var map = headerMap_(catalogue);
+      var map = sheetHeaderMap_(catalogue);
       setByAnyHeader_(catalogue, row, map, ['Purchase Date'], p.purchaseDate);
       setByAnyHeader_(catalogue, row, map, ['Purchase Price','Purchase Cost'], item.allocatedCost);
       setByAnyHeader_(catalogue, row, map, ['Bottle Size (mL)','Bottle Size'], item.bottleSize);
@@ -351,7 +401,7 @@ function nextCatalogueId_(catalogue, collection) {
   else if (c.indexOf('niche') >= 0) prefix = 'NIC';
   else if (c.indexOf('middle') >= 0) prefix = 'ME';
   else if (c.indexOf('inspired') >= 0) prefix = 'INS';
-  var map = headerMap_(catalogue);
+  var map = sheetHeaderMap_(catalogue);
   var idCol = getColumn_(map, ['ID','Fragrance ID']);
   var max = 0;
   if (idCol && catalogue.getLastRow() > 1) {
@@ -705,7 +755,7 @@ function generateFragranceSEO_(ss, payload) {
   var bundle = rowObjectFromSheet_(sheet, row);
   var all = getCatalogue_(ss).items || [];
   var seo = generateSEODataForRow_(bundle.obj, all);
-  var map = headerMap_(sheet);
+  var map = sheetHeaderMap_(sheet);
   Object.keys(seo).forEach(function(name){ setByAnyHeader_(sheet, row, map, [name], seo[name]); });
   return { ok:true, action:'generateFragranceSEO', id:payload.id, seo:seo };
 }
@@ -717,7 +767,7 @@ function saveFragranceSEO_(ss, payload) {
   if (!row) throw new Error('Bottle ID not found: ' + payload.id);
   var fields = payload.fields || {};
   fields['SEO Last Updated'] = new Date();
-  var map = headerMap_(sheet);
+  var map = sheetHeaderMap_(sheet);
   Object.keys(fields).forEach(function(name){ setByAnyHeader_(sheet, row, map, [name], fields[name]); });
   return { ok:true, action:'saveFragranceSEO', id:payload.id };
 }
@@ -728,7 +778,7 @@ function generateBulkFragranceSEO_(ss, payload) {
   if (!ids.length) return { ok:true, action:'generateBulkFragranceSEO', count:0 };
   var sheet = catalogueSheet_(ss);
   var all = getCatalogue_(ss).items || [];
-  var map = headerMap_(sheet);
+  var map = sheetHeaderMap_(sheet);
   var count = 0;
   ids.forEach(function(id){
     var row = findRowById_(sheet, id);
@@ -780,6 +830,12 @@ function getOrders_(ss) {
   var items=values.filter(function(r){return r.some(String);}).map(function(r){return rowObject_(headers,r);});
   items.reverse();
   return {ok:true,items:items};
+}
+function getOrderItems_(ss) {
+  var sheet=ss.getSheetByName('Order Items'); if(!sheet) return {ok:true,items:[]};
+  var values=sheet.getDataRange().getDisplayValues(); if(values.length<2) return {ok:true,items:[]};
+  var headers=values.shift();
+  return {ok:true,items:values.filter(function(r){return r.some(String);}).map(function(r){return rowObject_(headers,r);})};
 }
 function getCustomers_(ss) {
   var sheet=ss.getSheetByName('Customers'); if(!sheet) return {ok:true,items:[]};
@@ -843,6 +899,213 @@ function updateOrderStatus_(ss,payload) {
 }
 
 
+/* =========================
+ * ADMIN V2 PHASE 5: ORDER EDITING + CUSTOMER PROFILES
+ * ========================= */
+function boolValue_(v) { return v === true || String(v || '').toLowerCase() === 'true' || String(v || '') === '1'; }
+function findOrderRow_(sheet, orderId) {
+  var values=sheet.getDataRange().getValues(), headers=values[0], hi=headerMap_(headers);
+  for(var r=1;r<values.length;r++) if(String(values[r][hi.orderid])===String(orderId)) return {row:r+1,values:values[r],headers:headers,hi:hi};
+  return null;
+}
+function orderItemsFor_(sheet, orderId) {
+  var values=sheet.getDataRange().getValues(), headers=values[0], hi=headerMap_(headers), out=[];
+  for(var r=1;r<values.length;r++) if(String(values[r][hi.orderid])===String(orderId)) out.push({row:r+1,obj:rowObject_(headers,values[r])});
+  return out;
+}
+function normaliseMatchText_(v) {
+  return String(v || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+function resolveCatalogueStockRows_(ss, items) {
+  var sheet = ss.getSheetByName('Catalogue') || ss.getSheets()[0];
+  var values = sheet.getDataRange().getValues(), headers = values[0];
+  var idCol = findHeader_(headers, ['ID']);
+  var houseCol = findHeader_(headers, ['House']);
+  var fragranceCol = findHeader_(headers, ['Fragrance', 'Name']);
+  var mlCol = findHeader_(headers, ['Current mL','Current Amount Left (mL)','Amount Left','Remaining mL']);
+  if (mlCol < 0) throw new Error('Catalogue needs a Current mL column before stock can be adjusted.');
+
+  var resolved = items.map(function(it) {
+    var id = String(it.fragranceId || it['Fragrance ID'] || '').trim();
+    var house = normaliseMatchText_(it.house || it.House || '');
+    var fragrance = normaliseMatchText_(it.fragrance || it.Fragrance || '');
+    var row = -1;
+    if (id && idCol >= 0) {
+      for (var r=1; r<values.length; r++) if (String(values[r][idCol]).trim() === id) { row=r; break; }
+    }
+    if (row < 0 && fragrance && fragranceCol >= 0) {
+      for (var x=1; x<values.length; x++) {
+        var sameFragrance = normaliseMatchText_(values[x][fragranceCol]) === fragrance;
+        var sameHouse = houseCol < 0 || !house || normaliseMatchText_(values[x][houseCol]) === house;
+        if (sameFragrance && sameHouse) { row=x; break; }
+      }
+    }
+    if (row < 0) throw new Error('Could not match Catalogue bottle for ' + [it.house || it.House, it.fragrance || it.Fragrance].filter(String).join(' - '));
+    return { row:row, item:it };
+  });
+  return { sheet:sheet, values:values, mlCol:mlCol, resolved:resolved };
+}
+function adjustOrderStock_(ss,items,direction) {
+  var match = resolveCatalogueStockRows_(ss, items);
+  match.resolved.forEach(function(entry) {
+    var it=entry.item, qty=Math.max(1,Number(it.quantity || it.Quantity)||1), size=Number(it.sizeMl || it['Size mL'])||0;
+    if (!size) throw new Error('Missing sample size for ' + (it.fragrance || it.Fragrance || 'order item'));
+    var current=Number(match.values[entry.row][match.mlCol])||0;
+    var next=current+(direction*qty*size);
+    if (next < 0) throw new Error('Not enough stock for ' + (it.fragrance || it.Fragrance || 'order item') + '. Current stock: ' + current + 'mL.');
+    match.sheet.getRange(entry.row+1,match.mlCol+1).setValue(next);
+    match.values[entry.row][match.mlCol]=next;
+  });
+}
+function writeOrderItems_(sheet,orderId,date,customerId,customerName,items){
+  items.forEach(function(it,index){
+    var q=Math.max(1,Number(it.quantity)||1), size=Number(it.sizeMl)||0, price=Number(it.priceEach)||0, line=q*price, cost=Number(it.productCost)||0;
+    appendByHeaders_(sheet,{'Order Item ID':orderId+'-'+String(index+1).padStart(2,'0'),'Order ID':orderId,'Order Date':date,'Customer ID':customerId,'Customer':customerName,'Fragrance ID':it.fragranceId||'','House':it.house||'','Fragrance':it.fragrance||'','Size mL':size,'Quantity':q,'Price Each':price,'Line Total':line,'Product Cost':cost,'Profit':line-cost});
+  });
+}
+function updateOrder_(ss,payload) {
+  setupOrderSheets_(ss);
+  var orders=ss.getSheetByName('Orders'), itemsSheet=ss.getSheetByName('Order Items'), customers=ss.getSheetByName('Customers');
+  var id=String(payload.orderId||''), found=findOrderRow_(orders,id); if(!found) throw new Error('Order not found: '+id);
+  var oldCustomerId=String(found.values[found.hi.customerid]||''), oldStock=boolValue_(found.values[found.hi.stockdeducted]);
+  var oldItems=orderItemsFor_(itemsSheet,id), p=payload.order||{}, items=Array.isArray(p.items)?p.items:[]; if(!items.length) throw new Error('Add at least one fragrance.');
+  var date=p.orderDate||found.values[found.hi.orderdate], customerName=String(p.customer||'').trim()||'Walk-in / Unknown';
+  var customerId=upsertCustomer_(customers,customerName,p,date), subtotal=0,totalMl=0,totalQty=0;
+  items.forEach(function(it){var q=Math.max(1,Number(it.quantity)||1),size=Number(it.sizeMl)||0,price=Number(it.priceEach)||0;subtotal+=q*price;totalMl+=q*size;totalQty+=q;});
+  var postage=Number(p.postage)||0,discount=Number(p.discount)||0,total=Math.max(0,subtotal+postage-discount),newStock=boolValue_(p.deductStock);
+  // Validate every new stock match before changing the old order or catalogue.
+  if(newStock) resolveCatalogueStockRows_(ss, items);
+  if(oldStock) resolveCatalogueStockRows_(ss, oldItems.map(function(x){return x.obj;}));
+  if(oldStock) adjustOrderStock_(ss,oldItems.map(function(x){return x.obj;}),1);
+  oldItems.sort(function(a,b){return b.row-a.row;}).forEach(function(x){itemsSheet.deleteRow(x.row);});
+  writeOrderItems_(itemsSheet,id,date,customerId,customerName,items);
+  if(newStock) adjustOrderStock_(ss,items,-1);
+  var updates={'Order Date':date,'Customer ID':customerId,'Customer':customerName,'Sales Source':p.salesSource||'Direct','Items Sold':totalQty,'Total mL':totalMl,'Subtotal':subtotal,'Postage':postage,'Discount':discount,'Total Paid':total,'Payment Status':p.paymentStatus||'Paid','Order Status':p.orderStatus||'New','Tracking Number':p.trackingNumber||'','Notes':p.notes||'','Stock Deducted':newStock?'TRUE':'FALSE'};
+  found.headers.forEach(function(h,i){if(updates[h]!==undefined) orders.getRange(found.row,i+1).setValue(updates[h]);});
+  refreshCustomerStats_(ss,oldCustomerId); if(customerId!==oldCustomerId) refreshCustomerStats_(ss,customerId);
+  return {ok:true,action:'updateOrder',orderId:id,total:total};
+}
+function duplicateOrder_(ss,payload) {
+  var orders=ss.getSheetByName('Orders'), itemsSheet=ss.getSheetByName('Order Items'); if(!orders||!itemsSheet) throw new Error('Order sheets not found.');
+  var id=String(payload.orderId||''), found=findOrderRow_(orders,id); if(!found) throw new Error('Order not found: '+id);
+  var o=rowObject_(found.headers,found.values), its=orderItemsFor_(itemsSheet,id).map(function(x){var z=x.obj;return {fragranceId:z['Fragrance ID'],house:z.House,fragrance:z.Fragrance,sizeMl:Number(z['Size mL'])||0,quantity:Number(z.Quantity)||1,priceEach:Number(z['Price Each'])||0,productCost:Number(z['Product Cost'])||0};});
+  return createOrder_(ss,{order:{orderDate:payload.orderDate||Utilities.formatDate(new Date(),Session.getScriptTimeZone()||'Australia/Sydney','yyyy-MM-dd'),customer:o.Customer,salesSource:payload.salesSource||'Repeat Customer',paymentStatus:'Pending',orderStatus:'New',postage:Number(o.Postage)||0,discount:0,notes:'Duplicated from '+id,deductStock:false,items:its}});
+}
+function updateCustomer_(ss,payload) {
+  var sheet=ss.getSheetByName('Customers'); if(!sheet) throw new Error('Customers sheet not found.');
+  var values=sheet.getDataRange().getValues(), headers=values[0], hi=headerMap_(headers), id=String(payload.customerId||''), fields=payload.fields||{};
+  for(var r=1;r<values.length;r++) if(String(values[r][hi.customerid])===id){
+    var map={'Customer':'customer','Email':'email','Phone':'phone','Notes':'notes'};
+    Object.keys(map).forEach(function(label){var col=hi[map[label]];if(col!==undefined&&fields[label]!==undefined)sheet.getRange(r+1,col+1).setValue(fields[label]);});
+    var os=ss.getSheetByName('Orders'), oi=ss.getSheetByName('Order Items');
+    if(fields.Customer!==undefined){
+      [os,oi].forEach(function(s){if(!s)return;var v=s.getDataRange().getValues(),h=v[0],m=headerMap_(h);for(var i=1;i<v.length;i++)if(String(v[i][m.customerid])===id&&m.customer!==undefined)s.getRange(i+1,m.customer+1).setValue(fields.Customer);});
+    }
+    return {ok:true,action:'updateCustomer',customerId:id};
+  }
+  throw new Error('Customer not found: '+id);
+}
+
+
+/* Phase 7.1 — DeadEnd Intelligence Wishlist */
+var WISHLIST_HEADERS_ = [
+  'Wishlist ID','Date Added','Last Updated','House','Fragrance','Collection','Scent Style',
+  'Season','Occasion','Purchase Price','Shipping / Extra','Landed Cost','Normal RRP','Bottle Size mL',
+  'Suggested 3mL','Suggested 5mL','Suggested 10mL','Buy Score','Verdict','Projected ROI %',
+  'Closest Match','Closest Match %','Similarity Reasons','Status','Personal Interest','Notes / Accords','URL'
+];
+
+function wishlistSheet_(ss) {
+  var sheet = ss.getSheetByName('Wishlist');
+  if (!sheet) sheet = ss.insertSheet('Wishlist');
+  var current = sheet.getLastColumn() ? sheet.getRange(1,1,1,sheet.getLastColumn()).getDisplayValues()[0] : [];
+  var existing = {};
+  current.forEach(function(h){ existing[norm_(h)] = true; });
+  if (!current.length || !current.some(function(v){ return String(v || '').trim(); })) {
+    sheet.getRange(1,1,1,WISHLIST_HEADERS_.length).setValues([WISHLIST_HEADERS_]);
+  } else {
+    WISHLIST_HEADERS_.forEach(function(h){
+      if (!existing[norm_(h)]) sheet.getRange(1,sheet.getLastColumn()+1).setValue(h);
+    });
+  }
+  sheet.setFrozenRows(1);
+  return sheet;
+}
+
+function getWishlist_(ss) {
+  var sheet = wishlistSheet_(ss);
+  var values = sheet.getDataRange().getDisplayValues();
+  if (values.length < 2) return {ok:true,items:[]};
+  var headers = values.shift();
+  var items = values.filter(function(r){ return r.some(function(v){ return String(v || '').trim(); }); })
+    .map(function(r){ return rowObject_(headers,r); });
+  return {ok:true,items:items};
+}
+
+function saveWishlist_(ss,payload) {
+  var sheet = wishlistSheet_(ss);
+  var item = payload.item || {};
+  var id = String(item['Wishlist ID'] || item.id || '').trim();
+  if (!id) id = 'W-' + Utilities.getUuid().substring(0,8).toUpperCase();
+  var values = sheet.getDataRange().getValues();
+  var headers = values[0];
+  var hi = headerMap_(headers);
+  var row = 0;
+  for (var r=1;r<values.length;r++) {
+    if (String(values[r][hi.wishlistid] || '') === id) { row=r+1; break; }
+  }
+  var now = new Date();
+  var out = {
+    'Wishlist ID':id,
+    'Date Added':item['Date Added'] || item.saved || now,
+    'Last Updated':now,
+    'House':item.House || item.house || '',
+    'Fragrance':item.Fragrance || item.name || '',
+    'Collection':item.Collection || item.collection || '',
+    'Scent Style':item['Scent Style'] || item.scentStyle || '',
+    'Season':item.Season || item.season || '',
+    'Occasion':item.Occasion || item.occasion || '',
+    'Purchase Price':Number(item['Purchase Price'] || item.cost || 0),
+    'Shipping / Extra':Number(item['Shipping / Extra'] || item.shipping || 0),
+    'Landed Cost':Number(item['Landed Cost'] || item.landedCost || 0),
+    'Normal RRP':Number(item['Normal RRP'] || item.rrp || 0),
+    'Bottle Size mL':Number(item['Bottle Size mL'] || item.size || 0),
+    'Suggested 3mL':Number(item['Suggested 3mL'] || item.p3 || 0),
+    'Suggested 5mL':Number(item['Suggested 5mL'] || item.p5 || 0),
+    'Suggested 10mL':Number(item['Suggested 10mL'] || item.p10 || 0),
+    'Buy Score':Number(item['Buy Score'] || item.score || 0),
+    'Verdict':item.Verdict || item.verdict || '',
+    'Projected ROI %':Number(item['Projected ROI %'] || item.roi || 0),
+    'Closest Match':item['Closest Match'] || item.closest || '',
+    'Closest Match %':Number(item['Closest Match %'] || item.overlap || 0),
+    'Similarity Reasons':item['Similarity Reasons'] || item.similarityReasons || '',
+    'Status':item.Status || item.status || 'Wishlist',
+    'Personal Interest':Number(item['Personal Interest'] || item.interest || 3),
+    'Notes / Accords':item['Notes / Accords'] || item.notes || '',
+    'URL':item.URL || item.url || ''
+  };
+  var rowValues = headers.map(function(h){ return out[h] !== undefined ? out[h] : ''; });
+  if (row) sheet.getRange(row,1,1,headers.length).setValues([rowValues]);
+  else { sheet.appendRow(rowValues); row=sheet.getLastRow(); }
+  return {ok:true,action:'saveWishlist',id:id,row:row};
+}
+
+function deleteWishlist_(ss,payload) {
+  var sheet = wishlistSheet_(ss);
+  var id = String(payload.id || '').trim();
+  if (!id) throw new Error('Wishlist ID is required.');
+  var values = sheet.getDataRange().getValues();
+  var hi = headerMap_(values[0]);
+  for (var r=1;r<values.length;r++) {
+    if (String(values[r][hi.wishlistid] || '') === id) {
+      sheet.deleteRow(r+1);
+      return {ok:true,action:'deleteWishlist',id:id};
+    }
+  }
+  throw new Error('Wishlist item not found: ' + id);
+}
+
+
 // =========================================================
 // Phase 7.3.1 — Operations / Bulk Stocktake
 // =========================================================
@@ -864,7 +1127,7 @@ function ensureInventoryAdjustments_(ss){
 }
 function bulkStocktake_(ss,payload){
   setupOperationsColumns_(ss);
-  var entries=payload.entries||[], sheet=catalogueSheet_(ss), map=headerMap_(sheet), history=ensureInventoryAdjustments_(ss), logs=[];
+  var entries=payload.entries||[], sheet=catalogueSheet_(ss), map=sheetHeaderMap_(sheet), history=ensureInventoryAdjustments_(ss), logs=[];
   entries.forEach(function(e){
     var row=findRowById_(sheet,e.id); if(!row) throw new Error('Bottle ID not found: '+e.id);
     var mlCol=getColumn_(map,['Current mL','Current Amount Left (mL)','Amount Left','Remaining mL']);
@@ -890,3 +1153,43 @@ function getStockAdjustments_(ss){
   var items=vals.map(function(r){var o={};h.forEach(function(k,i){o[k]=r[i]||''});return o;}).reverse().slice(0,100);
   return {ok:true,items:items};
 }
+
+
+/* DeadEnd Intelligence V3.2 — Multi-Retailer Buy Scout.
+ * Retailer page structures can change. Each source is isolated and returns health status.
+ * Shopify retailers use collection products.json where available; other retailers use HTML text fallbacks.
+ */
+function buyScout_(e) {
+  var p=(e&&e.parameter)||{}, min=Number(p.min)||30, max=Number(p.max)||50;
+  var requested=String(p.sources||p.source||'fordgate,privateblends,perfumesdubai,witr,chemistwarehouse').split(',').map(function(x){return x.trim();}).filter(String);
+  if(requested.indexOf('all')>=0) requested=['fordgate','privateblends','perfumesdubai','witr','chemistwarehouse'];
+  var inStock=String(p.inStock||'1')!=='0', raw=[], statuses=[];
+  var defs={
+    fordgate:{label:'Fordgate',fn:function(){return scoutFordgateV32_(min,max);}},
+    privateblends:{label:'Private Blends',fn:function(){return scoutPrivateBlendsV32_(min,max);}},
+    perfumesdubai:{label:'Perfumes Dubai',fn:function(){return scoutPerfumesDubaiV32_(min,max);}},
+    witr:{label:'WITR',fn:function(){return scoutWitrV32_(min,max);}},
+    chemistwarehouse:{label:'Chemist Warehouse',fn:function(){return scoutChemistWarehouseV32_(min,max);}}
+  };
+  requested.forEach(function(key){var d=defs[key];if(!d)return;try{var got=d.fn()||[];raw=raw.concat(got);statuses.push({source:key,label:d.label,ok:true,count:got.length});}catch(err){statuses.push({source:key,label:d.label,ok:false,count:0,error:String(err&&err.message||err)});}});
+  var filtered=raw.filter(function(x){return Number(x.price)>=min&&Number(x.price)<=max&&(!inStock||x.available!==false);});
+  var groups={}; filtered.forEach(function(x){var key=scoutProductKey_(x);if(!groups[key])groups[key]=[];groups[key].push(x);});
+  var merged=Object.keys(groups).map(function(key){var offers=groups[key].sort(function(a,b){return Number(a.price)-Number(b.price);}),best=offers[0];return {key:key,name:best.name,house:best.house||'',inspiredBy:best.inspiredBy||'',category:best.category||'',size:best.size||'',sizeMl:Number(best.sizeMl)||scoutSizeMl_(best.name+' '+best.size),tags:best.tags||'',description:best.description||'',bestPrice:Number(best.price),highestPrice:Math.max.apply(null,offers.map(function(o){return Number(o.price)||0;})),bestSource:best.source,bestUrl:best.url,offerCount:offers.length,offers:offers.map(function(o){return {source:o.source,price:Number(o.price),url:o.url,available:o.available!==false};})};});
+  merged.sort(function(a,b){return a.bestPrice-b.bestPrice;});
+  return {ok:true,items:merged.slice(0,100),rawCount:filtered.length,sources:statuses,scannedAt:new Date().toISOString()};
+}
+function scoutFetchV32_(url){var r=UrlFetchApp.fetch(url,{muteHttpExceptions:true,followRedirects:true,headers:{'User-Agent':'Mozilla/5.0 (compatible; DeadEndScentsBuyScout/3.2; +https://deadendscents.com)'}}),code=r.getResponseCode();if(code<200||code>=400)throw new Error('HTTP '+code);return r.getContentText();}
+function scoutTextV32_(html){return String(html||'').replace(/<script[\s\S]*?<\/script>/gi,' ').replace(/<style[\s\S]*?<\/style>/gi,' ').replace(/<[^>]+>/g,' ').replace(/&amp;/g,'&').replace(/&#8217;|&rsquo;|&#39;/g,"'").replace(/&quot;/g,'"').replace(/&nbsp;/g,' ').replace(/\s+/g,' ');}
+function scoutSizeMl_(v){var m=String(v||'').match(/(\d+(?:\.\d+)?)\s*m[lL]\b/);return m?Number(m[1]):0;}
+function scoutCleanName_(v){return String(v||'').replace(/\b(?:eau de parfum|eau de toilette|parfum|perfume|edp|edt|exdp|extrait)\b/ig,' ').replace(/\b\d+(?:\.\d+)?\s*ml\b/ig,' ').replace(/\s+/g,' ').trim();}
+function scoutProductKey_(x){var s=scoutCleanName_((x.house||'')+' '+(x.name||'')).toLowerCase().replace(/\b(?:for men|for women|unisex|by)\b/g,' ').replace(/[^a-z0-9]+/g,' ').replace(/\s+/g,' ').trim();return s||String(x.source+' '+x.name).toLowerCase();}
+function scoutHouseFromTitle_(title,vendor){if(vendor)return String(vendor).trim();var m=String(title||'').match(/\bby\s+([^|,]+)$/i);return m?m[1].trim():'';}
+function scoutMiddleEasternHouse_(house,title){var t=(String(house||'')+' '+String(title||'')).toLowerCase();return /lattafa|afnan|armaf|fragrance world|french avenue|paris corner|maison alhambra|khadlaj|rasasi|al haramain|ahmed al maghribi|arabiyat|swiss arabian|rayhaan|zimaya|ard al zaafaran|al rehab|gulf orchid|naseem|ajmal|junaid|ibrahim al qurashi|reef perfumes/.test(t);}
+function scoutCategoryV32_(house,title,source){var t=(String(house||'')+' '+String(title||'')).toLowerCase();if(source==='Chemist Warehouse')return 'Designer';if(/mancera|montale|xerjoff|nishane|amouage|creed|parfums de marly|initio|memo paris|maison francis kurkdjian|byredo|le labo|diptyque|penhaligon|roja|clive christian/.test(t))return 'Niche';if(/dior|armani|boss|issey miyake|azzaro|valentino|versace|dolce|gabbana|rabanne|givenchy|gucci|burberry|coach|calvin klein|ralph lauren|montblanc|davidoff|marc jacobs|jean paul gaultier|yves saint laurent|ysl|hermes|chanel|prada|mugler|lacoste|jimmy choo/.test(t))return 'Designer';return scoutMiddleEasternHouse_(house,title)?'Middle Eastern':'';}
+function scoutShopifyCollectionV32_(base,collection,source,maxPages){var out=[],pages=Math.max(1,maxPages||2);for(var page=1;page<=pages;page++){var url=base.replace(/\/$/,'')+'/collections/'+collection+'/products.json?limit=250&page='+page,data=JSON.parse(scoutFetchV32_(url)),products=data.products||[];if(!products.length)break;products.forEach(function(p){var variants=p.variants||[],available=variants.filter(function(v){return v.available!==false;}),pool=available.length?available:variants;if(!pool.length)return;var best=pool.slice().sort(function(a,b){return Number(a.price)-Number(b.price);})[0],title=String(p.title||''),house=scoutHouseFromTitle_(title,p.vendor),sizeMl=scoutSizeMl_(title+' '+(best.title||''));out.push({source:source,name:scoutCleanName_(title),house:house,price:Number(best.price)||0,size:sizeMl?sizeMl+'mL':'',sizeMl:sizeMl,inspiredBy:'',category:scoutCategoryV32_(house,title,source),url:base.replace(/\/$/,'')+'/products/'+p.handle,available:available.length>0,tags:Array.isArray(p.tags)?p.tags.join(' '):String(p.tags||''),description:scoutTextV32_(p.body_html||'').slice(0,500)});});if(products.length<250)break;}return out;}
+function scoutFordgateV32_(){var out=[];for(var page=1;page<=4;page++){var url='https://fordgatepharmacy.com.au/dubai-fragrances/page/'+page+'/?orderby=price',text=scoutTextV32_(scoutFetchV32_(url)),re=/([^$]{4,120}?)\s+\$([0-9]+(?:\.[0-9]{2})?)/g,m;while((m=re.exec(text))!==null){var raw=String(m[1]||'').trim().split(' ').slice(-18).join(' ');if(raw.length<4||/shipping|cart|subtotal|search|login|checkout/i.test(raw))continue;var sold=/out of stock|sold out/i.test(raw),sizeMl=scoutSizeMl_(raw),house=scoutHouseFromTitle_(raw,'');out.push({source:'Fordgate Pharmacy',name:scoutCleanName_(raw.replace(/^(sale|out of stock|sold out)\s*/i,'')),house:house,price:Number(m[2]),size:sizeMl?sizeMl+'mL':'',sizeMl:sizeMl,inspiredBy:'',category:'Middle Eastern',url:url,available:!sold});}}return out;}
+function scoutPrivateBlendsV32_(){try{return scoutShopifyCollectionV32_('https://privateblends.com.au','all','Private Blends',2);}catch(err){var url='https://privateblends.com.au/collections/all',text=scoutTextV32_(scoutFetchV32_(url)),out=[],re=/([^$]{4,120}?)\s+\$([0-9]+(?:\.[0-9]{2})?)/g,m;while((m=re.exec(text))!==null){var raw=String(m[1]||'').trim().split(' ').slice(-16).join(' ');if(/shipping|cart|subtotal|gift card/i.test(raw))continue;var sizeMl=scoutSizeMl_(raw);out.push({source:'Private Blends',name:scoutCleanName_(raw),house:'',price:Number(m[2]),size:sizeMl?sizeMl+'mL':'',sizeMl:sizeMl,category:'Middle Eastern',url:url,available:!/sold out|out of stock/i.test(raw)});}return out;}}
+function scoutPerfumesDubaiV32_(){return scoutShopifyCollectionV32_('https://perfumesdubai.com.au','all','Perfumes Dubai',3);}
+function scoutWitrV32_(){return scoutShopifyCollectionV32_('https://witr.com.au','all','WITR',3);}
+function scoutChemistWarehouseV32_(){var urls=['https://www.chemistwarehouse.com.au/shop-online/542/fragrances','https://www.chemistwarehouse.com.au/shop-online/343/mens-fragrances','https://www.chemistwarehouse.com.au/shop-online/344/womens-fragrances'],out=[];urls.forEach(function(url){var text=scoutTextV32_(scoutFetchV32_(url)),re=/([A-Z][A-Za-z0-9&'’ .\-]{3,90}?(?:Eau de Parfum|Eau de Toilette|Parfum|EDP|EDT)?\s*\d+\s*m[lL])\s+\$([0-9]+(?:\.[0-9]{2})?)/g,m;while((m=re.exec(text))!==null){var raw=String(m[1]||'').trim();if(/save|rrp|shipping|gift|chemist/i.test(raw))continue;var sizeMl=scoutSizeMl_(raw);out.push({source:'Chemist Warehouse',name:scoutCleanName_(raw),house:'',price:Number(m[2]),size:sizeMl?sizeMl+'mL':'',sizeMl:sizeMl,inspiredBy:'',category:'Designer',url:url,available:true});}});return out;}
+
