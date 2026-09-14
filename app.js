@@ -556,38 +556,36 @@
   }
 
   async function init(){
+    // V2.6.3 cache-first boot: load the tiny local settings file, then paint the
+    // storefront from browser cache / packaged fallback immediately. Live settings
+    // and catalogue data refresh silently after the first paint.
     settings = await getJson('settings.json', {});
     settings = settings || {};
     if(!settings.masterSheetId) settings.masterSheetId = MASTER_SHEET_ID;
-    settings = await loadLiveSettings(settings);
-    if(!settings.masterSheetId) settings.masterSheetId = MASTER_SHEET_ID;
 
-    // Stable-load mode: choose one catalogue source first, then render once.
-    // This prevents the page visibly swapping between packaged backup, Sheets and
-    // Apps Script data (different counts / different Fragrance of the Week).
     try {
-      data = csvToFragrances(await getCsv(settings.catalogueCsvUrl || sheetCsvUrl('Catalogue') || DEFAULT_CSV));
+      const local = await getLocalCatalogueBackup();
+      catalogueSource = local.source;
+      data = csvToFragrances(local.csv);
     } catch(error){
-      console.error(error);
-      if(grid) grid.innerHTML='<div class="empty">Catalogue could not load.<br><small>' + escapeHtml(error.message || error) + '</small></div>';
-      return;
+      console.warn('Fast local catalogue boot failed; falling back to live source', error);
+      try {
+        data = csvToFragrances(await getCsv(settings.catalogueCsvUrl || sheetCsvUrl('Catalogue') || DEFAULT_CSV));
+      } catch(liveError){
+        console.error(liveError);
+        if(grid) grid.innerHTML='<div class="empty">Catalogue could not load.<br><small>' + escapeHtml(liveError.message || liveError) + '</small></div>';
+        return;
+      }
     }
+
     if(!data.length){
       if(grid) grid.innerHTML='<div class="empty">Catalogue is empty. Check the Catalogue tab headers.</div>';
       return;
     }
-    // Render catalogue + FOTW immediately once catalogue data is ready. Discovery
-    // Packs are non-critical and must never block the rest of the storefront.
-    showCatalogueSourceNotice();
-    if(statCount) statCount.textContent=data.length;
-    resetOptions(categoryFilter,'All scent styles',[...new Set([...uniqueValues('category'),'Vanilla'])].sort((a,b)=>a.localeCompare(b)));
-    resetOptions(collectionFilter,'All types',uniqueValues('collection'));
-    resetOptions(occasionFilter,'All occasions',uniqueMultiValues('occasion'));
-    setupContactLinks(); setupAnalytics(); injectSeoSchema(); applySearchQueryFromUrl(); renderFeatured(); renderExploreHub(); render(); updateCart();
-    trackEvent('catalogue_loaded', { fragrance_count: data.length, source: catalogueSource });
-    setClarityTag('fragrance_count', data.length);
 
-    // Load Discovery Packs independently after the critical storefront is visible.
+    renderStorefront(true);
+
+    // Discovery Packs remain non-critical and never block FOTW/catalogue rendering.
     loadDiscoveryPacks().then(loadedPacks => {
       packs = loadedPacks;
       renderPacks();
@@ -596,6 +594,59 @@
       packs = [];
       renderPacks();
     });
+
+    // Refresh live settings/catalogue in the background. If fresher data arrives,
+    // update the page without returning the customer to a loading state.
+    (async()=>{
+      try {
+        const liveSettings = await loadLiveSettings(settings);
+        if(liveSettings && typeof liveSettings === 'object') settings = liveSettings;
+        if(!settings.masterSheetId) settings.masterSheetId = MASTER_SHEET_ID;
+
+        const liveCsv = await getCsv(settings.catalogueCsvUrl || sheetCsvUrl('Catalogue') || DEFAULT_CSV);
+        const fresh = csvToFragrances(liveCsv);
+        if(fresh.length){
+          const before = catalogueSignature(data);
+          const after = catalogueSignature(fresh);
+          data = fresh;
+          if(before !== after) renderStorefront(false);
+          trackEvent('catalogue_refreshed', { fragrance_count: data.length, source: catalogueSource });
+          setClarityTag('fragrance_count', data.length);
+        }
+      } catch(error){
+        console.warn('Background catalogue refresh failed; keeping instant local catalogue', error);
+      }
+    })();
+  }
+
+  function catalogueSignature(items){
+    return (items || []).map(x=>[
+      x.id || '', x.house || '', x.name || x.fragrance || '', x.stock || '', x.status || '',
+      x.price3 || x['3ml'] || '', x.price5 || x['5ml'] || '', x.price10 || x['10ml'] || ''
+    ].join('~')).join('|');
+  }
+
+  function renderStorefront(firstBoot){
+    showCatalogueSourceNotice();
+    if(statCount) statCount.textContent=data.length;
+
+    // Preserve active filters during a silent background catalogue refresh.
+    const selectedCategory = categoryFilter ? categoryFilter.value : 'all';
+    const selectedCollection = collectionFilter ? collectionFilter.value : 'all';
+    const selectedOccasion = occasionFilter ? occasionFilter.value : 'all';
+    resetOptions(categoryFilter,'All scent styles',[...new Set([...uniqueValues('category'),'Vanilla'])].sort((a,b)=>a.localeCompare(b)));
+    resetOptions(collectionFilter,'All types',uniqueValues('collection'));
+    resetOptions(occasionFilter,'All occasions',uniqueMultiValues('occasion'));
+    if(categoryFilter && [...categoryFilter.options].some(o=>o.value===selectedCategory)) categoryFilter.value=selectedCategory;
+    if(collectionFilter && [...collectionFilter.options].some(o=>o.value===selectedCollection)) collectionFilter.value=selectedCollection;
+    if(occasionFilter && [...occasionFilter.options].some(o=>o.value===selectedOccasion)) occasionFilter.value=selectedOccasion;
+
+    if(firstBoot){
+      setupContactLinks(); setupAnalytics(); applySearchQueryFromUrl(); updateCart();
+      trackEvent('catalogue_loaded', { fragrance_count: data.length, source: catalogueSource });
+      setClarityTag('fragrance_count', data.length);
+    }
+    injectSeoSchema(); renderFeatured(); renderExploreHub(); render();
   }
 
   function uniqueValues(key){ return [...new Set(data.map(x=>x[key]).filter(Boolean))].sort(); }
