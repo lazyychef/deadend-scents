@@ -27,6 +27,18 @@
   let landingSelection = true;
   const LANDING_CARD_LIMIT = 8;
 
+  // Public-site performance guard: never let a slow Google/Apps Script request
+  // hold the entire storefront in a loading state indefinitely.
+  async function fetchWithTimeout(url, options = {}, timeoutMs = 4500){
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      return await fetch(url, Object.assign({}, options, { signal: controller.signal }));
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
   async function getJson(file, fallback){
     try { const res = await fetch(file, { cache: 'no-store' }); if(!res.ok) throw new Error(res.status); return await res.json(); }
     catch(error){ console.error('Could not load ' + file, error); return fallback; }
@@ -49,7 +61,7 @@
     if(appsScriptEndpoint){
       try {
         const liveUrl = appsScriptEndpoint + (appsScriptEndpoint.includes('?') ? '&' : '?') + 'action=catalogue&cacheBust=' + Date.now();
-        const liveRes = await fetch(liveUrl, { cache:'no-store', redirect:'follow' });
+        const liveRes = await fetchWithTimeout(liveUrl, { cache:'no-store', redirect:'follow' }, 4000);
         if(!liveRes.ok) throw new Error('Apps Script returned ' + liveRes.status);
         const liveJson = await liveRes.json();
         const liveItems = liveJson && Array.isArray(liveJson.items) ? liveJson.items : [];
@@ -65,7 +77,7 @@
     }
     const noCacheUrl = url + (url.includes('?') ? '&' : '?') + 'cacheBust=' + Date.now();
     try {
-      const res = await fetch(noCacheUrl, { cache: 'no-store', redirect: 'follow' });
+      const res = await fetchWithTimeout(noCacheUrl, { cache: 'no-store', redirect: 'follow' }, 4000);
       if(!res.ok) throw new Error('Google Sheet returned ' + res.status);
       const text = await res.text();
       if (text && text.trim()) { catalogueSource = 'live'; saveCatalogueCache(text); return text; }
@@ -99,7 +111,7 @@
   async function getSheetCsvOnly(url){
     const noCacheUrl = url + (url.includes('?') ? '&' : '?') + 'cacheBust=' + Date.now();
     try {
-      const res = await fetch(noCacheUrl, { cache: 'no-store', redirect: 'follow' });
+      const res = await fetchWithTimeout(noCacheUrl, { cache: 'no-store', redirect: 'follow' }, 4000);
       if(!res.ok) throw new Error('Google Sheet returned ' + res.status);
       const text = await res.text();
       if(text && text.trim()) return text;
@@ -521,7 +533,7 @@
     if(endpoint){
       try {
         const url = endpoint + (endpoint.includes('?') ? '&' : '?') + 'action=settings&cacheBust=' + Date.now();
-        const res = await fetch(url, { cache:'no-store', redirect:'follow' });
+        const res = await fetchWithTimeout(url, { cache:'no-store', redirect:'follow' }, 2500);
         if(res.ok){
           const json = await res.json();
           const live = json && json.settings ? json.settings : json;
@@ -564,15 +576,26 @@
       if(grid) grid.innerHTML='<div class="empty">Catalogue is empty. Check the Catalogue tab headers.</div>';
       return;
     }
-    packs = await loadDiscoveryPacks();
+    // Render catalogue + FOTW immediately once catalogue data is ready. Discovery
+    // Packs are non-critical and must never block the rest of the storefront.
     showCatalogueSourceNotice();
     if(statCount) statCount.textContent=data.length;
     resetOptions(categoryFilter,'All scent styles',[...new Set([...uniqueValues('category'),'Vanilla'])].sort((a,b)=>a.localeCompare(b)));
     resetOptions(collectionFilter,'All types',uniqueValues('collection'));
     resetOptions(occasionFilter,'All occasions',uniqueMultiValues('occasion'));
-    setupContactLinks(); setupAnalytics(); injectSeoSchema(); applySearchQueryFromUrl(); renderFeatured(); renderPacks(); renderExploreHub(); render(); updateCart();
+    setupContactLinks(); setupAnalytics(); injectSeoSchema(); applySearchQueryFromUrl(); renderFeatured(); renderExploreHub(); render(); updateCart();
     trackEvent('catalogue_loaded', { fragrance_count: data.length, source: catalogueSource });
     setClarityTag('fragrance_count', data.length);
+
+    // Load Discovery Packs independently after the critical storefront is visible.
+    loadDiscoveryPacks().then(loadedPacks => {
+      packs = loadedPacks;
+      renderPacks();
+    }).catch(error => {
+      console.warn('Discovery Packs background load failed', error);
+      packs = [];
+      renderPacks();
+    });
   }
 
   function uniqueValues(key){ return [...new Set(data.map(x=>x[key]).filter(Boolean))].sort(); }
