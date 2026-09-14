@@ -599,9 +599,22 @@
     // update the page without returning the customer to a loading state.
     (async()=>{
       try {
+        const settingsBefore = JSON.stringify({
+          weeklyDiscountPercent: settings.weeklyDiscountPercent ?? settings.weeklyDiscount ?? null,
+          weeklyDiscountDays: settings.weeklyDiscountDays ?? settings.featuredDiscountDays ?? null,
+          newArrivalDays: settings.newArrivalDays ?? null,
+          expressPostage: settings.expressPostage ?? null
+        });
         const liveSettings = await loadLiveSettings(settings);
         if(liveSettings && typeof liveSettings === 'object') settings = liveSettings;
         if(!settings.masterSheetId) settings.masterSheetId = MASTER_SHEET_ID;
+        const settingsAfter = JSON.stringify({
+          weeklyDiscountPercent: settings.weeklyDiscountPercent ?? settings.weeklyDiscount ?? null,
+          weeklyDiscountDays: settings.weeklyDiscountDays ?? settings.featuredDiscountDays ?? null,
+          newArrivalDays: settings.newArrivalDays ?? null,
+          expressPostage: settings.expressPostage ?? null
+        });
+        const settingsChanged = settingsBefore !== settingsAfter;
 
         const liveCsv = await getCsv(settings.catalogueCsvUrl || sheetCsvUrl('Catalogue') || DEFAULT_CSV);
         const fresh = csvToFragrances(liveCsv);
@@ -609,9 +622,14 @@
           const before = catalogueSignature(data);
           const after = catalogueSignature(fresh);
           data = fresh;
-          if(before !== after) renderStorefront(false);
+          // Re-render when catalogue OR live merchandising settings change.
+          // This keeps cache-first loading fast while ensuring FOTW uses the
+          // Google Sheet/Admin discount as soon as live settings arrive.
+          if(before !== after || settingsChanged) renderStorefront(false);
           trackEvent('catalogue_refreshed', { fragrance_count: data.length, source: catalogueSource });
           setClarityTag('fragrance_count', data.length);
+        } else if(settingsChanged) {
+          renderStorefront(false);
         }
       } catch(error){
         console.warn('Background catalogue refresh failed; keeping instant local catalogue', error);
