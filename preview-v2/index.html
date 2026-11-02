@@ -7,7 +7,7 @@
   <meta name="description" content="Buy designer, niche, Middle Eastern and inspired fragrance samples in Australia. Browse fragrance decants, Discovery Packs, Fragrantica links and $10 express postage from Sydney.">
   <meta name="keywords" content="fragrance samples Australia, fragrance decants Australia, perfume samples Australia, cologne samples Sydney, niche fragrance samples Australia, designer fragrance samples, Middle Eastern fragrance samples, DeadEnd Scents">
   <link rel="canonical" href="https://deadendscents.com/">
-  <meta name="robots" content="noindex,nofollow">
+  <meta name="robots" content="index,follow">
   <meta name="theme-color" content="#163f34">
   <meta property="og:site_name" content="DeadEnd Scents">
   <meta property="og:locale" content="en_AU">
@@ -30,6 +30,7 @@
   <link rel="stylesheet" href="layout-v254.css?v=1">
   <link rel="stylesheet" href="layout-v255.css?v=1">
   <link rel="stylesheet" href="discovery-packs-v261.css?v=1">
+  <link rel="stylesheet" href="scent-finder-v270.css?v=1">
 </head>
 <body id="top">
   <header class="site-header">
@@ -39,6 +40,7 @@
     </a>
     <button class="hamburger" type="button" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu"><span></span><span></span><span></span></button>
     <nav id="mobileMenu" class="mobile-menu" aria-label="Main menu">
+      <a href="#scentFinder">Find Your Scent</a>
       <a href="#featured">Fragrance of the Week</a>
       <a href="#packs">Discovery Packs</a>
       <a href="#catalogue">Catalogue</a>
@@ -59,6 +61,21 @@
       <div><strong>glass</strong><span>vials</span></div>
     </section>
 
+
+    <section id="scentFinder" class="finder-section section" aria-labelledby="finderHeading">
+      <div class="finder-shell">
+        <p class="eyebrow">YOUR SCENT, YOUR WAY</p>
+        <h2 id="finderHeading">Find Your Next Scent</h2>
+        <p class="finder-intro">Answer three quick questions. We'll match you with samples from our current collection.</p>
+        <div id="finderQuiz" class="finder-quiz">
+          <div class="finder-progress" aria-live="polite">Question <span id="finderStep">1</span> of 3</div>
+          <h3 id="finderQuestion">What scent profile do you enjoy?</h3>
+          <div id="finderChoices" class="finder-choices"></div>
+          <div class="finder-controls"><button id="finderBack" type="button" class="finder-secondary" hidden>Back</button><button id="finderReset" type="button" class="finder-secondary">Start again</button></div>
+        </div>
+        <div id="finderResults" class="finder-results" hidden aria-live="polite"></div>
+      </div>
+    </section>
 
     <section id="featured" class="featured-section">
       <section class="desktop-packs-panel" aria-label="Discovery Packs desktop">
@@ -183,7 +200,7 @@
   </footer>
 
   <script src="data.js"></script>
-  <script src="app.js?v=2.6.0-packs-warm"></script>
+  <script src="app.js?v=2.7.0"></script>
   <script src="discovery-packs-v261.js?v=1"></script>
 </body>
 </html>

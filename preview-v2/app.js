@@ -27,6 +27,18 @@
   let landingSelection = true;
   const LANDING_CARD_LIMIT = 8;
 
+  // Public-site performance guard: never let a slow Google/Apps Script request
+  // hold the entire storefront in a loading state indefinitely.
+  async function fetchWithTimeout(url, options = {}, timeoutMs = 4500){
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      return await fetch(url, Object.assign({}, options, { signal: controller.signal }));
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
   async function getJson(file, fallback){
     try { const res = await fetch(file, { cache: 'no-store' }); if(!res.ok) throw new Error(res.status); return await res.json(); }
     catch(error){ console.error('Could not load ' + file, error); return fallback; }
@@ -49,7 +61,7 @@
     if(appsScriptEndpoint){
       try {
         const liveUrl = appsScriptEndpoint + (appsScriptEndpoint.includes('?') ? '&' : '?') + 'action=catalogue&cacheBust=' + Date.now();
-        const liveRes = await fetch(liveUrl, { cache:'no-store', redirect:'follow' });
+        const liveRes = await fetchWithTimeout(liveUrl, { cache:'no-store', redirect:'follow' }, 4000);
         if(!liveRes.ok) throw new Error('Apps Script returned ' + liveRes.status);
         const liveJson = await liveRes.json();
         const liveItems = liveJson && Array.isArray(liveJson.items) ? liveJson.items : [];
@@ -65,7 +77,7 @@
     }
     const noCacheUrl = url + (url.includes('?') ? '&' : '?') + 'cacheBust=' + Date.now();
     try {
-      const res = await fetch(noCacheUrl, { cache: 'no-store', redirect: 'follow' });
+      const res = await fetchWithTimeout(noCacheUrl, { cache: 'no-store', redirect: 'follow' }, 4000);
       if(!res.ok) throw new Error('Google Sheet returned ' + res.status);
       const text = await res.text();
       if (text && text.trim()) { catalogueSource = 'live'; saveCatalogueCache(text); return text; }
@@ -99,7 +111,7 @@
   async function getSheetCsvOnly(url){
     const noCacheUrl = url + (url.includes('?') ? '&' : '?') + 'cacheBust=' + Date.now();
     try {
-      const res = await fetch(noCacheUrl, { cache: 'no-store', redirect: 'follow' });
+      const res = await fetchWithTimeout(noCacheUrl, { cache: 'no-store', redirect: 'follow' }, 4000);
       if(!res.ok) throw new Error('Google Sheet returned ' + res.status);
       const text = await res.text();
       if(text && text.trim()) return text;
@@ -521,7 +533,7 @@
     if(endpoint){
       try {
         const url = endpoint + (endpoint.includes('?') ? '&' : '?') + 'action=settings&cacheBust=' + Date.now();
-        const res = await fetch(url, { cache:'no-store', redirect:'follow' });
+        const res = await fetchWithTimeout(url, { cache:'no-store', redirect:'follow' }, 2500);
         if(res.ok){
           const json = await res.json();
           const live = json && json.settings ? json.settings : json;
@@ -544,36 +556,168 @@
   }
 
   async function init(){
+    // V2.6.3 cache-first boot: load the tiny local settings file, then paint the
+    // storefront from browser cache / packaged fallback immediately. Live settings
+    // and catalogue data refresh silently after the first paint.
     settings = await getJson('settings.json', {});
     settings = settings || {};
     if(!settings.masterSheetId) settings.masterSheetId = MASTER_SHEET_ID;
-    settings = await loadLiveSettings(settings);
-    if(!settings.masterSheetId) settings.masterSheetId = MASTER_SHEET_ID;
 
-    // Stable-load mode: choose one catalogue source first, then render once.
-    // This prevents the page visibly swapping between packaged backup, Sheets and
-    // Apps Script data (different counts / different Fragrance of the Week).
     try {
-      data = csvToFragrances(await getCsv(settings.catalogueCsvUrl || sheetCsvUrl('Catalogue') || DEFAULT_CSV));
+      const local = await getLocalCatalogueBackup();
+      catalogueSource = local.source;
+      data = csvToFragrances(local.csv);
     } catch(error){
-      console.error(error);
-      if(grid) grid.innerHTML='<div class="empty">Catalogue could not load.<br><small>' + escapeHtml(error.message || error) + '</small></div>';
-      return;
+      console.warn('Fast local catalogue boot failed; falling back to live source', error);
+      try {
+        data = csvToFragrances(await getCsv(settings.catalogueCsvUrl || sheetCsvUrl('Catalogue') || DEFAULT_CSV));
+      } catch(liveError){
+        console.error(liveError);
+        if(grid) grid.innerHTML='<div class="empty">Catalogue could not load.<br><small>' + escapeHtml(liveError.message || liveError) + '</small></div>';
+        return;
+      }
     }
+
     if(!data.length){
       if(grid) grid.innerHTML='<div class="empty">Catalogue is empty. Check the Catalogue tab headers.</div>';
       return;
     }
-    packs = await loadDiscoveryPacks();
+
+    renderStorefront(true);
+
+    // Discovery Packs remain non-critical and never block FOTW/catalogue rendering.
+    loadDiscoveryPacks().then(loadedPacks => {
+      packs = loadedPacks;
+      renderPacks();
+    }).catch(error => {
+      console.warn('Discovery Packs background load failed', error);
+      packs = [];
+      renderPacks();
+    });
+
+    // Refresh live settings/catalogue in the background. If fresher data arrives,
+    // update the page without returning the customer to a loading state.
+    (async()=>{
+      try {
+        const settingsBefore = JSON.stringify({
+          weeklyDiscountPercent: settings.weeklyDiscountPercent ?? settings.weeklyDiscount ?? null,
+          weeklyDiscountDays: settings.weeklyDiscountDays ?? settings.featuredDiscountDays ?? null,
+          newArrivalDays: settings.newArrivalDays ?? null,
+          expressPostage: settings.expressPostage ?? null
+        });
+        const liveSettings = await loadLiveSettings(settings);
+        if(liveSettings && typeof liveSettings === 'object') settings = liveSettings;
+        if(!settings.masterSheetId) settings.masterSheetId = MASTER_SHEET_ID;
+        const settingsAfter = JSON.stringify({
+          weeklyDiscountPercent: settings.weeklyDiscountPercent ?? settings.weeklyDiscount ?? null,
+          weeklyDiscountDays: settings.weeklyDiscountDays ?? settings.featuredDiscountDays ?? null,
+          newArrivalDays: settings.newArrivalDays ?? null,
+          expressPostage: settings.expressPostage ?? null
+        });
+        const settingsChanged = settingsBefore !== settingsAfter;
+
+        const liveCsv = await getCsv(settings.catalogueCsvUrl || sheetCsvUrl('Catalogue') || DEFAULT_CSV);
+        const fresh = csvToFragrances(liveCsv);
+        if(fresh.length){
+          const before = catalogueSignature(data);
+          const after = catalogueSignature(fresh);
+          data = fresh;
+          // Re-render when catalogue OR live merchandising settings change.
+          // This keeps cache-first loading fast while ensuring FOTW uses the
+          // Google Sheet/Admin discount as soon as live settings arrive.
+          if(before !== after || settingsChanged) renderStorefront(false);
+          trackEvent('catalogue_refreshed', { fragrance_count: data.length, source: catalogueSource });
+          setClarityTag('fragrance_count', data.length);
+        } else if(settingsChanged) {
+          renderStorefront(false);
+        }
+      } catch(error){
+        console.warn('Background catalogue refresh failed; keeping instant local catalogue', error);
+      }
+    })();
+  }
+
+  function catalogueSignature(items){
+    return (items || []).map(x=>[
+      x.id || '', x.house || '', x.name || x.fragrance || '', x.stock || '', x.status || '',
+      x.price3 || x['3ml'] || '', x.price5 || x['5ml'] || '', x.price10 || x['10ml'] || ''
+    ].join('~')).join('|');
+  }
+
+  function renderStorefront(firstBoot){
     showCatalogueSourceNotice();
     if(statCount) statCount.textContent=data.length;
+
+    // Preserve active filters during a silent background catalogue refresh.
+    const selectedCategory = categoryFilter ? categoryFilter.value : 'all';
+    const selectedCollection = collectionFilter ? collectionFilter.value : 'all';
+    const selectedOccasion = occasionFilter ? occasionFilter.value : 'all';
     resetOptions(categoryFilter,'All scent styles',[...new Set([...uniqueValues('category'),'Vanilla'])].sort((a,b)=>a.localeCompare(b)));
     resetOptions(collectionFilter,'All types',uniqueValues('collection'));
     resetOptions(occasionFilter,'All occasions',uniqueMultiValues('occasion'));
-    setupContactLinks(); setupAnalytics(); injectSeoSchema(); applySearchQueryFromUrl(); renderFeatured(); renderPacks(); renderExploreHub(); render(); updateCart();
-    trackEvent('catalogue_loaded', { fragrance_count: data.length, source: catalogueSource });
-    setClarityTag('fragrance_count', data.length);
+    if(categoryFilter && [...categoryFilter.options].some(o=>o.value===selectedCategory)) categoryFilter.value=selectedCategory;
+    if(collectionFilter && [...collectionFilter.options].some(o=>o.value===selectedCollection)) collectionFilter.value=selectedCollection;
+    if(occasionFilter && [...occasionFilter.options].some(o=>o.value===selectedOccasion)) occasionFilter.value=selectedOccasion;
+
+    if(firstBoot){
+      setupContactLinks(); setupAnalytics(); applySearchQueryFromUrl(); updateCart();
+      trackEvent('catalogue_loaded', { fragrance_count: data.length, source: catalogueSource });
+      setClarityTag('fragrance_count', data.length);
+    }
+    injectSeoSchema(); renderFeatured(); renderExploreHub(); render(); renderScentFinder();
   }
+
+  // V2.7: all recommendations use the same live catalogue and existing cart.
+  const finderQuestions = [
+    { title:'What scent profile do you enjoy?', choices:[['Fresh & citrus','fresh citrus aquatic bergamot lemon grapefruit'],['Sweet & vanilla','sweet vanilla gourmand caramel'],['Woody & earthy','woody cedar sandalwood vetiver oud'],['Spicy & warm','spicy amber tobacco cinnamon saffron'],['Floral & soft','floral rose jasmine musk']] },
+    { title:'When will you wear it?', choices:[['Everyday / office','daily office everyday work'],['Going out / date night','date evening night special'],['Warm weather','summer spring hot'],['Cool weather','winter autumn cold']] },
+    { title:'What are you looking for?', choices:[['Something easy to wear','fresh clean versatile light'],['Something bold','strong intense rich oud spicy'],['Something sweet','sweet vanilla gourmand'],['Surprise me','']] }
+  ];
+  let finderAnswers=[], finderStep=0, finderOpen=false;
+  function finderWords(s){return String(s||'').toLowerCase().replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(w=>w.length>2);}
+  function finderScore(f){
+    const style=(f.category||'')+' '+(f.notes||'')+' '+(f.accords||'');
+    const occasion=(f.occasion||'')+' '+(f.season||'');
+    const all=style+' '+occasion+' '+(f.name||'');
+    return finderAnswers.reduce((sum,ans,i)=>{
+      const target=i===0?style:i===1?occasion:all;
+      const terms=finderWords(ans[1]);
+      return sum+terms.reduce((n,w)=>n+(finderWords(target).includes(w)?(i===0?5:i===1?4:2):0),0);
+    },0);
+  }
+  function finderTrack(name,params){trackEvent(name,Object.assign({feature:'scent_finder'},params||{}));}
+  function renderScentFinder(){
+    const choices=$('finderChoices'), question=$('finderQuestion'), results=$('finderResults'), quiz=$('finderQuiz');
+    if(!choices||!data.length)return;
+    if(finderStep>=finderQuestions.length){
+      quiz.hidden=true; results.hidden=false;
+      const matches=data.filter(isPublicVisible).filter(f=>[f.p3,f.p5,f.p10].some(p=>parseMoney(p)>0)).map(f=>({f,score:finderScore(f)})).sort((a,b)=>b.score-a.score||String(a.f.name).localeCompare(String(b.f.name))).slice(0,5);
+      results.innerHTML='<div class="finder-result-head"><div><p class="eyebrow">YOUR MATCHES</p><h3>Made for your preferences</h3><p>Explore these scents or add a sample straight to your cart.</p></div><button type="button" class="finder-secondary" id="finderTryAgain">Retake quiz</button></div><div class="finder-result-grid">'+matches.map(({f},i)=>{
+        const prices=[['3mL',f.p3],['5mL',f.p5],['10mL',f.p10]].filter(x=>parseMoney(x[1])>0);
+        const image=/^https?:\/\//i.test(String(f.imageUrl||''))?'<img src="'+escapeAttr(f.imageUrl)+'" alt="'+escapeAttr(f.house+' '+f.name)+'" loading="lazy">':'<div class="finder-placeholder">DeadEnd Scents</div>';
+        return '<article class="finder-match">'+image+'<div class="finder-match-copy"><span class="finder-rank">MATCH '+(i+1)+'</span><p class="finder-house">'+escapeHtml(f.house)+'</p><h4>'+escapeHtml(f.name)+'</h4><p class="finder-notes">'+escapeHtml(f.notes||f.category||'')+'</p><div class="finder-prices">'+prices.map(([size,price])=>'<button type="button" class="finder-add" data-id="'+escapeAttr(f.id)+'" data-size="'+size+'" aria-label="Add '+escapeAttr(size+' '+f.name)+' to cart">'+size+' · '+escapeHtml(discountedPriceText(price,f))+' <b>+</b></button>').join('')+'</div></div></article>';
+      }).join('')+'</div>';
+      $('finderTryAgain').addEventListener('click',()=>{finderAnswers=[];finderStep=0;finderTrack('scent_finder_restart');renderScentFinder();});
+      results.querySelectorAll('.finder-add').forEach(btn=>btn.addEventListener('click',()=>{
+        const f=data.find(x=>String(x.id)===btn.dataset.id);if(!f)return;
+        const price=discountedPriceText(({ '3mL':f.p3,'5mL':f.p5,'10mL':f.p10 })[btn.dataset.size],f);
+        addToCart({type:'sample',name:f.name,house:f.house,size:btn.dataset.size,price});
+        finderTrack('scent_finder_add_to_cart',{fragrance_name:f.name,sample_size:btn.dataset.size,value:parseMoney(price),currency:'AUD'});
+        trackEvent('add_to_cart',{fragrance_name:f.name,house:f.house,sample_size:btn.dataset.size,value:parseMoney(price),currency:'AUD',source:'scent_finder'});
+        btn.textContent='Added ✓';setTimeout(()=>{btn.textContent=btn.dataset.size+' · '+price+' +';},1200);
+      }));
+      return;
+    }
+    quiz.hidden=false;results.hidden=true;
+    const q=finderQuestions[finderStep];$('finderStep').textContent=finderStep+1;question.textContent=q.title;
+    choices.innerHTML='';q.choices.forEach(([label,terms])=>{
+      const btn=document.createElement('button');btn.type='button';btn.className='finder-choice';btn.textContent=label;
+      btn.addEventListener('click',()=>{if(!finderOpen){finderOpen=true;finderTrack('scent_finder_start');}finderAnswers[finderStep]=[label,terms];finderTrack('scent_finder_answer',{question_number:finderStep+1,answer:label});finderStep++;if(finderStep===3)finderTrack('scent_finder_complete',{recommendation_count:5});renderScentFinder();});choices.appendChild(btn);
+    });
+    $('finderBack').hidden=finderStep===0;
+  }
+  if($('finderBack'))$('finderBack').addEventListener('click',()=>{finderStep=Math.max(0,finderStep-1);renderScentFinder();});
+  if($('finderReset'))$('finderReset').addEventListener('click',()=>{finderStep=0;finderAnswers=[];finderOpen=false;renderScentFinder();});
 
   function uniqueValues(key){ return [...new Set(data.map(x=>x[key]).filter(Boolean))].sort(); }
   function uniqueMultiValues(key){ const values=new Set(); data.forEach(x=>String(x[key]||'').split(',').map(v=>v.trim()).filter(Boolean).forEach(v=>values.add(v))); return [...values].sort(); }
@@ -1054,6 +1198,7 @@
     if(btn.dataset.special) setSpecialFilter(btn.dataset.special);
     else setCollectionFilter(btn.dataset.collection || 'all');
   }));
+  const messengerCheckout=$('sendMessengerCart'); if(messengerCheckout) messengerCheckout.addEventListener('click',()=>{if(cart.length) trackEvent('messenger_order_click',{cart_items:cart.length,cart_value:cart.reduce((n,item)=>n+parseMoney(item.price),0),currency:'AUD'});});
   const copyOrderBtn=$('copyOrder'); if(copyOrderBtn) copyOrderBtn.addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText($('orderText').value); copyOrderBtn.textContent='Copied'; trackEvent('copy_order_message', { cart_items: cart.length }); setTimeout(()=>copyOrderBtn.textContent='Copy order',1400); }catch(e){ $('orderText').select(); document.execCommand('copy'); } });
   const clearCart=$('clearCart'); if(clearCart) clearCart.addEventListener('click',()=>{ trackEvent('clear_cart', { cart_items: cart.length }); cart.length=0; updateCart(); });
   if(floatingCart) floatingCart.addEventListener('click',()=>{ trackEvent('floating_cart_click', { cart_items: cart.length }); const order=$('order'); if(order) order.scrollIntoView({behavior:'smooth',block:'start'}); });
