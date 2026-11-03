@@ -16,3 +16,6 @@
 .finder-expanded .finder-toggle{margin-bottom:20px;background:transparent;color:#182d09;padding:9px 15px}
 .finder-section #finderContent[hidden]{display:none!important}
 @media(max-width:600px){.finder-section:not(.finder-expanded) .finder-shell{display:block;padding:18px 16px}.finder-section:not(.finder-expanded) .finder-shell h2{font-size:clamp(29px,7.5vw,38px)}.finder-section:not(.finder-expanded) .finder-intro{font-size:14px;line-height:1.45;margin-bottom:13px}.finder-toggle{width:100%;padding:12px 15px}.finder-section{padding-top:12px;padding-bottom:12px}}
+
+/* V2.7.3 recommendation rotation */
+.finder-more-wrap{text-align:center;margin:20px 0 2px}.finder-more{background:#182d09;color:#fff;border:1px solid #182d09;border-radius:9px;padding:13px 22px;font:700 14px Inter,sans-serif;cursor:pointer}.finder-more:hover,.finder-more:focus-visible{background:#a65b32;border-color:#a65b32}.finder-more-wrap p{color:#5c6256;font-size:12px;margin:8px 0 0}

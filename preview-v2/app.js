@@ -673,7 +673,7 @@
     { title:'When will you wear it?', choices:[['Everyday / office','daily office everyday work'],['Going out / date night','date evening night special'],['Warm weather','summer spring hot'],['Cool weather','winter autumn cold']] },
     { title:'What are you looking for?', choices:[['Something easy to wear','fresh clean versatile light'],['Something bold','strong intense rich oud spicy'],['Something sweet','sweet vanilla gourmand'],['Surprise me','']] }
   ];
-  let finderAnswers=[], finderStep=0, finderOpen=false;
+  let finderAnswers=[], finderStep=0, finderOpen=false, finderPage=0;
   function finderWords(s){return String(s||'').toLowerCase().replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(w=>w.length>2);}
   function finderScore(f){
     const style=(f.category||'')+' '+(f.notes||'')+' '+(f.accords||'');
@@ -692,21 +692,30 @@
     if(finderStep>=finderQuestions.length){
       quiz.hidden=true; results.hidden=false;
       const ranked=data.filter(isPublicVisible).filter(f=>[f.p3,f.p5,f.p10].some(p=>parseMoney(p)>0)).map(f=>({f,score:finderScore(f)})).sort((a,b)=>b.score-a.score||String(a.f.name).localeCompare(String(b.f.name)));
-      const matches=[],houseCounts=new Map();
-      while(matches.length<5 && ranked.length){
-        const best=ranked[0].score;
-        let pick=ranked.findIndex(({f,score})=>score>=best-5 && !(houseCounts.get(String(f.house||'').toLowerCase())||0));
-        if(pick<0)pick=ranked.findIndex(({f,score})=>score>=best-5 && (houseCounts.get(String(f.house||'').toLowerCase())||0)<2);
+      // Keep two strongest matches; rotate three other relevant scents.
+      const anchors=ranked.slice(0,2);
+      const relevant=ranked.slice(2).filter(item=>item.score>0);
+      const pool=relevant.length?relevant:ranked.slice(2);
+      const startAt=pool.length?(finderPage*3)%pool.length:0;
+      const ordered=pool.slice(startAt).concat(pool.slice(0,startAt));
+      const rotating=[],houseCounts=new Map();
+      anchors.forEach(({f})=>{const h=String(f.house||'').toLowerCase();houseCounts.set(h,(houseCounts.get(h)||0)+1);});
+      while(rotating.length<3 && ordered.length){
+        let pick=ordered.findIndex(({f})=>!(houseCounts.get(String(f.house||'').toLowerCase())||0));
+        if(pick<0)pick=ordered.findIndex(({f})=>(houseCounts.get(String(f.house||'').toLowerCase())||0)<2);
         if(pick<0)pick=0;
-        const item=ranked.splice(pick,1)[0];matches.push(item);
-        const house=String(item.f.house||'').toLowerCase();houseCounts.set(house,(houseCounts.get(house)||0)+1);
+        const item=ordered.splice(pick,1)[0];rotating.push(item);
+        const h=String(item.f.house||'').toLowerCase();houseCounts.set(h,(houseCounts.get(h)||0)+1);
       }
+      const matches=anchors.concat(rotating).slice(0,5);
+      const canShowMore=pool.length>3;
       results.innerHTML='<div class="finder-result-head"><div><p class="eyebrow">YOUR MATCHES</p><h3>Made for your preferences</h3><p>Explore these scents or add a sample straight to your cart.</p></div><button type="button" class="finder-secondary" id="finderTryAgain">Retake quiz</button></div><div class="finder-result-grid">'+matches.map(({f},i)=>{
         const prices=[['3mL',f.p3],['5mL',f.p5],['10mL',f.p10]].filter(x=>parseMoney(x[1])>0);
         const image=/^https?:\/\//i.test(String(f.imageUrl||''))?'<img src="'+escapeAttr(f.imageUrl)+'" alt="'+escapeAttr(f.house+' '+f.name)+'" loading="lazy">':'<div class="finder-placeholder">DeadEnd Scents</div>';
         return '<article class="finder-match">'+image+'<div class="finder-match-copy"><span class="finder-rank">MATCH '+(i+1)+'</span><p class="finder-house">'+escapeHtml(f.house)+'</p><h4>'+escapeHtml(f.name)+'</h4><p class="finder-reason">Why it matches: '+escapeHtml(String(f.accords||f.notes||f.category||'Matches your preferences').split(/[,;|]/).slice(0,3).join(', ').trim())+'</p><p class="finder-notes">'+escapeHtml(f.notes||f.category||'')+'</p><div class="finder-prices">'+prices.map(([size,price])=>'<button type="button" class="finder-add" data-id="'+escapeAttr(f.id)+'" data-size="'+size+'" aria-label="Add '+escapeAttr(size+' '+f.name)+' to cart">'+size+' · '+escapeHtml(discountedPriceText(price,f))+' <b>+</b></button>').join('')+'</div></div></article>';
-      }).join('')+'</div>';
-      $('finderTryAgain').addEventListener('click',()=>{finderAnswers=[];finderStep=0;finderTrack('scent_finder_restart');renderScentFinder();});
+      }).join('')+'</div>'+(canShowMore?'<div class="finder-more-wrap"><button type="button" class="finder-more" id="finderShowMore">Show 3 more matches <span aria-hidden="true">→</span></button><p>Keep your top two matches and see three more options.</p></div>':'');
+      if(canShowMore)$('finderShowMore').addEventListener('click',()=>{finderPage++;finderTrack('scent_finder_show_more',{page:finderPage+1});renderScentFinder();});
+      $('finderTryAgain').addEventListener('click',()=>{finderAnswers=[];finderStep=0;finderPage=0;finderTrack('scent_finder_restart');renderScentFinder();});
       results.querySelectorAll('.finder-add').forEach(btn=>btn.addEventListener('click',()=>{
         const f=data.find(x=>String(x.id)===btn.dataset.id);if(!f)return;
         const price=discountedPriceText(({ '3mL':f.p3,'5mL':f.p5,'10mL':f.p10 })[btn.dataset.size],f);
@@ -721,7 +730,7 @@
     const q=finderQuestions[finderStep];$('finderStep').textContent=finderStep+1;question.textContent=q.title;
     choices.innerHTML='';q.choices.forEach(([label,terms])=>{
       const btn=document.createElement('button');btn.type='button';btn.className='finder-choice';btn.textContent=label;
-      btn.addEventListener('click',()=>{if(!finderOpen){finderOpen=true;finderTrack('scent_finder_start');}finderAnswers[finderStep]=[label,terms];finderTrack('scent_finder_answer',{question_number:finderStep+1,answer:label});finderStep++;if(finderStep===3)finderTrack('scent_finder_complete',{recommendation_count:5});renderScentFinder();});choices.appendChild(btn);
+      btn.addEventListener('click',()=>{if(!finderOpen){finderOpen=true;finderTrack('scent_finder_start');}finderAnswers[finderStep]=[label,terms];finderPage=0;finderTrack('scent_finder_answer',{question_number:finderStep+1,answer:label});finderStep++;if(finderStep===3)finderTrack('scent_finder_complete',{recommendation_count:5});renderScentFinder();});choices.appendChild(btn);
     });
     $('finderBack').hidden=finderStep===0;
   }
@@ -739,7 +748,7 @@
   if(location.hash==='#scentFinder')setFinderExpanded(true);
   document.querySelectorAll('a[href="#scentFinder"]').forEach(a=>a.addEventListener('click',()=>setFinderExpanded(true)));
   if($('finderBack'))$('finderBack').addEventListener('click',()=>{finderStep=Math.max(0,finderStep-1);renderScentFinder();});
-  if($('finderReset'))$('finderReset').addEventListener('click',()=>{finderStep=0;finderAnswers=[];finderOpen=false;renderScentFinder();});
+  if($('finderReset'))$('finderReset').addEventListener('click',()=>{finderStep=0;finderAnswers=[];finderPage=0;finderOpen=false;renderScentFinder();});
 
   function uniqueValues(key){ return [...new Set(data.map(x=>x[key]).filter(Boolean))].sort(); }
   function uniqueMultiValues(key){ const values=new Set(); data.forEach(x=>String(x[key]||'').split(',').map(v=>v.trim()).filter(Boolean).forEach(v=>values.add(v))); return [...values].sort(); }
