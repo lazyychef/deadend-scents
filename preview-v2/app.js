@@ -725,6 +725,19 @@
     });
     $('finderBack').hidden=finderStep===0;
   }
+  // V2.7.2: keep the homepage compact until a visitor opts into the quiz.
+  const finderToggle=$('finderToggle'), finderContent=$('finderContent');
+  function setFinderExpanded(expanded){
+    if(!finderToggle||!finderContent)return;
+    finderContent.hidden=!expanded;
+    finderToggle.setAttribute('aria-expanded',String(expanded));
+    finderToggle.innerHTML=expanded?'Hide Quiz <span aria-hidden="true">↑</span>':'Start Quiz <span aria-hidden="true">→</span>';
+    $('scentFinder')?.classList.toggle('finder-expanded',expanded);
+    if(expanded && !finderContent.dataset.initialized){finderContent.dataset.initialized='1';renderScentFinder();}
+  }
+  if(finderToggle)finderToggle.addEventListener('click',()=>setFinderExpanded(finderContent.hidden));
+  if(location.hash==='#scentFinder')setFinderExpanded(true);
+  document.querySelectorAll('a[href="#scentFinder"]').forEach(a=>a.addEventListener('click',()=>setFinderExpanded(true)));
   if($('finderBack'))$('finderBack').addEventListener('click',()=>{finderStep=Math.max(0,finderStep-1);renderScentFinder();});
   if($('finderReset'))$('finderReset').addEventListener('click',()=>{finderStep=0;finderAnswers=[];finderOpen=false;renderScentFinder();});
 
